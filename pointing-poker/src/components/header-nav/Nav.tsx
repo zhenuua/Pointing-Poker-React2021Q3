@@ -16,6 +16,9 @@ export const Nav: React.FC = () => {
         <NavLink exact to="/game-page">
           game-page
         </NavLink>
+        <NavLink exact to="/404">
+          404
+        </NavLink>
       </nav>
     </div>
   );
