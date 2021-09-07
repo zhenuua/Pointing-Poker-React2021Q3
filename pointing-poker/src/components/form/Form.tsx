@@ -10,7 +10,7 @@ const Form: React.FC = (): JSX.Element => {
   return (
     <form>
       <label htmlFor="firstName">
-        <span>Your first name:</span>
+        <span>Your first name name:</span>
         <input
           className={style.firstName}
           type="text"
