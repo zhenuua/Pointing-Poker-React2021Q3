@@ -23,6 +23,7 @@
     "@typescript-eslint",
     "react-hooks"
   ],
+  "ignorePatterns": ["*.config.js", "node_modules/", "build/"],
   "rules": {
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": [
