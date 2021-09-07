@@ -1,30 +1,23 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-import style from './App.module.scss';
+import MainContent from './components/main-content/MainContent';
 
-import MainPage from './pages/main-page/MainPage';
-import NotFoundPage from './pages/not-found-page/NotFoundPage';
-import LobbyPage from './pages/lobby-page/LobbyPage';
-import GamePage from './pages/game-page/GamePage';
+import Style from './App.module.scss';
+import { Nav } from './components/header-nav/Nav';
 
-const App: React.FC = (): JSX.Element => (
-  <div className={style.app}>
-    <Switch>
-      <Route exact path="/">
-        <MainPage />
-      </Route>
-      <Route exact path="/lobby-page">
-        <LobbyPage />
-      </Route>
-      <Route path="/game-page">
-        <GamePage />
-      </Route>
-      <Route path="*">
-        <NotFoundPage />
-      </Route>
-    </Switch>
-  </div>
-);
+const App: React.FC = (): JSX.Element => {
+  return (
+    <>
+      <header>
+        <Nav />
+      </header>
+      <main className={Style.main}>
+        <MainContent />
+      </main>
+      <footer>some footer</footer>
+    </>
+  );
+};
 
 export default App;
