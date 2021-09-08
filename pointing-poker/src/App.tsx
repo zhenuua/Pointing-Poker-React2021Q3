@@ -7,9 +7,12 @@ import MainPage from './pages/main-page/MainPage';
 import NotFoundPage from './pages/not-found-page/NotFoundPage';
 import LobbyPage from './pages/lobby-page/LobbyPage';
 import GamePage from './pages/game-page/GamePage';
+import Header from './components/header/Header';
+import Footer from './components/footer/Footer';
 
 const App: React.FC = (): JSX.Element => (
   <div className={style.app}>
+    <Header />
     <Switch>
       <Route exact path="/">
         <MainPage />
@@ -24,6 +27,7 @@ const App: React.FC = (): JSX.Element => (
         <NotFoundPage />
       </Route>
     </Switch>
+    <Footer />
   </div>
 );
 
