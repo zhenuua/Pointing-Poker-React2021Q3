@@ -4,7 +4,11 @@ import style from './Form.module.scss';
 
 import avatar from '../../assets/images/Avatar(Auto).png';
 
-const Form: React.FC = (): JSX.Element => {
+type PopUpType = {
+  setActive: any,
+};
+
+const Form: React.FC<PopUpType> = ({ setActive }): JSX.Element => {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [jobPosition, setJobPosition] = useState<string>('');
@@ -54,7 +58,7 @@ const Form: React.FC = (): JSX.Element => {
           }
         />
       </label>
-      <label htmlFor="input_file">
+      <label htmlFor="input_file" className={style.labelFile}>
         <span className={style.header}>Image:</span>
         <br />
         <span className={style.imgButton}>Choose file:</span>
@@ -72,6 +76,7 @@ const Form: React.FC = (): JSX.Element => {
           className={`${style.buttonCancel} ${style.button}`}
           type="reset"
           value="Cancel"
+          onClick={() => setActive(false)}
         />
       </div>
     </form>
