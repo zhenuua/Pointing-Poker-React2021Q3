@@ -1,21 +1,39 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, useLocation } from 'react-router-dom';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
-import MainContent from './components/main-content/MainContent';
+import { Nav } from './components/header-nav/Nav';
+import MainPage from './pages/main-page/MainPage';
+import LobbyPage from './pages/lobby-page/LobbyPage';
+import GamePage from './pages/game-page/GamePage';
+import NotFoundPage from './pages/not-found-page/NotFoundPage';
 
 import Style from './App.module.scss';
-import { Nav } from './components/header-nav/Nav';
+import cssTransition from './cssTransition.module.scss';
 
 const App: React.FC = (): JSX.Element => {
+  const location = useLocation();
+
   return (
     <>
-      <header>
-        <Nav />
-      </header>
-      <main className={Style.main}>
-        <MainContent />
-      </main>
-      <footer>some footer</footer>
+      <TransitionGroup>
+        <CSSTransition timeout={250} key={location.key} classNames={{ ...cssTransition }}>
+          <Switch location={location}>
+            <Route exact path="/">
+              <MainPage />
+            </Route>
+            <Route exact path="/lobby-page">
+              <LobbyPage />
+            </Route>
+            <Route path="/game-page">
+              <GamePage />
+            </Route>
+            <Route path="*">
+              <NotFoundPage />
+            </Route>
+          </Switch>
+        </CSSTransition>
+      </TransitionGroup>
     </>
   );
 };
