@@ -2,17 +2,21 @@ import React, { useState } from 'react';
 
 import style from './Form.module.scss';
 
+import avatar from '../../assets/images/Avatar(Auto).png';
+
 const Form: React.FC = (): JSX.Element => {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [jobPosition, setJobPosition] = useState<string>('');
 
   return (
-    <form>
+    <form className={style.form}>
+      <h1 className={style.headerForm}>Connect to lobby</h1>
       <label htmlFor="firstName">
-        <span>Your first name name:</span>
+        <span className={style.header}>Your first name:</span>
+        <br />
         <input
-          className={style.firstName}
+          className={style.input}
           type="text"
           id="firstName"
           name="firstName"
@@ -23,9 +27,10 @@ const Form: React.FC = (): JSX.Element => {
         />
       </label>
       <label htmlFor="lastName">
-        <span>Your last name:</span>
+        <span className={style.header}>Your last name:</span>
+        <br />
         <input
-          className={style.lastName}
+          className={style.input}
           type="text"
           id="lastName"
           name="lastName"
@@ -36,9 +41,10 @@ const Form: React.FC = (): JSX.Element => {
         />
       </label>
       <label htmlFor="jobPosition">
-        <span>Your job position:</span>
+        <span className={style.header}>Your job position:</span>
+        <br />
         <input
-          className={style.jobPosition}
+          className={style.input}
           type="text"
           id="jobPosition"
           name="jobPosition"
@@ -49,15 +55,25 @@ const Form: React.FC = (): JSX.Element => {
         />
       </label>
       <label htmlFor="input_file">
-        <span>Image:</span>
-        <input
-          className={style.inputTypeFile}
-          type="file"
-          id="input_file"
-          name="file"
-          placeholder="Прикрепите файл"
-        />
+        <span className={style.header}>Image:</span>
+        <br />
+        <span className={style.imgButton}>Choose file:</span>
+        <input className={style.inputTypeFile} type="file" id="input_file" name="file" />
+        <button className={style.btn} type="button">
+          Button
+        </button>
+        <img className={style.avatar} src={avatar} alt="avatar" />
       </label>
+      <div className={style.btnWrapper}>
+        <button className={`${style.buttonSubmit} ${style.button}`} type="submit">
+          Confirm
+        </button>
+        <input
+          className={`${style.buttonCancel} ${style.button}`}
+          type="reset"
+          value="Cancel"
+        />
+      </div>
     </form>
   );
 };

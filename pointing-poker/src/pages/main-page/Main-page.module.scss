@@ -2,10 +2,96 @@
   text-align: center;
 }
 
-.main {
-  //background-image: url(/assets/images/palma.jpg);
-}
-
 .mainLogo {
   display: block;
-  margin: 0 auto;}
+  margin: 0 221px 20px 228px;
+  padding-top: 130px;
+}
+
+.mainWrapper {
+  max-width: 1000px;
+  height: 933px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  margin: 0 auto;
+}
+
+.header {
+  font-family: 'Roboto', sans-serif;
+  color: #66999B;
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.startPlanning {
+  max-width: 767px;
+  height: 198px;
+  margin: 40px 118px 0 26px;
+}
+
+.createSessionText {
+  font-family: Roboto, sans-serif;
+  font-weight: 300;
+  font-size: 24px;
+  margin-top: 122px;
+  margin-right: 116px;
+  width: 340px;
+}
+
+.createSessionWrapper {
+  margin-top: 90px;
+}
+
+@media only screen and (min-width : 400px) and (max-width : 1023px) {
+  .mainLogo {
+    width: 350px;
+    display: block;
+    margin: 0 221px 20px 260px;
+    padding-top: 130px;
+  }
+}
+
+.orHeader {
+  margin: 35px 0 0 180px;
+}
+
+.connectToLobbyText {
+  margin-top: 20px;
+  display: block;
+}
+
+.connectToLobbyWrapper {
+  height: 204px;
+}
+
+.inputWrapper {
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.buttonWrapper {
+  display: inline-block;
+  position: relative;
+  top: 2px;
+}
+
+.connectToLobbyBold {
+  color: #66999B;
+}
+
+@media only screen and (min-width : 400px) and (max-width : 1023px) {
+  .mainLogo {
+    width: 350px;
+    display: block;
+    margin: 0 221px 20px 260px;
+    padding-top: 130px;
+  }
+}
+
+@media only screen and (min-width : 370px) and (max-width : 450px) {
+  .mainLogo {
+    width: 320px;
+    display: block;
+    margin: 0 0 20px 15px;
+    padding-top: 130px;
+  }
+}
