@@ -1,34 +1,43 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
-
-import style from './App.module.scss';
+import { Switch, Route, useLocation } from 'react-router-dom';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import MainPage from './pages/main-page/MainPage';
-import NotFoundPage from './pages/not-found-page/NotFoundPage';
 import LobbyPage from './pages/lobby-page/LobbyPage';
 import GamePage from './pages/game-page/GamePage';
 import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
+import NotFoundPage from './pages/not-found-page/NotFoundPage';
 
-const App: React.FC = (): JSX.Element => (
-  <div className={style.app}>
-    <Header />
-    <Switch>
-      <Route exact path="/">
-        <MainPage />
-      </Route>
-      <Route exact path="/lobby-page">
-        <LobbyPage />
-      </Route>
-      <Route path="/game-page">
-        <GamePage />
-      </Route>
-      <Route path="*">
-        <NotFoundPage />
-      </Route>
-    </Switch>
-    <Footer />
-  </div>
-);
+import cssTransition from './cssTransition.module.scss';
+
+const App: React.FC = (): JSX.Element => {
+  const location = useLocation();
+
+  return (
+    <>
+      <Header />
+      <TransitionGroup>
+        <CSSTransition timeout={250} key={location.key} classNames={{ ...cssTransition }}>
+          <Switch location={location}>
+            <Route exact path="/">
+              <MainPage />
+            </Route>
+            <Route exact path="/lobby-page">
+              <LobbyPage />
+            </Route>
+            <Route path="/game-page">
+              <GamePage />
+            </Route>
+            <Route path="*">
+              <NotFoundPage />
+            </Route>
+          </Switch>
+        </CSSTransition>
+      </TransitionGroup>
+      <Footer />
+    </>
+  );
+};
 
 export default App;
