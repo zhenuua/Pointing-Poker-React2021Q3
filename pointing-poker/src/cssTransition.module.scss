@@ -1,0 +1,27 @@
+.enter {
+  opacity: 0;
+  z-index: 1;
+}
+
+.enterActive {
+  opacity: 1;
+  transition: opacity 250ms ease-in;
+}
+
+.enterDone {
+  opacity: 1;
+}
+
+.exit {
+  opacity: 1;
+}
+
+.exitActive {
+  opacity: 0;
+  transition: opacity 250ms ease-in;
+}
+
+.exitDone {
+  opacity: 0;
+}
+
