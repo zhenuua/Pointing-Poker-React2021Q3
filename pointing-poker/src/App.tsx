@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
+
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import MainPage from './pages/main-page/MainPage';
@@ -26,11 +27,11 @@ const App: React.FC = (): JSX.Element => {
             <Route exact path="/lobby-page">
               <LobbyPage />
             </Route>
-            <Route path="/game-page">
-              <GamePage />
-            </Route>
             <Route path="*">
               <NotFoundPage />
+            </Route>
+            <Route path="/game-page">
+              <GamePage />
             </Route>
           </Switch>
         </CSSTransition>
