@@ -25,14 +25,14 @@ const GamePage: React.FC = (): JSX.Element => {
           userName="Tim Cook"
           userStaff="senior software"
           isCurrentUser
-          isRemove
+          isRemove={false}
         />
         <PersonalDataTab
           userImage={dambldorImage}
           userName="Альбус Персиваль Вульфрик Брайан Дамблдор"
           userStaff="Director"
           isCurrentUser={false}
-          isRemove={false}
+          isRemove
         />
       </div>
     </div>

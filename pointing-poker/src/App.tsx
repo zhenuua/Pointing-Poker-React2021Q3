@@ -13,7 +13,6 @@ import cssTransition from './cssTransition.module.scss';
 
 const App: React.FC = (): JSX.Element => {
   const location = useLocation();
-
   return (
     <>
       <Header />
