@@ -1,3 +1,217 @@
-.lobbyPageHeader {
+.wrapperLobby{
+  margin: 0 auto;
+  width: 960px;
+}
+.lobbyText{
+  display: flex;
+  font-family: Ruda;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 30px;
+  align-items: center;
   text-align: center;
+  color: #000000;
+}
+.lobbyTextTitle{
+  margin: 30px 0;
+  justify-content: center;
+}
+.lobbyTextSubparagraph{
+  margin: 30px 0;
+}
+.lobbyTitle__text__link{
+  font-family: Roboto;
+  font-style: italic;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 28px;
+  align-items: center;
+  color: #000000;
+}
+.lobbyTitle__text__scrum{
+  font-family: Ruda;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 15px;
+  display: flex;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+
+.lobbyMain{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  &__title{
+    display: flex;
+    justify-content: center;
+    height: 82px;
+    cursor: pointer;
+    // &__text{
+    //   font-family: Ruda;
+    //   font-style: normal;
+    //   font-weight: bold;
+    //   font-size: 24px;
+    //   line-height: 30px;
+    //   display: flex;
+    //   align-items: center;
+    //   text-align: center;
+    //   color: #000000;
+    // }
+    &__settings{
+      margin: 50px 0 0 15px;
+      height: 24px;
+      width: 24px;
+    } 
+  }
+  &__control{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  &__link{
+    margin-top: 15px;
+    &__copy{
+      display: flex;
+    }
+    &__input{
+      height: 47px;
+      font-family: Roboto;
+      font-weight: 300;
+      font-size: 24px;
+      align-items: center;
+      text-align: center;
+      color: #000000;
+    }
+  }
+}
+.lobbyMembers{
+  &__members{
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+.lobbyIssues{
+  &__items{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  &__item{
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    margin: 10px;
+    padding: 22px;
+    width: 300px;
+    height: 75px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    cursor: pointer;
+    &__title{
+      font-family: Roboto;
+      font-style: normal;
+      font-weight: 300;
+      font-size: 24px;
+      line-height: 56px;
+      display: flex;
+      align-items: center;
+      color: #000000;
+    }
+    &__propity{
+      position: absolute;
+      bottom: 10px;
+      font-family: Roboto;
+      font-weight: 300;
+      font-size: 10px;
+      line-height: 12px;
+      color: #000000;
+    }
+    &__img{
+      height: 31px;
+      margin-left: 20px;
+    }
+  }
+
+
+}
+.lobbyGameSettings{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  &__item{
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px;
+    width: 500px;
+    &__title{
+      font-family: Ruda;
+      font-weight: bold;
+      font-size: 24px;
+      line-height: 30px;
+      display: flex;
+      align-items: center;
+      color: #000000;
+    }
+    &__input{
+      padding-left: 10px;
+      width: 325px;
+      height: 36px;
+      background: #FFFFFF;
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+      border: none;
+      outline:none;
+      cursor: pointer;
+      appearance: none;
+      border-radius: 0px 0 0 8px;
+        font-family: Ruda;
+        font-weight: bold;
+        font-size: 24px;
+        line-height: 30px;
+        display: flex;
+        align-items: center;
+        color: #000000;
+    }
+  }
+}
+.lobbyGameCards{
+  &__faces{
+    display: flex;
+    flex-wrap: wrap;
+    &__item{
+      margin: 0 10px 10px 0;
+      position: relative;
+    }
+    &__itemAdd{
+      padding: 0 20px;
+      width: 100px;
+      height: 160px;
+      cursor: pointer;
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+      border-radius: 15px;
+    }
+    &__itemimg{
+      width: 100px;
+      height: 160px;
+      backface-visibility: hidden;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      object-fit: cover;
+      cursor: pointer;
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+      border-radius: 15px;
+    }
+    &__itemActive{
+      position: absolute;
+      height: 30px;
+      top: 5px;
+      right: 5px;
+    }
+  }
 }
