@@ -7,33 +7,28 @@ import authorTest from '../../assets/images/ImageUser.png';
 import dambldorImage from '../../assets/images/dambldor.jpg';
 
 import style from './Game-page.module.scss';
+import Card from '../../components/card/Card';
 
 const GamePage: React.FC = (): JSX.Element => {
   return (
     <div className={style.gamePageWrapper}>
-      <h1 className={style.gamePageHeader}>Game Page</h1>
-      <div>
-        <PersonalDataTab
-          userImage={authorTest}
-          userName="John Smith"
-          userStaff="Agent 007"
-          isCurrentUser
-          isRemove
-        />
-        <PersonalDataTab
-          userImage={authorTest}
-          userName="Tim Cook"
-          userStaff="senior software"
-          isCurrentUser
-          isRemove={false}
-        />
-        <PersonalDataTab
-          userImage={dambldorImage}
-          userName="Альбус Персиваль Вульфрик Брайан Дамблдор"
-          userStaff="Director"
-          isCurrentUser={false}
-          isRemove
-        />
+      <div className={style.gameWrapperLeft}>1</div>
+      <div className={style.gameWrapperRight}>
+        <div className={style.scoreColumn}>
+          <span className={style.headerText}>Score:</span>
+        </div>
+        <div className={style.playersColumn}>
+          <span className={style.headerText}>Players:</span>
+          <div>
+            <PersonalDataTab
+              userImage={authorTest}
+              userName="Tim Cook"
+              userStaff="senior software"
+              isCurrentUser
+              isRemove={false}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
