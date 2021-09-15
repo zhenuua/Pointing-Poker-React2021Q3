@@ -1,0 +1,45 @@
+.tabWrapper {
+  display: flex;
+  width: 250px;
+  height: 63px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  margin-bottom: 5px;
+}
+
+.tabText {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 28px;
+  display: block;
+  text-align: left;
+  line-height: 63px;
+  padding-left: 15px;
+}
+
+.closeIcon {
+  position: absolute;
+  width: 40px;
+  left: 200px;
+  top: 12px;
+}
+
+.current {
+  position: absolute;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  font-size: 9px;
+  text-transform: uppercase;
+  padding: 10px 0 0 17px;
+}
+
+.priority {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  position: absolute;
+  top: 40px;
+  font-size: 9px;
+  padding: 5px 0 0 17px;
+}
