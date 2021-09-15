@@ -26,11 +26,11 @@ const App: React.FC = (): JSX.Element => {
             <Route exact path="/lobby-page">
               <LobbyPage />
             </Route>
-            <Route path="*">
-              <NotFoundPage />
-            </Route>
             <Route path="/game-page">
               <GamePage />
+            </Route>
+            <Route path="*">
+              <NotFoundPage />
             </Route>
           </Switch>
         </CSSTransition>

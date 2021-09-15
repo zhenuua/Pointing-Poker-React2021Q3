@@ -1,0 +1,74 @@
+.cardWrapper {
+  width: 97px;
+  height: 161px;
+  background-color: #fff;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  border: 1px solid #EEEEEE;
+  border-radius: 13px;
+  margin: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+.text {
+  font-family: 'Ruda', sans-serif;
+  font-weight: 700;
+  font-size: 62px;
+  line-height: 161px;
+  text-align: center;
+}
+
+.number {
+  font-family: 'Ruda', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+
+}
+
+.up {
+  left: 8px;
+  top: 4px;
+}
+
+.down {
+  transform: rotate(180deg);
+  left: 66px;
+  top: 132px;
+}
+
+.input {
+  font-family: 'Ruda', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  position: absolute;
+  border: none;
+  width: 20px;
+  height: 20px;
+}
+
+.removeIcon {
+  position: absolute;
+  left: 65px;
+  margin: 8px;
+  cursor: pointer;
+}
+
+.active {
+  width: 20px;
+  height: 20px;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 2px;
+}
+
+input {
+  outline:none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
