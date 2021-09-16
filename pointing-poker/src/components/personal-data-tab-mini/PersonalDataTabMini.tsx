@@ -2,30 +2,42 @@ import React from 'react';
 
 import Marquee from 'react-double-marquee';
 
-import style from './Personal-data-tab-mini.module.scss';
-
 import RemoveIcon from '../../assets/images/Remove-icon.svg';
 
-type PersonalDataTabType = {
+import style from './Personal-data-tab-mini.module.scss';
+
+type PersonalDataTabMiniType = {
   userImage: string,
   userName: string,
   userStaff: string,
   isCurrentUser: boolean,
   isRemove: boolean,
+  id: number,
+  setData: any,
+  data: any,
 };
 
-const PersonalDataTabMini: React.FC<PersonalDataTabType> = ({
+const PersonalDataTabMini: React.FC<PersonalDataTabMiniType> = ({
   userImage,
   userName,
   userStaff,
   isCurrentUser,
   isRemove,
+  id,
+  setData,
+  data,
 }): JSX.Element => {
   return (
     <div className={style.userTab}>
       <img className={style.userImg} src={userImage} alt="user icon" />
       {isRemove ? (
-        <img className={style.removeIcon} src={RemoveIcon} alt="remove icon" />
+        <img
+          className={style.removeIcon}
+          src={RemoveIcon}
+          alt="remove icon"
+          onClick={() => setData(data.filter((el: any) => el.id !== id))}
+          aria-hidden="true"
+        />
       ) : (
         ''
       )}

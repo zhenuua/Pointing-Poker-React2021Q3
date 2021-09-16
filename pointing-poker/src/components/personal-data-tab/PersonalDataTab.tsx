@@ -2,17 +2,11 @@ import React from 'react';
 
 import Marquee from 'react-double-marquee';
 
-import style from './Personal-data-tab.module.scss';
-
 import RemoveIcon from '../../assets/images/Remove-icon.svg';
 
-type PersonalDataTabType = {
-  userImage: string,
-  userName: string,
-  userStaff: string,
-  isCurrentUser: boolean,
-  isRemove: boolean,
-};
+import { PersonalDataTabType } from '../../types/types';
+
+import style from './Personal-data-tab.module.scss';
 
 const PersonalDataTab: React.FC<PersonalDataTabType> = ({
   userImage,

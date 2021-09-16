@@ -6,10 +6,6 @@ import editIcon from '../../assets/images/Edit-icon.svg';
 
 import style from './Card.module.scss';
 
-type TCard = {
-  number: number,
-};
-
 const Card: React.FC = (): JSX.Element => {
   const [isNumberCard, setIsNumberCard] = useState<number>(1);
   const [inputClassName, setInputClassName] = useState<boolean>(false);
@@ -21,12 +17,12 @@ const Card: React.FC = (): JSX.Element => {
   };
 
   let styleInput = '';
-  let styleSpan = 's';
+  let styleSpan = '';
 
   if (!inputClassName) {
     styleInput = `${style.input} ${style.up}`;
     styleSpan = `${style.number} ${style.down}`;
-  } else if (inputClassName) {
+  } else {
     styleInput = `${style.input} ${style.up} ${style.active}`;
     styleSpan = `${style.number} ${style.down} ${style.active}`;
   }

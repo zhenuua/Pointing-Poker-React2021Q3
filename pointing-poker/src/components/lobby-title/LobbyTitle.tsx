@@ -4,11 +4,9 @@ import OutsideClickHandler from 'react-outside-click-handler';
 
 import editIcon from '../../assets/images/Edit-icon.svg';
 
-import style from './Lobby-title.module.scss';
+import { LobbyTitleType } from '../../types/types';
 
-type LobbyTitleType = {
-  isScrumMaster: boolean,
-};
+import style from './Lobby-title.module.scss';
 
 const LobbyTitle: React.FC<LobbyTitleType> = ({ isScrumMaster }): JSX.Element => {
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);

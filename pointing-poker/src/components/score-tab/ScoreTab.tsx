@@ -1,10 +1,8 @@
 import React from 'react';
 
-import style from './Score-tab.module.scss';
+import { ScoreTabType } from '../../types/types';
 
-type ScoreTabType = {
-  status: string,
-};
+import style from './Score-tab.module.scss';
 
 const ScoreTab: React.FC<ScoreTabType> = ({ status }): JSX.Element => {
   return (

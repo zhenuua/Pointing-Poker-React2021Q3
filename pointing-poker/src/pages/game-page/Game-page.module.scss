@@ -2,7 +2,7 @@
   display: flex;
   max-width: 1440px;
   margin: 0 auto;
-  height: 100vh;
+  height: 150vh;
 }
 
 .gamePageHeader {
@@ -59,6 +59,11 @@
   margin-top: 60px;
 }
 
+.statisticsWrapper {
+  width: 316px;
+  margin-top: 10px;
+}
+
 .issuesText {
   width: 316px;
   height: 76px;
@@ -83,5 +88,9 @@
 }
 
 .wrapper {
+  display: flex;
+}
+
+.cardWrapper {
   display: flex;
 }

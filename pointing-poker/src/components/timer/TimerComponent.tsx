@@ -8,7 +8,7 @@ const TimerComponent: React.FC = (): JSX.Element => {
       <span className={style.number}>00</span>
       <h1 className={style.separator}>:</h1>
       <span className={style.min}>minutes</span>
-      <span className={style.sec}>secons</span>
+      <span className={style.sec}>seconds</span>
       <span className={style.number}>00</span>
     </div>
   );

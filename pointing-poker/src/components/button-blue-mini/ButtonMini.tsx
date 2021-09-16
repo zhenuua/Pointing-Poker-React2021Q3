@@ -1,10 +1,8 @@
 import React from 'react';
 
-import style from './Button-mini.module.scss';
+import { ButtonType } from '../../types/types';
 
-type ButtonType = {
-  text: string,
-};
+import style from './Button-mini.module.scss';
 
 const ButtonMini: React.FC<ButtonType> = ({ text }): JSX.Element => {
   return (
