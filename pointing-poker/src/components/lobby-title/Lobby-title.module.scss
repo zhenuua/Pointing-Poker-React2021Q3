@@ -1,0 +1,34 @@
+.titleWrapper {
+  width: 100%;
+  text-align: center;
+}
+
+input {
+  outline:none;
+}
+
+.inputLobbyTitle {
+  font-family: 'Ruda', sans-serif;
+  font-weight: 700;
+  border: none;
+  font-size: 24px;
+  width: 625px;
+  margin-top: 30px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.removeIcon {
+  position: relative;
+  left: 645px;
+  cursor: pointer;
+  visibility: hidden;
+}
+
+.active {
+  visibility: visible;
+}

@@ -1,0 +1,17 @@
+.tabWrapper {
+  width: 200px;
+  height: 50px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  margin: 10px auto;
+  cursor: pointer;
+}
+
+.tabText {
+  font-family: 'Ruda', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  display: block;
+  text-align: center;
+  line-height: 50px;
+}
