@@ -23,7 +23,7 @@ import petter from '../../assets/images/user/Petter.jpg';
 import sendler from '../../assets/images/user/Sendler.jpg';
 import travolta from '../../assets/images/user/Travolta.jpg';
 import brad from '../../assets/images/user/Brad.jpg';
-import frodo from '../../assets/images/user/Frodo.png';
+// import frodo from '../../assets/images/user/Frodo.jpg';
 
 type dataType = {
   id: number,
@@ -35,7 +35,7 @@ type dataType = {
 
 const GamePage: React.FC = (): JSX.Element => {
   const [data, setData] = useState<dataType[]>([
-    { id: 1, name: 'Max Kalevich', staff: 'Senior', current: true, photo: frodo },
+    { id: 1, name: 'Max Kalevich', staff: 'Senior', current: true, photo: travolta },
     { id: 2, name: 'Brad Pitt', staff: 'Cleaner', current: false, photo: brad },
     { id: 3, name: 'John Travolta', staff: 'Actor', current: false, photo: travolta },
     { id: 4, name: 'Adam Sendler', staff: 'Physics', current: false, photo: sendler },

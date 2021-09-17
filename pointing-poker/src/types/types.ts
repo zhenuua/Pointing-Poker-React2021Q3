@@ -1,9 +1,11 @@
 export type ButtonType = {
   text: string,
+  onClick?: () => void,
 };
 
 export type FormType = {
   setActive: any,
+  isConnect?: boolean,
 };
 
 export type IssueTabType = {

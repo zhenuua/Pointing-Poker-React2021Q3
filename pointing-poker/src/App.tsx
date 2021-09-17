@@ -21,10 +21,10 @@ const App: React.FC = (): JSX.Element => {
       <TransitionGroup>
         <CSSTransition timeout={250} key={location.key} classNames={{ ...cssTransition }}>
           <Switch location={location}>
-            <Route exact path="/">
+            <Route exact path="/:lobbyParam?">
               <MainPage />
             </Route>
-            <Route exact path="/lobby-page">
+            <Route exact path="/lobby-page/:lobbyId">
               <LobbyPage />
             </Route>
             <Route path="/game-page">

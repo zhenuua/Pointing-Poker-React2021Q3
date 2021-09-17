@@ -1,18 +1,44 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import avatar from '../../assets/images/Avatar(Auto).png';
+import { useActions } from '../../hooks/useActions';
+import { UserRoles } from '../../store/types/sliceTypes';
 
 import { FormType } from '../../types/types';
 
 import style from './Form.module.scss';
 
-const Form: React.FC<FormType> = ({ setActive }): JSX.Element => {
+const Form: React.FC<FormType> = ({ setActive, isConnect = false }): JSX.Element => {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [jobPosition, setJobPosition] = useState<string>('');
+  const history = useHistory();
+  const {
+    setUsername,
+    setLastName: setLast,
+    setJobPosition: setJob,
+    setUserRole,
+  } = useActions();
+
+  const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setUsername(firstName);
+    setLast(lastName);
+    setJob(jobPosition);
+    setUserRole(UserRoles.USER_ADMIN);
+    let id;
+    if (isConnect) {
+      console.log('logica playera, menyaem ID');
+    } else {
+      console.log('logica admina, menyaem ID');
+    }
+    // history.push(`/lobby-page/${id}`);
+    // `/lobby-page/${response.data.lobbyId}`
+  };
 
   return (
-    <form className={style.form}>
+    <form className={style.form} onSubmit={handleSubmit}>
       <h1 className={style.headerForm}>Connect to lobby</h1>
       <label htmlFor="firstName">
         <span className={style.header}>Your first name:</span>

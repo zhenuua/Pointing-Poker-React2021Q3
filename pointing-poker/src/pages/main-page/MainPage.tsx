@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import logo from '../../assets/images/Poker-Planning-picture.svg';
 
@@ -11,6 +12,17 @@ import Form from '../../components/form/Form';
 
 const MainPage: React.FC = (): JSX.Element => {
   const [modalActive, setModalActive] = useState<boolean>(false);
+  const [modalActiveConnect, setModalActiveConnect] = useState<boolean>(false);
+
+  const connectRef = React.useRef<HTMLInputElement | null>(null);
+  const [lobbyLink, setLobbyLink] = useState<string>('');
+  const history = useHistory();
+
+  const connectLobby = () => {
+    console.log(`${lobbyLink}`);
+    history.push(`/lobby-page/${lobbyLink}`);
+  };
+
   return (
     <>
       <div className={style.mainWrapper}>
@@ -36,16 +48,24 @@ const MainPage: React.FC = (): JSX.Element => {
               Connect to lobby by <b className={style.connectToLobbyBold}>URL</b>:
             </span>
             <div className={style.inputWrapper}>
-              <InputComponent />
+              <InputComponent setLobbyLink={setLobbyLink} />
             </div>
-            <div className={style.buttonWrapper}>
+            <div
+              className={style.buttonWrapper}
+              onClick={() => setModalActiveConnect(true)}
+              aria-hidden="true"
+            >
               <Button text="Connect" />
+              {/* <Button text="Connect" onClick={connectLobby} /> */}
             </div>
           </div>
         </div>
       </div>
       <PopUp active={modalActive} setActive={setModalActive}>
         <Form setActive={setModalActive} />
+      </PopUp>
+      <PopUp active={modalActiveConnect} setActive={setModalActiveConnect}>
+        <Form setActive={setModalActiveConnect} isConnect />
       </PopUp>
     </>
   );
