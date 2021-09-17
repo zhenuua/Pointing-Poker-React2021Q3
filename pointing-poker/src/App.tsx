@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 
@@ -26,11 +27,11 @@ const App: React.FC = (): JSX.Element => {
             <Route exact path="/lobby-page">
               <LobbyPage />
             </Route>
-            <Route path="*">
-              <NotFoundPage />
-            </Route>
             <Route path="/game-page">
               <GamePage />
+            </Route>
+            <Route path="*">
+              <NotFoundPage />
             </Route>
           </Switch>
         </CSSTransition>
