@@ -1,0 +1,67 @@
+.popupCreateIssue{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 35px;
+  width: 875px;
+  height: 761px;
+  &__title{
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 64px;
+    line-height: 75px;
+    text-align: center;
+    color: #000000;
+  }
+  &__options{
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 300px;
+    width: 580px;
+    &__item{
+      display: flex;
+    }
+  }
+  &__text{
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 28px;
+    display: flex;
+    align-items: center;
+    width: 150px;
+    height: 47px;
+    align-items: center;
+    color: #000000;
+  }
+  &__input{
+    padding: 0 5px;
+    width: 420px;
+    height: 47px;
+    border: 1px solid #2B3A67;
+    box-sizing: border-box;
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 0px;
+  }
+  &__select{
+    width: 267px;
+    height: 45px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 28px;
+    display: flex;
+    align-items: center;
+    color: #000000;
+  }
+  &__control{
+    display: flex;
+    justify-content: space-between;
+  }
+}

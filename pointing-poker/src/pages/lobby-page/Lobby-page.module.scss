@@ -135,8 +135,6 @@
       margin-left: 20px;
     }
   }
-
-
 }
 .lobbyGameSettings{
   display: flex;
@@ -188,12 +186,20 @@
       position: relative;
     }
     &__itemAdd{
-      padding: 0 20px;
+      position: absolute;
+      background-image: url(../../assets/icons/plusInCircle.svg);
+      backface-visibility: hidden;
+      background-position: center;
+      background-size: 70px;
+      background-repeat: no-repeat;
       width: 100px;
       height: 160px;
       cursor: pointer;
       box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
       border-radius: 15px;
+    }
+    &__itemAdd input{
+      display: none;
     }
     &__itemimg{
       width: 100px;

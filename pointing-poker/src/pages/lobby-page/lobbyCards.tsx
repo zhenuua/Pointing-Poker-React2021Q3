@@ -1,6 +1,5 @@
 import React, { MouseEvent, ChangeEvent, useEffect, useState } from 'react';
 import activeCardImg from '../../assets/icons/choose.svg';
-import plusInCircle from '../../assets/icons/plusInCircle.svg';
 
 import style from './Lobby-page.module.scss';
 
@@ -23,8 +22,8 @@ const cardFaces = [
   },
 ];
 const LobbyCards: React.FC = (): JSX.Element => {
-  const chengeFaceCard = (e: React.MouseEvent<HTMLDivElement>) => {
-    console.log('fff');
+  const chengeFaceCard = (imageSrc: string) => {
+    console.log('do active this card:', imageSrc);
   };
   return (
     <section className={style.lobbyGameCards}>
@@ -35,8 +34,11 @@ const LobbyCards: React.FC = (): JSX.Element => {
       <div className={style.lobbyGameCards__faces}>
         {cardFaces.map((item) => {
           return (
-            <div className={style.lobbyGameCards__faces__item}>
-              {/* onClick={chengeFaceCard} */}
+            <div
+              onClick={() => chengeFaceCard(item.imgSrc)}
+              aria-hidden="true"
+              className={style.lobbyGameCards__faces__item}
+            >
               <img
                 className={style.lobbyGameCards__faces__itemimg}
                 src={item.imgSrc}
@@ -53,12 +55,9 @@ const LobbyCards: React.FC = (): JSX.Element => {
           );
         })}
         <div className={style.lobbyGameCards__faces__item}>
-          {/* onClick={chengeFaceCard} */}
-          <img
-            className={style.lobbyGameCards__faces__itemAdd}
-            src={plusInCircle}
-            alt="add card face"
-          />
+          <label htmlFor="input_file" className={style.lobbyGameCards__faces__itemAdd}>
+            <input type="file" id="input_file" name="file" />
+          </label>
         </div>
       </div>
       <h3 className={`${style.lobbyText} ${style.lobbyTextSubparagraph}`}>
@@ -69,4 +68,3 @@ const LobbyCards: React.FC = (): JSX.Element => {
 };
 
 export default LobbyCards;
-/* onClick={chengeFaceCard} */

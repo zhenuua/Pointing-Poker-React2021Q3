@@ -1,4 +1,4 @@
-import React, { MouseEvent, ChangeEvent, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ButtonSubmit from '../../components/buttonSubmit/ButtonSubmit';
 import ButtonCancel from '../../components/buttonCancel/ButtonCancel';
 import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
@@ -7,6 +7,20 @@ import style from './Lobby-page.module.scss';
 import authorTest from '../../assets/images/ImageUser.png';
 
 const LobbyMain: React.FC = (): JSX.Element => {
+  const [isGame, setIsGame] = useState<boolean>(false);
+  const [link, setLink] = useState<string>('http://pockerplanning.c...');
+  const startGame = () => {
+    console.log('game is start');
+    setIsGame(true);
+  };
+  const cancelGame = () => {
+    console.log('cancel is cancel');
+    setIsGame(false);
+  };
+  const copyLink = () => {
+    console.log('copy link');
+    navigator.clipboard.writeText(link);
+  };
   return (
     <section className={style.lobbyMain}>
       <div className={style.lobbyMain__title}>
@@ -37,15 +51,30 @@ const LobbyMain: React.FC = (): JSX.Element => {
               className={style.lobbyMain__link__input}
               id="link"
               type="text"
-              value="http://pockerplanning.c..."
+              value={link}
             />
           </label>
-          <ButtonSubmit text="Copy" />
+          <ButtonSubmit
+            onclickHandler={() => {
+              copyLink();
+            }}
+            text="Copy"
+          />
         </div>
       </div>
       <div className={style.lobbyMain__control}>
-        <ButtonSubmit text="Start Game" />
-        <ButtonCancel text="Cancel game" />
+        <ButtonSubmit
+          onclickHandler={() => {
+            startGame();
+          }}
+          text="Start Game"
+        />
+        <ButtonCancel
+          onclickHandler={() => {
+            cancelGame();
+          }}
+          text="Cancel game"
+        />
       </div>
     </section>
   );

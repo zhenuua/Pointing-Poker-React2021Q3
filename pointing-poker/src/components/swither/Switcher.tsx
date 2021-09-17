@@ -4,21 +4,24 @@ import './Switcher.scss';
 
 type SwitcherType = {
   status: boolean,
-  setStatus: any,
+  setStatus: (status: boolean) => void,
+  id: string,
 };
 
-export const Switcher: React.FC<SwitcherType> = ({ status, setStatus }): JSX.Element => {
-  const cheangeSwither = ({ target: { checked } }: any): void => {
-    console.log(checked);
-  };
-
+export const Switcher: React.FC<SwitcherType> = ({
+  status,
+  setStatus,
+  id,
+}): JSX.Element => {
   return (
-    <label className="switch" htmlFor="switcher">
+    <label className="switch" htmlFor={id}>
       <input
-        id="switcher"
-        checked={status}
+        id={id}
         type="checkbox"
-        onChange={() => cheangeSwither}
+        checked={status}
+        onChange={() => {
+          setStatus(!status);
+        }}
       />
       <span className="slider round" />
     </label>

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Marquee from 'react-double-marquee';
+import PopUp from '../popup/PopUp';
 
 import style from './Personal-data-tab.module.scss';
 
 import RemoveIcon from '../../assets/images/Remove-icon.svg';
+import FormKickPlayer from '../form-kick-player/FormKickPlayer';
 
 type PersonalDataTabType = {
   userImage: string,
@@ -21,6 +23,7 @@ const PersonalDataTab: React.FC<PersonalDataTabType> = ({
   isCurrentUser,
   isRemove,
 }): JSX.Element => {
+  const [popUpCick, setPopUpCick] = useState<boolean>(false);
   // if (userName.length <= 10) {
   //   return (
   //     <div className={style.userTab}>
@@ -46,7 +49,15 @@ const PersonalDataTab: React.FC<PersonalDataTabType> = ({
     <div className={style.userTab}>
       <img className={style.userImg} src={userImage} alt="user icon" />
       {isRemove ? (
-        <img className={style.removeIcon} src={RemoveIcon} alt="remove icon" />
+        <img
+          onClick={() => {
+            setPopUpCick(true);
+          }}
+          className={style.removeIcon}
+          src={RemoveIcon}
+          alt="remove icon"
+          aria-hidden="true"
+        />
       ) : (
         ''
       )}
@@ -61,6 +72,17 @@ const PersonalDataTab: React.FC<PersonalDataTabType> = ({
           {userName}
         </Marquee>
       </div>
+      <PopUp active={popUpCick} setActive={setPopUpCick}>
+        <FormKickPlayer
+          onSubmitHandler={() => {
+            setPopUpCick(false);
+          }}
+          onCancelHandler={() => {
+            setPopUpCick(false);
+          }}
+          namePlayer={userName}
+        />
+      </PopUp>
     </div>
   );
 };
