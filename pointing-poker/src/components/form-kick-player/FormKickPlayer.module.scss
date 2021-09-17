@@ -1,0 +1,39 @@
+.popUpKickPlayer{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 875px;
+  height: 500px;
+  background-color: #fff;
+  padding: 35px;
+
+  &__title{
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 64px;
+    line-height: 75px;
+    text-align: center;
+    color: #000000;
+  }
+  &__text{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-family: Ruda;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 30px;
+    align-items: center;
+    text-align: center;
+    color: #000000;
+    &__namePlayer{
+      color: #496A81;
+    }
+  }
+  &__control{
+    display: flex;
+    justify-content: space-between;
+  }
+}

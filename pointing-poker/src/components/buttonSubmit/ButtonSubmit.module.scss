@@ -1,0 +1,15 @@
+.button {
+  font-family: 'Ruda', sans-serif;
+  width: 189px;
+  height: 47px;
+  border: none;
+  background-color: #2B3A67;
+  font-size: 24px;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button:active {
+  transform: scale(0.95);
+}

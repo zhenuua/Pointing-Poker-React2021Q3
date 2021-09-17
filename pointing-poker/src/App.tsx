@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 
