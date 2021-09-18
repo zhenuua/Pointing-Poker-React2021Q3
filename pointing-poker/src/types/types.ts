@@ -6,6 +6,7 @@ export type ButtonType = {
 export type FormType = {
   setActive: any,
   isConnect?: boolean,
+  lobbyLink?: string,
 };
 
 export type IssueTabType = {

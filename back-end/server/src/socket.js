@@ -37,17 +37,17 @@ const socketInit = ({ io }) => {
     console.log(`----User connected adminSpace with id: ${socket.id}----`);
     console.log(`//-----token provided from client ${socket.handshake.auth.token}----//`);
 
-    socket.on(EVENTS.CLIENT.AUTH_ADMIN, (userData) => {
-      // const { token, roomId, userRole, username, lastName, jobPosition } = userData;
-      // console.log(userData);
-      // console.log('-------------');
-      // console.log(lobbiesData);
-      // console.log('-------------');
-      createUser(userData, lobbiesData);
-      // console.log('-------------');
-      // console.log(lobbiesData);
-      // console.log('-------------');
-    })
+    // socket.on(EVENTS.CLIENT.AUTH_ADMIN, (userData) => {
+    //   // const { token, roomId, userRole, username, lastName, jobPosition } = userData;
+    //   // console.log(userData);
+    //   // console.log('-------------');
+    //   // console.log(lobbiesData);
+    //   // console.log('-------------');
+    //   createUser(userData, lobbiesData);
+    //   // console.log('-------------');
+    //   // console.log(lobbiesData);
+    //   // console.log('-------------');
+    // })
 
     socket.on(EVENTS.disconnect, () => {
       console.log(`----User DISCONNECTED adminSpace with id: ${socket.id} ----`);
@@ -58,22 +58,38 @@ const socketInit = ({ io }) => {
   io.on(EVENTS.connection, (socket) => {
     console.log(`----User connected to mainSpace with id: ${socket.id}----`);
 
-    socket.on(EVENTS.CLIENT.ACCESS_REQ, ({ roomId, userRole }) => {
-      console.log(`user id: ${socket.id} requesting access to room: ${roomId} as ${userRole}`);
-      const userSocketId = socket.id;
-      const users = lobbiesData.find(lobby => lobby.lobbyId === roomId).users;
-      const adminId = users.find(user => user.userRole === 'ADMIN').socketId;
-      // console.log('--//--');
-      // console.log(adminId);
-      // console.log('--//--');
+    // io.emit('server-kek', {message: 'keking from the server'});
 
-      adminSpace.to(adminId).emit(EVENTS.SERVER.PENDING_USER, { userSocketId, userRole });
-    });
+    // socket.on(EVENTS.CLIENT.ACCESS_REQ, ({ roomId, userRole }) => {
+    //   console.log(`user id: ${socket.id} requesting access to room: ${roomId} as ${userRole}`);
+    //   const userSocketId = socket.id;
+    //   const users = lobbiesData.find(lobby => lobby.lobbyId === roomId).users;
+    //   const adminId = users.find(user => user.userRole === 'ADMIN').socketId;
+    //   // console.log('--//--');
+    //   // console.log(adminId);
+    //   // console.log('--//--');
+
+    //   adminSpace.to(adminId).emit(EVENTS.SERVER.PENDING_USER, { userSocketId, userRole });
+    // });
+
+    socket.on('lobby-connect', (msg) => {
+      console.log(msg);
+    })
+
+    socket.on('lobby-create', (msg) => {
+      console.log(msg);
+      socket.emit('sending', 'you have joined the room');
+    })
+
+
+    
 
     socket.on(EVENTS.disconnect, () => {
       console.log(`----User DISCONNECTED mainSpace with id: ${socket.id} ----`);
     });
   });
+
+  
 
   // io.on('connection', (socket) => {
 //   console.log(socket.id + ' connected to server');

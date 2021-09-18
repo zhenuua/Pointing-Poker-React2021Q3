@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import avatar from '../../assets/images/Avatar(Auto).png';
+import { useSocketsContext } from '../../context/socket.context';
 import { useActions } from '../../hooks/useActions';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
+// import { state } from '../../pages/main/main-config';
+import { checkLobby, createLobby } from '../../store/reducers/userSlice';
 import { UserRoles } from '../../store/types/sliceTypes';
 
 import { FormType } from '../../types/types';
 
 import style from './Form.module.scss';
 
-const Form: React.FC<FormType> = ({ setActive, isConnect = false }): JSX.Element => {
+const Form: React.FC<FormType> = ({
+  setActive,
+  isConnect = false,
+  lobbyLink = '',
+}): JSX.Element => {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [jobPosition, setJobPosition] = useState<string>('');
+  const [isRoomId, setIsRoomId] = useState<boolean>(false);
+  const dispatch = useDispatch();
   const history = useHistory();
+  const { roomId } = useTypedSelector((state) => state.userSlice);
   const {
     setUsername,
     setLastName: setLast,
@@ -21,21 +33,36 @@ const Form: React.FC<FormType> = ({ setActive, isConnect = false }): JSX.Element
     setUserRole,
   } = useActions();
 
+  const { socket } = useSocketsContext();
+
   const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // setUserRole(UserRoles.USER_ADMIN);
+    // let id;
     setUsername(firstName);
     setLast(lastName);
     setJob(jobPosition);
-    setUserRole(UserRoles.USER_ADMIN);
-    let id;
     if (isConnect) {
-      console.log('logica playera, menyaem ID');
+      dispatch(checkLobby({ lobbyId: lobbyLink }));
+      setIsRoomId(true);
+      socket.emit('lobby-connect', 'joining room lobby, dadada--------------');
     } else {
-      console.log('logica admina, menyaem ID');
+      dispatch(
+        createLobby({
+          socketId: 'aklsjdlfkjasdflkjasda',
+          userRole: UserRoles.USER_ADMIN,
+        }),
+      );
+      setIsRoomId(true);
+      socket.emit('lobby-create', '-----------creating room lobby, dadada');
     }
-    // history.push(`/lobby-page/${id}`);
+    // if (roomId) history.push(`/lobby-page/${roomId}`);
     // `/lobby-page/${response.data.lobbyId}`
   };
+
+  if (isRoomId) {
+    return <Redirect to={`/lobby-page/${roomId}`} />;
+  }
 
   return (
     <form className={style.form} onSubmit={handleSubmit}>

@@ -25,7 +25,7 @@ const SocketContext = createContext<Context>({
   chatSocket: null,
 });
 
-const SocketsProvider = ({ children: JSX.Element }) => {
+const SocketsProvider = () => {
   const [username, setUsername] = useState('');
   const [roomId, setRoomId] = useState('');
   const [rooms, setRooms] = useState({});
@@ -35,10 +35,14 @@ const SocketsProvider = ({ children: JSX.Element }) => {
     <SocketContext.Provider
       value={{
         socket,
+        adminSocket,
+        playerSocket,
+        chatSocket,
       }}
     >
       {children}
     </SocketContext.Provider>
+    // console.log('11')
   );
 };
 

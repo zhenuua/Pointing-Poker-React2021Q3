@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 import { Socket } from 'socket.io-client';
 import { UserRoles } from '../types/sliceTypes';
 

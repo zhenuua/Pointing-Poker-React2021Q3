@@ -60,10 +60,10 @@ const useSockets = () => {
       adminSocket.on(EVENTS.connect, () => {
         console.log(`///-----you connected to admin namespace socket id: ${adminSocket.id} -----///`);
       });
-      setAdminSocket(adminSocket);
+      // setAdminSocket(adminSocket);
     }
     return () => {
-      adminSkt?.disconnect();
+      // adminSkt?.disconnect();
     };
   }, [userRole]);
 };

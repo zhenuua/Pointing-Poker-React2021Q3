@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import Inputt from '../../components/inputt/inputt';
 import { useActions } from '../../hooks/useActions';
 // import { setUsername, setUserRole, setToken, setRoomId } from '../../store/reducers/userSlice';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
@@ -32,6 +33,7 @@ export const MainPage: React.FC = () => {
   const jobRef = useRef<HTMLInputElement | null>(null);
   const lobbyRef = useRef<HTMLInputElement | null>(null);
   const asSpectatorRef = useRef<HTMLInputElement | null>(null);
+  const testRef = useRef<HTMLInputElement | null>(null);
   // const nameConnectRef = useRef<HTMLInputElement | null>(null);
   // const lastNameConnectRef = useRef<HTMLInputElement | null>(null);
 
@@ -89,10 +91,17 @@ export const MainPage: React.FC = () => {
       console.log(error);
     }
   };
+  const handleRef = () => {
+    console.log(testRef.current!.value);
+  };
 
   return (
     <div>
       <form>
+        <Inputt ref={testRef} />
+        <button type="button" onClick={handleRef}>
+          reffffff
+        </button>
         <label htmlFor="name-input">
           <input
             ref={nameRef}

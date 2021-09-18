@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import logo from '../../assets/images/Poker-Planning-picture.svg';
@@ -18,10 +18,10 @@ const MainPage: React.FC = (): JSX.Element => {
   const [lobbyLink, setLobbyLink] = useState<string>('');
   const history = useHistory();
 
-  const connectLobby = () => {
-    console.log(`${lobbyLink}`);
-    history.push(`/lobby-page/${lobbyLink}`);
-  };
+  // const connectLobby = () => {
+  //   console.log(`${lobbyLink}`);
+  //   history.push(`/lobby-page/${lobbyLink}`);
+  // };
 
   return (
     <>
@@ -65,7 +65,7 @@ const MainPage: React.FC = (): JSX.Element => {
         <Form setActive={setModalActive} />
       </PopUp>
       <PopUp active={modalActiveConnect} setActive={setModalActiveConnect}>
-        <Form setActive={setModalActiveConnect} isConnect />
+        <Form setActive={setModalActiveConnect} isConnect lobbyLink={lobbyLink} />
       </PopUp>
     </>
   );

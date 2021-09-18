@@ -12,9 +12,11 @@ import Footer from './components/footer/Footer';
 import NotFoundPage from './pages/not-found-page/NotFoundPage';
 
 import cssTransition from './cssTransition.module.scss';
+import { useSocketsContext } from './context/socket.context';
 
 const App: React.FC = (): JSX.Element => {
   const location = useLocation();
+
   return (
     <>
       <Header />
@@ -27,7 +29,7 @@ const App: React.FC = (): JSX.Element => {
             <Route exact path="/lobby-page/:lobbyId">
               <LobbyPage />
             </Route>
-            <Route path="/game-page">
+            <Route exact path="/game-page/:gameId">
               <GamePage />
             </Route>
             <Route path="*">
