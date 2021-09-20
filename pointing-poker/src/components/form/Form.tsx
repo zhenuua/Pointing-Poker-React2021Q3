@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import avatar from '../../assets/images/Avatar(Auto).png';
@@ -13,7 +13,17 @@ const Form: React.FC<FormType> = ({ setActive, isConnect = false }): JSX.Element
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [jobPosition, setJobPosition] = useState<string>('');
+  const [userImage, setUserImage] = useState<string>('');
+
   const history = useHistory();
+
+  const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const img = event.target.files[0];
+      setUserImage(URL.createObjectURL(img));
+    }
+  };
+
   const {
     setUsername,
     setLastName: setLast,
@@ -86,11 +96,21 @@ const Form: React.FC<FormType> = ({ setActive, isConnect = false }): JSX.Element
         <span className={style.header}>Image:</span>
         <br />
         <span className={style.imgButton}>Choose file:</span>
-        <input className={style.inputTypeFile} type="file" id="input_file" name="file" />
+        <input
+          className={style.inputTypeFile}
+          type="file"
+          id="input_file"
+          name="file"
+          onChange={onImageChange}
+        />
         <button className={style.btn} type="button">
           Button
         </button>
-        <img className={style.avatar} src={avatar} alt="avatar" />
+        {userImage ? (
+          <img className={style.avatar} src={userImage} alt="avatar" />
+        ) : (
+          <img className={style.avatar} src={avatar} alt="avatar" />
+        )}
       </label>
       <div className={style.btnWrapper}>
         <button className={`${style.buttonSubmit} ${style.button}`} type="submit">

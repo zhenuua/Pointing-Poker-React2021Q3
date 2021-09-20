@@ -27,7 +27,7 @@ const App: React.FC = (): JSX.Element => {
             <Route exact path="/lobby-page/:lobbyId">
               <LobbyPage />
             </Route>
-            <Route path="/game-page">
+            <Route exact path="/game-page/:gameId">
               <GamePage />
             </Route>
             <Route path="*">
