@@ -1,5 +1,5 @@
-import { createUser } from './lobby.js';
-import { lobbiesData } from "./lobbiesData.js";
+import { createUser } from './z-unneccesary-files/lobby.js';
+import { lobbiesData } from "./z-unneccesary-files/lobbiesData.js";
 
   
 export const EVENTS = {
@@ -16,6 +16,7 @@ export const EVENTS = {
     LOBBIES: "LOBBIES",
     JOINED_LOBBY: "JOINED_LOBBY",
     LOBBY_MESSAGE: "LOBBY_MESSAGE",
+    USER_JOIN: "USER_JOIN",
     PENDING_USER: "PENDING_USER",
   },
 };
@@ -58,6 +59,20 @@ const socketInit = ({ io }) => {
   io.on(EVENTS.connection, (socket) => {
     console.log(`----User connected to mainSpace with id: ${socket.id}----`);
 
+    socket.on(EVENTS.CLIENT.JOIN_LOBBY, ({ socketId, userRole, roomId }, callback) => {
+      socket.join(roomId);
+      console.log(`client with id: ${socketId}, role: ${userRole} joining room: ${roomId}`);
+      callback({
+        msg: `you successfully joined room: ${roomId}`,
+        isJoinedRoom: true,
+      });
+      socket.to(roomId).emit(EVENTS.SERVER.USER_JOIN, 
+        `user with id: ${socket.id} and role: ${userRole} joined to your room: ${roomId}`);
+    });
+
+    socket.on(EVENTS.disconnect, () => {
+      console.log(`----User DISCONNECTED mainSpace with id: ${socket.id} ----`);
+    });
     // io.emit('server-kek', {message: 'keking from the server'});
 
     // socket.on(EVENTS.CLIENT.ACCESS_REQ, ({ roomId, userRole }) => {
@@ -72,21 +87,18 @@ const socketInit = ({ io }) => {
     //   adminSpace.to(adminId).emit(EVENTS.SERVER.PENDING_USER, { userSocketId, userRole });
     // });
 
-    socket.on('lobby-connect', (msg) => {
-      console.log(msg);
-    })
+    // socket.on('lobby-connect', (msg) => {
+    //   console.log(msg);
+    // })
 
-    socket.on('lobby-create', (msg) => {
-      console.log(msg);
-      socket.emit('sending', 'you have joined the room');
-    })
+    // socket.on('lobby-create', (msg) => {
+    //   console.log(msg);
+    //   socket.emit('sending', 'you have joined the room');
+    // })
 
 
     
 
-    socket.on(EVENTS.disconnect, () => {
-      console.log(`----User DISCONNECTED mainSpace with id: ${socket.id} ----`);
-    });
   });
 
   

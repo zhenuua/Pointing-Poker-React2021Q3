@@ -5,7 +5,7 @@ import { UserRoles } from '../store/types/sliceTypes';
 import { useActions } from './useActions';
 import { useTypedSelector } from './useTypedSelector';
 
-export const EVENTS = {
+export const EVENTSSS = {
   connect: 'connect',
   disconnect: 'disconnect',
   CLIENT: {
@@ -35,18 +35,18 @@ const useSockets = () => {
   // const { setPlayerSocket, setChatSocket, setMainSocket, setAdminSocket } = useActions();
 
   // const socket: Socket = io('http://localhost:5000/');
-  // socket.on(EVENTS.connect, () => {
+  // socket.on(EVENTSSS.connect, () => {
   //   console.log(`you have connected to Socket.IO server`);
   //   // setSocketId(socket.id);
-  //   // socket.emit(EVENTS.CLIENT.ACCESS_REQ, { roomId, userRole });
+  //   // socket.emit(EVENTSSS.CLIENT.ACCESS_REQ, { roomId, userRole });
   // });
 
   useEffect(() => {
     const socket: Socket = io('http://localhost:5000/');
-    socket.on(EVENTS.connect, () => {
+    socket.on(EVENTSSS.connect, () => {
       console.log(`you have connected to Socket.IO server`);
       // setSocketId(socket.id);
-      // socket.emit(EVENTS.CLIENT.ACCESS_REQ, { roomId, userRole });
+      // socket.emit(EVENTSSS.CLIENT.ACCESS_REQ, { roomId, userRole });
     });
     // setMainSocket(socket);
   }, []);
@@ -58,7 +58,7 @@ const useSockets = () => {
       const adminSocket: Socket = io('http://localhost:5000/admin', {
         auth: { token: `${token} ${roomId}` },
       });
-      adminSocket.on(EVENTS.connect, () => {
+      adminSocket.on(EVENTSSS.connect, () => {
         console.log(
           `///-----you connected to admin namespace socket id: ${adminSocket.id} -----///`,
         );
@@ -86,10 +86,10 @@ export default useSockets;
 
 //   const socketInit = () => {
 //     const socket: Socket = io('http://localhost:5000/');
-//     socket.on(EVENTS.connect, () => {
+//     socket.on(EVENTSSS.connect, () => {
 //       console.log(`you have connected to room:// ${roomId} //, requesting access...`);
 //       // setSocketId(socket.id);
-//       socket.emit(EVENTS.CLIENT.ACCESS_REQ, { roomId, userRole });
+//       socket.emit(EVENTSSS.CLIENT.ACCESS_REQ, { roomId, userRole });
 //     });
 //     return socket;
 //   };
@@ -97,10 +97,10 @@ export default useSockets;
 //   const adminSocketInit = () => {
 //     const adminSocket: Socket = io('http://localhost:5000/admin', { auth: { token: `${token} ${roomId}` } });
 
-//     adminSocket.on(EVENTS.connect, () => {
+//     adminSocket.on(EVENTSSS.connect, () => {
 //       console.log(`///-----you connected to admin namespace socket id: ${adminSocket.id} -----///`);
 //       // setSocketId(adminSocket.id);
-//       adminSocket.emit(EVENTS.CLIENT.AUTH_ADMIN, {
+//       adminSocket.emit(EVENTSSS.CLIENT.AUTH_ADMIN, {
 //         token,
 //         roomId,
 //         socketId: adminSocket.id,
@@ -112,7 +112,7 @@ export default useSockets;
 //       });
 //     });
 
-//     adminSocket.on(EVENTS.SERVER.PENDING_USER, ({ userSocketId, userRole: pendingRole }) => {
+//     adminSocket.on(EVENTSSS.SERVER.PENDING_USER, ({ userSocketId, userRole: pendingRole }) => {
 //       console.log('//-----//');
 //       console.log(`incoming access req from user: ${userSocketId} with role: ${pendingRole}`);
 //       console.log('//-----//');
@@ -158,9 +158,9 @@ export default useSockets;
 // }) => {
 //   const { roomId, userRole } = data;
 //   const socket: Socket = io('http://localhost:5000/');
-//   socket.on(EVENTS.connect, () => {
+//   socket.on(EVENTSSS.connect, () => {
 //     console.log(`you have connected to room:// ${roomId} //, requesting access...`);
-//     socket.emit(EVENTS.CLIENT.ACCESS_LOBBY, { roomId, userRole });
+//     socket.emit(EVENTSSS.CLIENT.ACCESS_LOBBY, { roomId, userRole });
 //   });
 //   return socket;
 // };
@@ -177,9 +177,9 @@ export default useSockets;
 
 //   const adminSocket: Socket = io('http://localhost:5000/admin', { auth: { token: `${token} ${roomId}` } });
 
-//   adminSocket.on(EVENTS.connect, () => {
+//   adminSocket.on(EVENTSSS.connect, () => {
 //     console.log(`///-----you connected to admin namespace socket id: ${adminSocket.id} -----///`);
-//     adminSocket.emit(EVENTS.CLIENT.AUTH_ADMIN, {
+//     adminSocket.emit(EVENTSSS.CLIENT.AUTH_ADMIN, {
 //       token,
 //       roomId,
 //       userRole,

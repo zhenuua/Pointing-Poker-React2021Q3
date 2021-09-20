@@ -11,6 +11,7 @@ interface IInitState {
   userRole: UserRoles;
   token: string;
   roomId: string;
+  avatarImg: string;
 }
 
 const initialState: IInitState = {
@@ -21,6 +22,7 @@ const initialState: IInitState = {
   userRole: UserRoles.USER_PLAYER,
   token: '',
   roomId: '',
+  avatarImg: '',
 };
 
 export const createLobby = createAsyncThunk(
@@ -45,7 +47,7 @@ export const createLobby = createAsyncThunk(
       dispatch(setToken(adminToken));
     } catch (err) {
       console.error(err);
-      alert('server issue');
+      alert('server issue, unable to create new lobby');
     }
   },
 );

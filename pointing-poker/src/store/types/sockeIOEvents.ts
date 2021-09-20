@@ -1,0 +1,18 @@
+export const EVENTS = {
+  connect: 'connect',
+  disconnect: 'disconnect',
+  CLIENT: {
+    CREATE_LOBBY: 'CREATE_LOBBY',
+    SEND_LOBBY_MESSAGE: 'SEND_LOBBY_MESSAGE',
+    JOIN_LOBBY: 'JOIN_LOBBY',
+    ACCESS_REQ: 'ACCESS_REQ',
+    AUTH_ADMIN: 'AUTH_ADMIN',
+  },
+  SERVER: {
+    LOBBIES: 'LOBBIES',
+    JOINED_LOBBY: 'JOINED_LOBBY',
+    LOBBY_MESSAGE: 'LOBBY_MESSAGE',
+    PENDING_USER: 'PENDING_USER',
+    USER_JOIN: 'USER_JOIN',
+  },
+};

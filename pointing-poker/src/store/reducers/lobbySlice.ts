@@ -5,10 +5,12 @@ import { UserRoles } from '../types/sliceTypes';
 
 export interface IUserInfo {
   username: string;
-  lastName: string;
-  jobPosition: string;
+  lastName?: string;
+  jobPosition?: string;
   socketId: string;
   userRole: UserRoles;
+  roomId: string;
+  avatarImg?: string;
 }
 
 export interface IChatMessage extends IUserInfo {
@@ -88,6 +90,9 @@ const lobbySlice = createSlice({
       );
       if (index !== -1) state.users.splice(index, 1);
     },
+    setUsers(state, action) {
+      state.users = action.payload;
+    },
     addIssue(state, action) {
       state.issues.push(action.payload);
     },
@@ -110,6 +115,7 @@ export const {
   removePendingUser,
   addUser,
   removeUser,
+  setUsers,
   addIssue,
   removeIssue,
   setGameSettings,

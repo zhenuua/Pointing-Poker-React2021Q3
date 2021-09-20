@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
@@ -13,6 +13,9 @@ import NotFoundPage from './pages/not-found-page/NotFoundPage';
 
 import cssTransition from './cssTransition.module.scss';
 import { useSocketsContext } from './context/socket.context';
+import { useActions } from './hooks/useActions';
+import { useTypedSelector } from './hooks/useTypedSelector';
+// import { state } from './pages/main/main-config';
 
 const App: React.FC = (): JSX.Element => {
   const location = useLocation();

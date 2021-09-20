@@ -25,7 +25,7 @@ const Form: React.FC<FormType> = ({
   const [isRoomId, setIsRoomId] = useState<boolean>(false);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { roomId } = useTypedSelector((state) => state.userSlice);
+  const { roomId, socketId } = useTypedSelector((state) => state.userSlice);
   const {
     setUsername,
     setLastName: setLast,
@@ -33,7 +33,7 @@ const Form: React.FC<FormType> = ({
     setUserRole,
   } = useActions();
 
-  const { socket } = useSocketsContext();
+  // const { socket } = useSocketsContext();
 
   const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,24 +45,25 @@ const Form: React.FC<FormType> = ({
     if (isConnect) {
       dispatch(checkLobby({ lobbyId: lobbyLink }));
       setIsRoomId(true);
-      socket.emit('lobby-connect', 'joining room lobby, dadada--------------');
+      // socket.emit('lobby-connect', 'joining room lobby, dadada--------------');
     } else {
       dispatch(
         createLobby({
-          socketId: 'aklsjdlfkjasdflkjasda',
+          socketId,
           userRole: UserRoles.USER_ADMIN,
         }),
       );
       setIsRoomId(true);
-      socket.emit('lobby-create', '-----------creating room lobby, dadada');
+      // socket.emit('lobby-create', '-----------creating room lobby, dadada');
     }
-    // if (roomId) history.push(`/lobby-page/${roomId}`);
-    // `/lobby-page/${response.data.lobbyId}`
   };
 
-  if (isRoomId) {
-    return <Redirect to={`/lobby-page/${roomId}`} />;
-  }
+  // checking if roomId changed, and redirects to lobby
+  useEffect(() => {
+    if (isRoomId) {
+      history.push(`/lobby-page/${roomId}`);
+    }
+  }, [roomId]);
 
   return (
     <form className={style.form} onSubmit={handleSubmit}>

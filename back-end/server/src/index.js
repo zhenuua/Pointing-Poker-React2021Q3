@@ -7,9 +7,10 @@ import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 
 import lobbyRouter from './routers/lobbyRouter.js';
+import usersRouter from './routers/usersRouter.js';
 import socketInit from './socket.js';
-import { createLobby } from './lobby.js';
-import { lobbiesData } from "./lobbiesData.js";
+import { createLobby } from './z-unneccesary-files/lobby.js';
+import { lobbiesData } from "./z-unneccesary-files/lobbiesData.js";
 
 
 const PORT = process.env.PORT || 5000;
@@ -28,7 +29,24 @@ const io = new Server(server, {
 
 app.use(json());
 app.use(cors());
+
 app.use('/lobby', lobbyRouter);
+app.use('/users', usersRouter);
+
+const start = async () => {
+  try {
+    await mongoose.connect(MONGO_URL);
+
+    server.listen(PORT, () => {
+      console.log('listening on port ' + PORT);
+      socketInit({ io });
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+start();
 
 // app.get('/lobby/create', (req, res) => {
 //   res.status(200).json(createLobby());
@@ -52,21 +70,6 @@ app.use('/lobby', lobbyRouter);
 //   res.status(204).json('no lobby found');
 //   // console.log('no lobby found');
 // }
-
-const start = async () => {
-  try {
-    await mongoose.connect(MONGO_URL);
-
-    server.listen(PORT, () => {
-      console.log('listening on port ' + PORT);
-      socketInit({ io });
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-start();
 
 // io.on('connection', (socket) => {
 //   console.log(socket.id + ' connected to server');

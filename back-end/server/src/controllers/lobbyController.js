@@ -1,16 +1,7 @@
-import jwt from "jsonwebtoken";
-import Lobby from '../models/lobbyModel.js';
 import { nanoid } from "nanoid";
 
-const { sign } = jwt;
-
-const generateAccessToken = (socketId, userRole, secret) => {
-  const payload = {
-    socketId,
-    userRole
-  }
-  return sign(payload, secret, {expiresIn: "1h"} )
-}
+import Lobby from '../models/lobbyModel.js';
+import { generateAccessToken } from '../utils/jwt.js';
 
 export const createLobby = async (req, res) => {
   try {
@@ -24,7 +15,7 @@ export const createLobby = async (req, res) => {
     res.json({ lobbyId, adminToken });
   } catch (err) {
     console.log(err);
-    res.status(500).json({message: 'Lobby creation error'})
+    res.status(500).json({message: 'Lobby creation error'});
   }
 };
 

@@ -9,6 +9,7 @@ import InputComponent from '../../components/input/InputComponent';
 import style from './Main-page.module.scss';
 import PopUp from '../../components/popup/PopUp';
 import Form from '../../components/form/Form';
+import { useResetUser } from '../../hooks/useResetUser';
 
 const MainPage: React.FC = (): JSX.Element => {
   const [modalActive, setModalActive] = useState<boolean>(false);
@@ -18,10 +19,8 @@ const MainPage: React.FC = (): JSX.Element => {
   const [lobbyLink, setLobbyLink] = useState<string>('');
   const history = useHistory();
 
-  // const connectLobby = () => {
-  //   console.log(`${lobbyLink}`);
-  //   history.push(`/lobby-page/${lobbyLink}`);
-  // };
+  // resets userdata, by useEffect
+  useResetUser();
 
   return (
     <>

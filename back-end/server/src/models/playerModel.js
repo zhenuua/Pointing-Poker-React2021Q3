@@ -12,7 +12,7 @@ const Player = new Schema({
   avatarImg: {type: String},
 });
 
-const mongoModel = model('Payer', Player);
+const mongoModel = model('Player', Player);
 
 export default mongoModel;
 
