@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 
-import style from './Form.module.scss';
-
 import avatar from '../../assets/images/Avatar(Auto).png';
 
-type PopUpType = {
-  setActive: any,
-};
+import { FormType } from '../../types/types';
 
-const Form: React.FC<PopUpType> = ({ setActive }): JSX.Element => {
+import style from './Form.module.scss';
+
+const Form: React.FC<FormType> = ({ setActive }): JSX.Element => {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [jobPosition, setJobPosition] = useState<string>('');

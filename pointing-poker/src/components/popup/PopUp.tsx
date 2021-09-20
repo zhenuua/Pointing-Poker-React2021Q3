@@ -1,11 +1,8 @@
 import React from 'react';
 
-import style from './Pop-up.module.scss';
+import { PopUpType } from '../../types/types';
 
-type PopUpType = {
-  active: boolean,
-  setActive: any,
-};
+import style from './Pop-up.module.scss';
 
 const PopUp: React.FC<PopUpType> = ({ active, setActive, children }): JSX.Element => {
   return (

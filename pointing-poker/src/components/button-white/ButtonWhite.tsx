@@ -2,9 +2,9 @@ import React from 'react';
 
 import { ButtonType } from '../../types/types';
 
-import style from './Button.module.scss';
+import style from './Button-white.module.scss';
 
-const Button: React.FC<ButtonType> = ({ text }): JSX.Element => {
+const ButtonWhite: React.FC<ButtonType> = ({ text }): JSX.Element => {
   return (
     <button type="button" className={style.button}>
       {text}
@@ -12,4 +12,4 @@ const Button: React.FC<ButtonType> = ({ text }): JSX.Element => {
   );
 };
 
-export default Button;
+export default ButtonWhite;

@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import Switcher from '../../components/swither/Switcher';
+import TimerComponent from '../../components/timer/TimerComponent';
 
 import style from './Lobby-page.module.scss';
 
@@ -71,7 +72,11 @@ const LobbySettings: React.FC = (): JSX.Element => {
         <div className={style.lobbyGameSettings__item}>
           <p className={style.lobbyGameSettings__item__title}>Round time:</p>
           {timerNeed ? (
-            <div>TIMER</div>
+            <div>
+              {' '}
+              <TimerComponent isEditMode isStartTimer={false} />
+              <TimerComponent isEditMode={false} isStartTimer />
+            </div>
           ) : (
             <p className={style.lobbyGameSettings__item__title}>No timer</p>
           )}
