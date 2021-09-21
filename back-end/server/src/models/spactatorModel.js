@@ -1,23 +1,20 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
 
-const Spactator = new Schema({
-  username: {type: String, required: true},
-  lastName: {type: String},
-  jobPosition: {type: String},
-  socketId: {type: String, unique: true, required: true},
-  userRole: {type: String, required: true},
-  roomId: {type: String, required: true},
-  avatarImg: {type: String},
+const Spectator = new Schema({
+  username: { type: String, required: true },
+  lastName: { type: String },
+  jobPosition: { type: String },
+  socketId: { type: String, unique: true, required: true },
+  userRole: { type: String, required: true },
+  roomId: { type: String, required: true },
+  avatarImg: { type: String },
 });
 
-const mongoModel = model('Spactator', Spactator);
+const mongoModel = model("Spectator", Spectator);
 
 export default mongoModel;
-
-
-
 
 // const {
 //   setUsername,

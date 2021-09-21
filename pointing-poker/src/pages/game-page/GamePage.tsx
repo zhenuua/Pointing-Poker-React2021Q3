@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 
 import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
 
-import userImage from '../../assets/images/Avatar(Auto).png';
 import authorTest from '../../assets/images/ImageUser.png';
-import dambldorImage from '../../assets/images/dambldor.jpg';
 
 import style from './Game-page.module.scss';
 
@@ -23,7 +21,6 @@ import petter from '../../assets/images/user/Petter.jpg';
 import sendler from '../../assets/images/user/Sendler.jpg';
 import travolta from '../../assets/images/user/Travolta.jpg';
 import brad from '../../assets/images/user/Brad.jpg';
-// import frodo from '../../assets/images/user/Frodo.jpg';
 
 type dataType = {
   id: number,

@@ -11,9 +11,9 @@ import { UserRoles } from '../../store/types/sliceTypes';
 
 import { FormType } from '../../types/types';
 
-import style from './Form.module.scss';
+import style from './Forma.module.scss';
 
-const Form: React.FC<FormType> = ({
+const ConnectForm: React.FC<FormType> = ({
   setActive,
   isConnect = false,
   lobbyLink = '',
@@ -44,7 +44,7 @@ const Form: React.FC<FormType> = ({
 
   // const { socket } = useSocketsContext();
 
-  const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleSubmit1 = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     // setUserRole(UserRoles.USER_ADMIN);
     // let id;
@@ -75,7 +75,7 @@ const Form: React.FC<FormType> = ({
   }, [roomId]);
 
   return (
-    <form className={style.form} onSubmit={handleSubmit}>
+    <form className={style.form} onSubmit={handleSubmit1}>
       <h1 className={style.headerForm}>Connect to lobby</h1>
       <label htmlFor="firstName">
         <span className={style.header}>Your first name:</span>
@@ -119,15 +119,15 @@ const Form: React.FC<FormType> = ({
           }
         />
       </label>
-      <label htmlFor="input_file" className={style.labelFile}>
+      <label htmlFor="connect-form" className={style.labelFile}>
         <span className={style.header}>Image:</span>
         <br />
         <span className={style.imgButton}>Choose file:</span>
         <input
           className={style.inputTypeFile}
           type="file"
-          id="input_file"
-          name="file"
+          id="connect-form"
+          name="connect-form"
           onChange={onImageChange}
         />
         <button className={style.btn} type="button">
@@ -154,4 +154,4 @@ const Form: React.FC<FormType> = ({
   );
 };
 
-export default Form;
+export default ConnectForm;
