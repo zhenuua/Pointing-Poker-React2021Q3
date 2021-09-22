@@ -4,9 +4,9 @@ import { ButtonType } from '../../types/types';
 
 import style from './Button.module.scss';
 
-const Button: React.FC<ButtonType> = ({ text }): JSX.Element => {
+const Button: React.FC<ButtonType> = ({ text, onClick }): JSX.Element => {
   return (
-    <button type="button" className={style.button}>
+    <button type="button" className={style.button} onClick={onClick}>
       {text}
     </button>
   );

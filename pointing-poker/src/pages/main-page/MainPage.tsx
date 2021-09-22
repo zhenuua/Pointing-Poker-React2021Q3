@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import logo from '../../assets/images/Poker-Planning-picture.svg';
 
@@ -8,9 +9,19 @@ import InputComponent from '../../components/input/InputComponent';
 import style from './Main-page.module.scss';
 import PopUp from '../../components/popup/PopUp';
 import Form from '../../components/form/Form';
+import { useResetUser } from '../../hooks/useResetUser';
+import ConnectForm from '../../components/connect-form/ConnectForm';
 
 const MainPage: React.FC = (): JSX.Element => {
   const [modalActive, setModalActive] = useState<boolean>(false);
+  const [isConnect, setIsConnect] = useState<boolean>(false);
+  const connectRef = React.useRef<HTMLInputElement | null>(null);
+  const [lobbyLink, setLobbyLink] = useState<string>('');
+  const history = useHistory();
+
+  // resets userdata, by useEffect
+  useResetUser();
+
   return (
     <>
       <div className={style.mainWrapper}>
@@ -21,7 +32,10 @@ const MainPage: React.FC = (): JSX.Element => {
             <span className={style.createSessionText}>Create session:</span>
             <div
               className={style.buttonWrapper}
-              onClick={() => setModalActive(true)}
+              onClick={() => {
+                setModalActive(true);
+                setIsConnect(false);
+              }}
               aria-hidden="true"
             >
               <Button text="Start new game" />
@@ -36,16 +50,28 @@ const MainPage: React.FC = (): JSX.Element => {
               Connect to lobby by <b className={style.connectToLobbyBold}>URL</b>:
             </span>
             <div className={style.inputWrapper}>
-              <InputComponent />
+              <InputComponent setLobbyLink={setLobbyLink} />
             </div>
-            <div className={style.buttonWrapper}>
+            <div
+              className={style.buttonWrapper}
+              onClick={() => {
+                setModalActive(true);
+                setIsConnect(true);
+              }}
+              aria-hidden="true"
+            >
               <Button text="Connect" />
+              {/* <Button text="Connect" onClick={connectLobby} /> */}
             </div>
           </div>
         </div>
       </div>
       <PopUp active={modalActive} setActive={setModalActive}>
-        <Form setActive={setModalActive} />
+        <ConnectForm
+          setActive={setModalActive}
+          isConnect={isConnect}
+          lobbyLink={lobbyLink}
+        />
       </PopUp>
     </>
   );
