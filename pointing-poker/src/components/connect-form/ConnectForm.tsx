@@ -1,26 +1,30 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import avatar from '../../assets/images/Avatar(Auto).png';
+import { useSocketsContext } from '../../context/socket.context';
 import { useActions } from '../../hooks/useActions';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { checkLobby, createLobby } from '../../store/reducers/userSlice';
 import { UserRoles } from '../../store/types/sliceTypes';
 
 import { FormType } from '../../types/types';
 
-import style from './Form.module.scss';
+import style from './Forma.module.scss';
 
-const Form: React.FC<FormType> = ({ setActive, isConnect = false }): JSX.Element => {
+const ConnectForm: React.FC<FormType> = ({
+  setActive,
+  isConnect,
+  lobbyLink = '',
+}): JSX.Element => {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [jobPosition, setJobPosition] = useState<string>('');
+  const [isRoomId, setIsRoomId] = useState<boolean>(false);
+  const dispatch = useDispatch();
   const history = useHistory();
-  const {
-    setUsername,
-    setLastName: setLast,
-    setJobPosition: setJob,
-    setUserRole,
-  } = useActions();
-
+  const { roomId, socketId } = useTypedSelector((state) => state.userSlice);
   const [userImage, setUserImage] = useState<string>('');
 
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,24 +35,47 @@ const Form: React.FC<FormType> = ({ setActive, isConnect = false }): JSX.Element
     }
   };
 
-  const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+  const {
+    setUsername,
+    setLastName: setLast,
+    setJobPosition: setJob,
+    setUserRole,
+  } = useActions();
+
+  // const { socket } = useSocketsContext();
+
+  const handleSubmit1 = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // setUserRole(UserRoles.USER_ADMIN);
+    // let id;
     setUsername(firstName);
     setLast(lastName);
     setJob(jobPosition);
-    setUserRole(UserRoles.USER_ADMIN);
-    let id;
     if (isConnect) {
-      console.log('logica playera, menyaem ID');
+      dispatch(checkLobby({ lobbyId: lobbyLink }));
+      setIsRoomId(true);
+      // socket.emit('lobby-connect', 'joining room lobby, dadada--------------');
     } else {
-      console.log('logica admina, menyaem ID');
+      dispatch(
+        createLobby({
+          socketId,
+          userRole: UserRoles.USER_ADMIN,
+        }),
+      );
+      setIsRoomId(true);
+      // socket.emit('lobby-create', '-----------creating room lobby, dadada');
     }
-    // history.push(`/lobby-page/${id}`);
-    // `/lobby-page/${response.data.lobbyId}`
   };
 
+  // checking if roomId changed, and redirects to lobby
+  useEffect(() => {
+    if (isRoomId) {
+      history.push(`/lobby-page/${roomId}`);
+    }
+  }, [roomId]);
+
   return (
-    <form className={style.form} onSubmit={handleSubmit}>
+    <form className={style.form} onSubmit={handleSubmit1}>
       <h1 className={style.headerForm}>Connect to lobby</h1>
       <label htmlFor="firstName">
         <span className={style.header}>Your first name:</span>
@@ -92,21 +119,25 @@ const Form: React.FC<FormType> = ({ setActive, isConnect = false }): JSX.Element
           }
         />
       </label>
-      <label htmlFor="input_file" className={style.labelFile}>
+      <label htmlFor="connect-form" className={style.labelFile}>
         <span className={style.header}>Image:</span>
         <br />
         <span className={style.imgButton}>Choose file:</span>
         <input
           className={style.inputTypeFile}
           type="file"
-          id="input_file"
-          name="file"
+          id="connect-form"
+          name="connect-form"
           onChange={onImageChange}
         />
         <button className={style.btn} type="button">
           Button
         </button>
-        <img className={style.avatar} src={avatar} alt="avatar" />
+        {userImage ? (
+          <img className={style.avatar} src={userImage} alt="avatar" />
+        ) : (
+          <img className={style.avatar} src={avatar} alt="avatar" />
+        )}
       </label>
       <div className={style.btnWrapper}>
         <button className={`${style.buttonSubmit} ${style.button}`} type="submit">
@@ -123,4 +154,4 @@ const Form: React.FC<FormType> = ({ setActive, isConnect = false }): JSX.Element
   );
 };
 
-export default Form;
+export default ConnectForm;

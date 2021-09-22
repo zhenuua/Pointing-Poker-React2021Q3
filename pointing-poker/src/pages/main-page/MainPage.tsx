@@ -10,6 +10,7 @@ import style from './Main-page.module.scss';
 import PopUp from '../../components/popup/PopUp';
 import Form from '../../components/form/Form';
 import { useResetUser } from '../../hooks/useResetUser';
+import ConnectForm from '../../components/connect-form/ConnectForm';
 
 const MainPage: React.FC = (): JSX.Element => {
   const [modalActive, setModalActive] = useState<boolean>(false);
@@ -66,7 +67,11 @@ const MainPage: React.FC = (): JSX.Element => {
         </div>
       </div>
       <PopUp active={modalActive} setActive={setModalActive}>
-        <Form setActive={setModalActive} isConnect={isConnect} lobbyLink={lobbyLink} />
+        <ConnectForm
+          setActive={setModalActive}
+          isConnect={isConnect}
+          lobbyLink={lobbyLink}
+        />
       </PopUp>
     </>
   );
