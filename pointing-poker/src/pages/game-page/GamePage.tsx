@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { useDispatch } from 'react-redux';
 import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
 
 import userImage from '../../assets/images/Avatar(Auto).png';
@@ -23,6 +24,7 @@ import petter from '../../assets/images/user/Petter.jpg';
 import sendler from '../../assets/images/user/Sendler.jpg';
 import travolta from '../../assets/images/user/Travolta.jpg';
 import brad from '../../assets/images/user/Brad.jpg';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
 // import frodo from '../../assets/images/user/Frodo.jpg';
 
 type dataType = {
@@ -41,6 +43,9 @@ const GamePage: React.FC = (): JSX.Element => {
     { id: 4, name: 'Adam Sendler', staff: 'Physics', current: false, photo: sendler },
     { id: 5, name: 'Petter Peddigry', staff: 'Wizzard', current: false, photo: petter },
   ]);
+  const dispatch = useDispatch();
+  const { gameSettings } = useTypedSelector((state) => state.lobbySlice);
+  const { cardValues } = gameSettings;
   return (
     <div className={style.gamePageWrapper}>
       <div className={style.gameWrapperLeft}>
@@ -70,7 +75,7 @@ const GamePage: React.FC = (): JSX.Element => {
             <NewIssue />
           </div>
           <div className={style.runRoundWrapper}>
-            <TimerComponent />
+            <TimerComponent isEditMode={false} isStartTimer={false} />
             <ButtonMini text="Run Round" />
           </div>
         </div>
@@ -78,9 +83,10 @@ const GamePage: React.FC = (): JSX.Element => {
           <div className={style.issuesText}>Statistics:</div>
         </div>
         <div className={style.cardWrapper}>
-          <Card />
-          <Card />
           <CardCoffee />
+          {cardValues.map((item) => {
+            return <Card key={item} cardPoints={item} />;
+          })}
         </div>
       </div>
       <div className={style.gameWrapperRight}>

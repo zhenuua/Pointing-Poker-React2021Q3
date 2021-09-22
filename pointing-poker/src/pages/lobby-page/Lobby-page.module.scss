@@ -1,6 +1,13 @@
-.wrapperLobby{
+.LobbyChatOff{
+  display: none;
+}
+.wrapperLobbyPage{
+  display: flex;
   margin: 0 auto;
-  width: 960px;
+  width: 1400px;
+}
+.wrapperLobby{
+  padding: 0 25px;
 }
 .lobbyText{
   display: flex;
@@ -145,7 +152,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 30px;
     width: 500px;
     &__title{
       font-family: Ruda;
@@ -182,7 +188,7 @@
     display: flex;
     flex-wrap: wrap;
     &__item{
-      margin: 0 10px 10px 0;
+      margin: 10px;
       position: relative;
     }
     &__itemAdd{

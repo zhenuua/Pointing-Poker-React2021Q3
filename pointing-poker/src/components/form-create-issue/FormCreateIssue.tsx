@@ -65,12 +65,16 @@ export const FormCreateIssue: React.FC<PopUpType> = ({
         <ButtonSubmit
           onclickHandler={() => {
             onSubmitHandler();
+            seTitleIssue('');
+            setPriority('Low');
           }}
           text="Yes"
         />
         <ButtonCancel
           onclickHandler={() => {
             onCancelHandler();
+            seTitleIssue('');
+            setPriority('Low');
           }}
           text="No"
         />

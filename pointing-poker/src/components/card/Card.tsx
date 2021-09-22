@@ -6,8 +6,12 @@ import editIcon from '../../assets/images/Edit-icon.svg';
 
 import style from './Card.module.scss';
 
-const Card: React.FC = (): JSX.Element => {
-  const [isNumberCard, setIsNumberCard] = useState<number>(1);
+type CardPoints = {
+  cardPoints: number,
+};
+
+const Card: React.FC<CardPoints> = ({ cardPoints }): JSX.Element => {
+  const [isNumberCard, setIsNumberCard] = useState<number>(cardPoints);
   const [inputClassName, setInputClassName] = useState<boolean>(false);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
 

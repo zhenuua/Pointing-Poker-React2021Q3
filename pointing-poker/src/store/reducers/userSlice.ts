@@ -19,7 +19,7 @@ const initialState: IInitState = {
   lastName: '',
   jobPosition: '',
   socketId: '',
-  userRole: UserRoles.USER_PLAYER,
+  userRole: UserRoles.USER_ADMIN, // заменить на USER_PLAYER
   token: '',
   roomId: '',
   avatarImg: '',

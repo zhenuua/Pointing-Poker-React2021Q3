@@ -10,17 +10,22 @@ import issues from './issues';
 const LobbyIssues: React.FC = (): JSX.Element => {
   const [popupCreateIssue, setPopupCreateIssue] = useState<boolean>(false);
 
-  const createIssue = () => {
-    setPopupCreateIssue(true);
-  };
   return (
     <section className={style.lobbyIssues}>
       <h2 className={`${style.lobbyText} ${style.lobbyTextTitle}`}>Issues:</h2>
       <div className={style.lobbyIssues__items}>
         {issues.map((item) => {
-          return <IssueLobby titleIssue={item.title} prority={item.prority} />;
+          return (
+            <IssueLobby key={item.title} titleIssue={item.title} prority={item.prority} />
+          );
         })}
-        <div className={style.lobbyIssues__item} aria-hidden="true" onClick={createIssue}>
+        <div
+          className={style.lobbyIssues__item}
+          aria-hidden="true"
+          onClick={() => {
+            setPopupCreateIssue(true);
+          }}
+        >
           <p className={style.lobbyIssues__item__title}>Create new Issue</p>
           <img
             className={style.lobbyIssues__item__img}

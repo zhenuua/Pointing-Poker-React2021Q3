@@ -17,6 +17,7 @@ import {
   createPlayer,
   fetchUsers,
 } from '../../store/actionCreators/lobbyActionCreators';
+import LobbyChat from './lobbyChat';
 
 const LobbyPage: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
@@ -25,65 +26,68 @@ const LobbyPage: React.FC = (): JSX.Element => {
   const dispatch = useDispatch();
 
   // joining lobby on page load
-  useEffect(() => {
-    // <-------------- handling joinnig the lobby --------->
-    if (userRole !== UserRoles.USER_ADMIN) {
-      console.log('additional logic required for non admin users');
-    }
-    socket.emit(
-      EVENTS.CLIENT.JOIN_LOBBY,
-      { socketId, userRole, roomId },
-      ({ msg, isJoinedRoom }: { msg: string, isJoinedRoom: boolean | null }) => {
-        console.log(msg);
-        if (!isJoinedRoom) {
-          console.log(new Error('unable to join the room'));
-          alert('unable to join the room');
-          return; // !!!!!!!! here could be a potential bug !!!!!!!!
-        }
+  // useEffect(() => {
+  //   // <-------------- handling joinnig the lobby --------->
+  //   if (userRole !== UserRoles.USER_ADMIN) {
+  //     console.log('additional logic required for non admin users');
+  //   }
+  //   socket.emit(
+  //     EVENTS.CLIENT.JOIN_LOBBY,
+  //     { socketId, userRole, roomId },
+  //     ({ msg, isJoinedRoom }: { msg: string, isJoinedRoom: boolean | null }) => {
+  //       console.log(msg);
+  //       if (!isJoinedRoom) {
+  //         console.log(new Error('unable to join the room'));
+  //         alert('unable to join the room');
+  //         return; // !!!!!!!! here could be a potential bug !!!!!!!!
+  //       }
 
-        console.log('fetching users...');
-        if (userRole !== UserRoles.USER_ADMIN) {
-          dispatch(
-            createPlayer({
-              userRole,
-              socketId,
-              roomId,
-              username,
-              lastName,
-              jobPosition,
-              avatarImg,
-            }),
-          );
-          // dispatch(fetchUsers({ roomId }));
-        } else {
-          dispatch(
-            createAdmin({
-              userRole,
-              socketId,
-              roomId,
-              username,
-              lastName,
-              jobPosition,
-              avatarImg,
-            }),
-          );
-        }
-      },
-    );
-    // <---------------- handling when someone else joins room ------------->
-    socket.on(EVENTS.SERVER.USER_JOIN, (msg: any) => {
-      console.log(msg);
-      // !!!!!! bug - fetches palyers too fast for admin, so he doesn't get the last one!!!!!!!!!!
-      dispatch(fetchUsers({ roomId }));
-    });
-  }, []);
+  //       console.log('fetching users...');
+  //       if (userRole !== UserRoles.USER_ADMIN) {
+  //         dispatch(
+  //           createPlayer({
+  //             userRole,
+  //             socketId,
+  //             roomId,
+  //             username,
+  //             lastName,
+  //             jobPosition,
+  //             avatarImg,
+  //           }),
+  //         );
+  //         // dispatch(fetchUsers({ roomId }));
+  //       } else {
+  //         dispatch(
+  //           createAdmin({
+  //             userRole,
+  //             socketId,
+  //             roomId,
+  //             username,
+  //             lastName,
+  //             jobPosition,
+  //             avatarImg,
+  //           }),
+  //         );
+  //       }
+  //     },
+  //   );
+  //   // <---------------- handling when someone else joins room ------------->
+  //   socket.on(EVENTS.SERVER.USER_JOIN, (msg: any) => {
+  //     console.log(msg);
+  //     // !!!!!! bug - fetches palyers too fast for admin, so he doesn't get the last one!!!!!!!!!!
+  //     dispatch(fetchUsers({ roomId }));
+  //   });
+  // }, []);
   return (
-    <div className={style.wrapperLobby}>
-      <LobbyMain />
-      <LobbyMembers />
-      {userRole === UserRoles.USER_ADMIN && <LobbyIssues />}
-      {userRole === UserRoles.USER_ADMIN && <LobbySettings />}
-      {userRole === UserRoles.USER_ADMIN && <LobbyCards />}
+    <div className={style.wrapperLobbyPage}>
+      <div className={style.wrapperLobby}>
+        <LobbyMain />
+        <LobbyMembers />
+        {userRole === UserRoles.USER_ADMIN && <LobbyIssues />}
+        {userRole === UserRoles.USER_ADMIN && <LobbySettings />}
+        {userRole === UserRoles.USER_ADMIN && <LobbyCards />}
+      </div>
+      <LobbyChat />
     </div>
   );
 };
