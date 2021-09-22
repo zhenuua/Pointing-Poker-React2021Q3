@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 import Lobby from "../models/lobbyModel.js";
 import Admin from "../models/adminModel.js";
 import Player from "../models/playerModel.js";
-import Spectator from "../models/spactatorModel.js";
+import Spectator from "../models/spectatorModel.js";
 import { generateAccessToken } from "../utils/jwt.js";
 
 export const getUsers = async (req, res) => {
@@ -136,34 +136,37 @@ export const deleteUser = async (req, res) => {
   const { socketId, userRole } = req.body;
 
   try {
-    let del;
+    let candidate;
     switch (userRole) {
       case "ADMIN":
         {
-          del = await Admin.deleteOne({ socketId });
-          !del
-            ? res.status(200).send("OK")
-            : res.status(500).send("Something went wrong");
+          candidate = await Admin.deleteOne({ socketId });
+          const { deletedCount } = candidate;
+          deletedCount
+            ? res.status(200).send({ userDeleted: true })
+            : res.status(500).send("unable delete admin");
         }
         break;
       case "PLAYER":
         {
-          del = await Player.deleteOne({ socketId });
-          !del
-            ? res.status(200).send("OK")
-            : res.status(500).send("Something went wrong");
+          candidate = await Player.deleteOne({ socketId });
+          const { deletedCount } = candidate;
+          deletedCount
+            ? res.status(200).send({ userDeleted: true })
+            : res.status(500).send("unable delete player");
         }
         break;
       case "SPECTATOR":
         {
-          del = await Spectator.deleteOne({ socketId });
-          !del
-            ? res.status(200).send("OK")
-            : res.status(500).send("Bad request");
+          candidate = await Spectator.deleteOne({ socketId });
+          const { deletedCount } = candidate;
+          deletedCount
+            ? res.status(200).send({ userDeleted: true })
+            : res.status(500).send("unable delete spectator");
         }
         break;
       default:
-        res.status(404).send("User not found");
+        res.status(404).send("unable delete User, not found");
     }
   } catch (error) {
     console.log(error);
