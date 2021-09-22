@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { Socket } from 'socket.io-client';
-import { setUsers } from '../reducers/lobbySlice';
 import { setToken } from '../reducers/userSlice';
 import { UserRoles } from '../types/sliceTypes';
 
@@ -15,7 +14,7 @@ interface PlayerData {
   avatarImg?: string;
 }
 
-export const createPlayer = createAsyncThunk(
+const createPlayer = createAsyncThunk(
   'lobby/createPlayer',
   async (playerData: PlayerData, { dispatch }) => {
     try {
@@ -36,17 +35,25 @@ export const createPlayer = createAsyncThunk(
 );
 
 export const createAdmin = createAsyncThunk(
-  'lobby/createPlayer',
-  async (playerData: PlayerData, { dispatch }) => {
+  'lobby/createAdmin',
+  async ({
+    userData,
+    emitSocketEvent,
+  }: {
+    userData: PlayerData,
+    emitSocketEvent: () => void,
+  }) => {
     try {
       const response = await axios({
         method: 'post',
         url: 'http://localhost:5000/users/create-admin',
         timeout: 2000,
-        data: playerData,
+        data: userData,
       });
-      const { playerToken } = response.data;
-      dispatch(setToken(playerToken));
+      console.log(response.data);
+      emitSocketEvent();
+      // const { playerToken } = response.data;
+      // dispatch(setToken(playerToken));
     } catch (err) {
       console.error(err);
       alert('server issue, unable create new user');
@@ -54,8 +61,8 @@ export const createAdmin = createAsyncThunk(
   },
 );
 
-export const fetchUsers = createAsyncThunk(
-  'lobby/createPlayer',
+const fetchUsers = createAsyncThunk(
+  'lobby/fetchUsers',
   async ({ roomId }: { roomId: string }, { dispatch }) => {
     try {
       const response = await axios({

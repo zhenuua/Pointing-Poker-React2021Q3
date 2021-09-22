@@ -62,6 +62,24 @@ const initialState: IInitState = {
   gameSettings: null,
 };
 
+export const fetchUsers = createAsyncThunk(
+  'lobby/fetchUsers',
+  async ({ roomId }: { roomId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `http://localhost:5000/users/${roomId}`,
+        timeout: 2000,
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable fetch users');
+      return rejectWithValue([]);
+    }
+  },
+);
+
 const lobbySlice = createSlice({
   name: 'lobby',
   initialState,
@@ -105,6 +123,13 @@ const lobbySlice = createSlice({
     setGameSettings(state, action) {
       state.gameSettings = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchUsers.fulfilled, (state, { payload }) => {
+      // const { admin, players, spectators } = payload;
+      console.log('otvet servera nizheeee');
+      console.log(payload);
+    });
   },
 });
 

@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 import Lobby from '../models/lobbyModel.js';
 import Admin from '../models/adminModel.js';
 import Player from '../models/playerModel.js';
-import Spactator from '../models/spactatorModel.js';
+import Spectator from '../models/spectatorModel.js';
 import { generateAccessToken } from '../utils/jwt.js';
 
 export const getUsers = async (req, res) => {
@@ -15,10 +15,10 @@ export const getUsers = async (req, res) => {
     }
 
     const players = await Player.find({ roomId });
-    const spactators = await Spactator.find({ roomId });
+    const spectators = await Spectator.find({ roomId });
     const admin = await Admin.findOne({ roomId });
     // console.log({ players });
-    res.json({ players, spactators, admin });
+    res.json({ players, spectators, admin });
     // res.json('fetching complete');
   } catch (err) {
     console.log(err);

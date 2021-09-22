@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { Socket } from 'socket.io-client';
 import { UserRoles } from '../types/sliceTypes';
+import { fetchUsers } from './lobbySlice';
 
 interface IInitState {
   username: string;
@@ -76,6 +77,64 @@ export const checkLobby = createAsyncThunk(
   },
 );
 
+interface PlayerData {
+  username: string;
+  lastName?: string;
+  jobPosition?: string;
+  socketId: string;
+  userRole: UserRoles;
+  roomId: string;
+  avatarImg?: string;
+}
+
+// export const createAdmin = createAsyncThunk(
+//   'user/createAdmin',
+//   async (playerData: PlayerData, { rejectWithValue }) => {
+//     try {
+//       const response = await axios({
+//         method: 'post',
+//         url: 'http://localhost:5000/users/create-admin',
+//         timeout: 2000,
+//         data: playerData,
+//       });
+//       // const { playerToken } = response.data;
+//       return response.data;
+//       // dispatch(setToken(playerToken));
+//     } catch (err) {
+//       console.error(err);
+//       alert('server issue, unable create new admin');
+//       return rejectWithValue('');
+//     }
+//   },
+// );
+
+export const createPlayer = createAsyncThunk(
+  'user/createPlayer',
+  async (
+    { userData, emitSocketEvent }: { userData: PlayerData, emitSocketEvent: () => void },
+    { rejectWithValue, dispatch },
+  ) => {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'http://localhost:5000/users/create-player',
+        timeout: 2000,
+        data: userData,
+      });
+      // const { playerToken } = response.data;
+      emitSocketEvent();
+      dispatch(fetchUsers({ roomId: userData.roomId }));
+      return response.data;
+      // dispatch(setToken(playerToken));
+      // dispatch(fetchUsers({ roomId: playerData.roomId }));
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable create new user');
+      return rejectWithValue('');
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -102,9 +161,12 @@ const userSlice = createSlice({
       state.roomId = action.payload;
     },
   },
-  // extraReducers: {
-  //   createLobby.fullfild
-  // },
+  extraReducers: (builder) => {
+    builder.addCase(createPlayer.fulfilled, (state, { payload }) => {
+      const { playerToken } = payload;
+      state.token = playerToken;
+    });
+  },
 });
 
 export const {

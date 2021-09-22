@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
 
-const Spactator = new Schema({
+const Spectator = new Schema({
   username: {type: String, required: true},
   lastName: {type: String},
   jobPosition: {type: String},
@@ -12,7 +12,7 @@ const Spactator = new Schema({
   avatarImg: {type: String},
 });
 
-const mongoModel = model('Spactator', Spactator);
+const mongoModel = model('Spectator', Spectator);
 
 export default mongoModel;
 

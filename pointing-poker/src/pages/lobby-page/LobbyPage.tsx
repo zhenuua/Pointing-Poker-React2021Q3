@@ -12,70 +12,68 @@ import { useSocketsContext } from '../../context/socket.context';
 import { EVENTS } from '../../store/types/sockeIOEvents';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
-import {
-  createAdmin,
-  createPlayer,
-  fetchUsers,
-} from '../../store/actionCreators/lobbyActionCreators';
+import { createAdmin } from '../../store/actionCreators/lobbyActionCreators';
+import { createPlayer } from '../../store/reducers/userSlice';
+import { fetchUsers } from '../../store/reducers/lobbySlice';
 
 const LobbyPage: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
   const { userRole, socketId, roomId, username, lastName, jobPosition, avatarImg } =
     useTypedSelector((state) => state.userSlice);
+  const userData = {
+    userRole,
+    socketId,
+    roomId,
+    username,
+    lastName,
+    jobPosition,
+    avatarImg,
+  };
   const dispatch = useDispatch();
 
-  // joining lobby on page load
+  // <------------- joining lobby on page load-------->
   useEffect(() => {
     // <-------------- handling joinnig the lobby --------->
+
+    const emitJoinLobby = () => {
+      // telling everyone else in the room about you're joining the room
+      socket.emit(
+        EVENTS.CLIENT.JOIN_LOBBY,
+        { socketId, userRole, roomId },
+        ({ msg, isJoinedRoom }: { msg: string, isJoinedRoom: boolean | null }) => {
+          console.log(msg);
+          if (!isJoinedRoom) {
+            console.log(new Error('unable to join the room'));
+            alert('unable to join the room');
+          }
+        },
+      );
+    };
+
+    const createUser = async () => {
+      if (userRole !== UserRoles.USER_ADMIN) {
+        dispatch(createPlayer({ userData, emitSocketEvent: emitJoinLobby }));
+        // dispatch(fetchUsers({ roomId })); - envoloped this into createPlayer
+      } else {
+        dispatch(createAdmin({ userData, emitSocketEvent: emitJoinLobby }));
+      }
+    };
+
+    // additinal logic for rejecting/accepting player/spectator
     if (userRole !== UserRoles.USER_ADMIN) {
       console.log('additional logic required for non admin users');
     }
-    socket.emit(
-      EVENTS.CLIENT.JOIN_LOBBY,
-      { socketId, userRole, roomId },
-      ({ msg, isJoinedRoom }: { msg: string, isJoinedRoom: boolean | null }) => {
-        console.log(msg);
-        if (!isJoinedRoom) {
-          console.log(new Error('unable to join the room'));
-          alert('unable to join the room');
-          return; // !!!!!!!! here could be a potential bug !!!!!!!!
-        }
 
-        console.log('fetching users...');
-        if (userRole !== UserRoles.USER_ADMIN) {
-          dispatch(
-            createPlayer({
-              userRole,
-              socketId,
-              roomId,
-              username,
-              lastName,
-              jobPosition,
-              avatarImg,
-            }),
-          );
-          // dispatch(fetchUsers({ roomId }));
-        } else {
-          dispatch(
-            createAdmin({
-              userRole,
-              socketId,
-              roomId,
-              username,
-              lastName,
-              jobPosition,
-              avatarImg,
-            }),
-          );
-        }
-      },
-    );
+    // Creating user
+    createUser();
+
     // <---------------- handling when someone else joins room ------------->
     socket.on(EVENTS.SERVER.USER_JOIN, (msg: any) => {
       console.log(msg);
-      // !!!!!! bug - fetches palyers too fast for admin, so he doesn't get the last one!!!!!!!!!!
       dispatch(fetchUsers({ roomId }));
     });
+
+    // ---------------------------------END-----------------------------------
   }, []);
   return (
     <div className={style.wrapperLobby}>

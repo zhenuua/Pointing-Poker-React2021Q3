@@ -13,8 +13,7 @@ import { useResetUser } from '../../hooks/useResetUser';
 
 const MainPage: React.FC = (): JSX.Element => {
   const [modalActive, setModalActive] = useState<boolean>(false);
-  const [modalActiveConnect, setModalActiveConnect] = useState<boolean>(false);
-
+  const [isConnect, setIsConnect] = useState<boolean>(false);
   const connectRef = React.useRef<HTMLInputElement | null>(null);
   const [lobbyLink, setLobbyLink] = useState<string>('');
   const history = useHistory();
@@ -32,7 +31,10 @@ const MainPage: React.FC = (): JSX.Element => {
             <span className={style.createSessionText}>Create session:</span>
             <div
               className={style.buttonWrapper}
-              onClick={() => setModalActive(true)}
+              onClick={() => {
+                setModalActive(true);
+                setIsConnect(false);
+              }}
               aria-hidden="true"
             >
               <Button text="Start new game" />
@@ -51,7 +53,10 @@ const MainPage: React.FC = (): JSX.Element => {
             </div>
             <div
               className={style.buttonWrapper}
-              onClick={() => setModalActiveConnect(true)}
+              onClick={() => {
+                setModalActive(true);
+                setIsConnect(true);
+              }}
               aria-hidden="true"
             >
               <Button text="Connect" />
@@ -61,10 +66,7 @@ const MainPage: React.FC = (): JSX.Element => {
         </div>
       </div>
       <PopUp active={modalActive} setActive={setModalActive}>
-        <Form setActive={setModalActive} />
-      </PopUp>
-      <PopUp active={modalActiveConnect} setActive={setModalActiveConnect}>
-        <Form setActive={setModalActiveConnect} isConnect lobbyLink={lobbyLink} />
+        <Form setActive={setModalActive} isConnect={isConnect} lobbyLink={lobbyLink} />
       </PopUp>
     </>
   );
