@@ -31,7 +31,7 @@ export enum ScoreTypes {
 
 export interface IIssueDetail {
   issueTitle: string;
-  issueLink: string;
+  // issueLink: string;
   priority: IssuesPriority;
   issueId: string;
 }
@@ -108,9 +108,15 @@ const lobbySlice = createSlice({
     },
     removeIssue(state, action) {
       const index = state.issues.findIndex(
-        (issue) => issue.issueId === action.payload.issueId,
+        (issue) => issue.issueTitle === action.payload,
       );
       if (index !== -1) state.issues.splice(index, 1);
+    },
+    editIssue(state, action) {
+      const index = state.issues.findIndex(
+        (issue) => issue.issueTitle === action.payload.issueId,
+      );
+      if (index !== -1) state.issues.splice(index, 1, action.payload);
     },
     setGameSettings(state, action) {
       state.gameSettings = action.payload;
@@ -149,6 +155,7 @@ export const {
   setUsers,
   addIssue,
   removeIssue,
+  editIssue,
   setGameSettings,
   setScoreType,
   setCardValues,

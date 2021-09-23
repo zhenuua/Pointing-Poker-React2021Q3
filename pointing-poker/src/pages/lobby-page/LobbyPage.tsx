@@ -17,7 +17,7 @@ import {
   createPlayer,
   fetchUsers,
 } from '../../store/actionCreators/lobbyActionCreators';
-import LobbyChat from './lobbyChat';
+import LobbyChat from '../../components/lobby-chat/lobbyChat';
 
 const LobbyPage: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();

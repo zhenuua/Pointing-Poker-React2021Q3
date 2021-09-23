@@ -2,10 +2,10 @@ import React, { MouseEvent, ChangeEvent, useEffect, useState, useRef } from 'rea
 import { useDispatch } from 'react-redux';
 
 import style from './Lobby-chat.module.scss';
-import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
+import PersonalDataTab from '../personal-data-tab/PersonalDataTab';
 import authorTest from '../../assets/images/ImageUser.png';
 import dambldorImage from '../../assets/images/dambldor.jpg';
-import roomsChats from './massages';
+import roomsChats from '../../pages/lobby-page/massages';
 
 const currentUser = 'Zhenuua';
 const activeChat = true;

@@ -1,22 +1,25 @@
 import React, { MouseEvent, ChangeEvent, useEffect, useState } from 'react';
 import PopUp from '../../components/popup/PopUp';
-
 import plus from '../../assets/icons/plus.svg';
 import style from './Lobby-page.module.scss';
 import FormCreateIssue from '../../components/form-create-issue/FormCreateIssue';
 import IssueLobby from '../../components/issue-lobby/IssueLobby';
-import issues from './issues';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
 
 const LobbyIssues: React.FC = (): JSX.Element => {
   const [popupCreateIssue, setPopupCreateIssue] = useState<boolean>(false);
-
+  const { issues } = useTypedSelector((state) => state.lobbySlice);
   return (
     <section className={style.lobbyIssues}>
       <h2 className={`${style.lobbyText} ${style.lobbyTextTitle}`}>Issues:</h2>
       <div className={style.lobbyIssues__items}>
         {issues.map((item) => {
           return (
-            <IssueLobby key={item.title} titleIssue={item.title} prority={item.prority} />
+            <IssueLobby
+              key={item.issueTitle}
+              issueTitle={item.issueTitle}
+              priority={item.priority}
+            />
           );
         })}
         <div

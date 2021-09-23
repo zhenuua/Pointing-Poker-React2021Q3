@@ -42,7 +42,6 @@ const LobbyCards: React.FC = (): JSX.Element => {
 
     dispatch(addCardValue(0));
   };
-  console.log(cardValues);
 
   return (
     <section className={style.lobbyGameCards}>
