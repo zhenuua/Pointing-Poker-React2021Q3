@@ -9,10 +9,13 @@ import FormKickPlayer from '../form-kick-player/FormKickPlayer';
 import { PersonalDataTabType } from '../../types/types';
 
 import style from './Personal-data-tab.module.scss';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
+// import { state } from '../../pages/main/main-config';
 
 const PersonalDataTab: React.FC<PersonalDataTabType> = ({
   userImage,
   userName,
+  lastName,
   userStaff,
   isCurrentUser,
   isRemove,
@@ -43,7 +46,7 @@ const PersonalDataTab: React.FC<PersonalDataTabType> = ({
       <p className={style.staff}>{userStaff}</p>
       <div className={style.marquee} title={userName}>
         <Marquee direction="left" scrollWhen="overflow">
-          {userName}
+          {`${userName} ${lastName}`}
         </Marquee>
       </div>
       <PopUp active={popUpCick} setActive={setPopUpCick}>

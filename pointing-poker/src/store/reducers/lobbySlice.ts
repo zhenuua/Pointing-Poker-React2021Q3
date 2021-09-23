@@ -126,9 +126,11 @@ const lobbySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.fulfilled, (state, { payload }) => {
-      // const { admin, players, spectators } = payload;
+      const { admin, players, spectators } = payload;
       console.log('otvet servera nizheeee');
       console.log(payload);
+      const fetchedUsers = [admin, ...players, ...spectators];
+      state.users = fetchedUsers;
     });
   },
 });

@@ -22,7 +22,8 @@ export type LobbyTitleType = {
 export type PersonalDataTabType = {
   userImage: string,
   userName: string,
-  userStaff: string,
+  lastName?: string,
+  userStaff?: string,
   isCurrentUser: boolean,
   isRemove: boolean,
 };
