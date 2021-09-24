@@ -89,7 +89,7 @@ const LobbySettings: React.FC = (): JSX.Element => {
         <div className={style.lobbyGameSettings__item}>
           <p className={style.lobbyGameSettings__item__title}>Round time:</p>
           {timerNeeded ? (
-            <TimerComponent isEditMode isStartTimer={false} />
+            <TimerComponent isEditMode={false} isStartTimer />
           ) : (
             <p className={style.lobbyGameSettings__item__title}>No timer</p>
           )}

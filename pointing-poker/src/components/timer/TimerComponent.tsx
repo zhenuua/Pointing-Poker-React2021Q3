@@ -15,24 +15,26 @@ const TimerComponent: React.FC<TimerType> = ({
   const dispatch = useDispatch();
   const { gameSettings } = useTypedSelector((state) => state.lobbySlice);
   const { roundTime } = gameSettings;
-  const [seconds, setSeconds] = useState<number>(Math.floor(roundTime % 60));
-  const [minutes, setMinutes] = useState<number>(Math.floor(roundTime / 60));
+  const [currentRoundTime, setCurrentRoundTime] = useState<number>(roundTime);
+  const [seconds, setSeconds] = useState<number>(Math.floor(currentRoundTime % 60));
+  const [minutes, setMinutes] = useState<number>(Math.floor(currentRoundTime / 60));
   useEffect(() => {
     if (!isStartTimer) {
+      setCurrentRoundTime(roundTime);
       dispatch(setRoundTime(minutes * 60 + seconds));
-    } else if (roundTime === 0) {
+    } else if (currentRoundTime === 0) {
       console.log('time is over');
     } else {
-      setTimeout(() => dispatch(setRoundTime(roundTime - 1)), 1000);
+      setTimeout(() => setCurrentRoundTime(currentRoundTime - 1), 1000);
     }
-  }, [roundTime, minutes, seconds]);
+  }, [roundTime, currentRoundTime, minutes, seconds]);
 
-  const getMinutesTimer = (secondsMath: number) => {
-    const minutesTimer = Math.floor(secondsMath / 60);
+  const getMinutesTimer = (secondsMatch: number) => {
+    const minutesTimer = Math.floor(secondsMatch / 60);
     return minutesTimer < 10 ? `0${minutesTimer}` : minutesTimer;
   };
-  const getSecondsTimer = (secondsMath: number) => {
-    const secondsTimer = secondsMath % 60;
+  const getSecondsTimer = (secondsMatch: number) => {
+    const secondsTimer = secondsMatch % 60;
     return secondsTimer < 10 ? `0${secondsTimer}` : secondsTimer;
   };
   const validate = (value: string, typeNum: string) => {
@@ -76,11 +78,11 @@ const TimerComponent: React.FC<TimerType> = ({
         </div>
       ) : (
         <div className={style.timerWrapper}>
-          <span className={style.number}>{getMinutesTimer(roundTime)}</span>
+          <span className={style.number}>{getMinutesTimer(currentRoundTime)}</span>
           <h1 className={style.separator}>:</h1>
           <span className={style.min}>minutes</span>
           <span className={style.sec}>seconds</span>
-          <span className={style.number}>{getSecondsTimer(roundTime)}</span>
+          <span className={style.number}>{getSecondsTimer(currentRoundTime)}</span>
         </div>
       )}
     </div>
