@@ -15,14 +15,10 @@ import style from './Lobby-page.module.scss';
 import { configLobby } from './config';
 
 const LobbySettings: React.FC = (): JSX.Element => {
-  const [scoreTypeShort, setScoreTypeShort] = useState<string>('FB');
   const dispatch = useDispatch();
   const { gameSettings } = useTypedSelector((state) => state.lobbySlice);
-  const { cardChange, scoreType, scramMaster, timerNeeded } = gameSettings;
-
-  useEffect(() => {
-    setScoreTypeShort(scoreType === ScoreTypes.FIBBONACCI ? 'FB' : 'ST');
-  }, [scoreType]);
+  const { cardChange, scoreType, shortScoreType, scramMaster, timerNeeded } =
+    gameSettings;
 
   const changeScoreType = (e: ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
@@ -84,12 +80,12 @@ const LobbySettings: React.FC = (): JSX.Element => {
         </div>
         <div className={style.lobbyGameSettings__item}>
           <p className={style.lobbyGameSettings__item__title}>Score type (Short):</p>
-          <div className={style.lobbyGameSettings__item__input}>{scoreTypeShort}</div>
+          <div className={style.lobbyGameSettings__item__input}>{shortScoreType}</div>
         </div>
         <div className={style.lobbyGameSettings__item}>
           <p className={style.lobbyGameSettings__item__title}>Round time:</p>
           {timerNeeded ? (
-            <TimerComponent isEditMode={false} isStartTimer />
+            <TimerComponent isEditMode isStartTimer={false} />
           ) : (
             <p className={style.lobbyGameSettings__item__title}>No timer</p>
           )}

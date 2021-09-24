@@ -5,6 +5,7 @@ import pencil from '../../assets/icons/pencil.svg';
 import urn from '../../assets/icons/urn.svg';
 
 import style from './IssueLobby.module.scss';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
 
 type IssueLobbyType = {
   issueTitle: string,
@@ -18,22 +19,24 @@ const IssueLobby: React.FC<IssueLobbyType> = ({ issueTitle, priority }): JSX.Ele
   const [prevIssueTitle, setPrevIssueTitle] = useState<string>(issueTitle);
 
   const dispatch = useDispatch();
-
+  const { issues } = useTypedSelector((state) => state.lobbySlice);
   const updateIssue = () => {
     setEditMode(!editMode);
-    if (editMode) {
-      if (!issueTitleCurrent) {
-        setIssueTitleCurrent(prevIssueTitle);
-      } else {
-        dispatch(
-          editIssue({
-            issueTitle: issueTitleCurrent,
-            priority: issuePriorityCurrent,
-            issueId: prevIssueTitle,
-          }),
-        );
-        setPrevIssueTitle(issueTitleCurrent);
-      }
+    if (
+      editMode &&
+      (!issueTitleCurrent ||
+        issues.find((issue) => issue.issueTitle === issueTitleCurrent))
+    ) {
+      setIssueTitleCurrent(prevIssueTitle);
+    } else {
+      dispatch(
+        editIssue({
+          issueTitle: issueTitleCurrent,
+          priority: issuePriorityCurrent,
+          issueId: prevIssueTitle,
+        }),
+      );
+      setPrevIssueTitle(issueTitleCurrent);
     }
   };
   const deleteIssue = (item: string) => {

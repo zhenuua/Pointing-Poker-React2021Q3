@@ -28,6 +28,20 @@ export enum ScoreTypes {
   STORY_POINT = 'STORY_POINT',
   FIBBONACCI = 'FIBBONACCI',
 }
+// export enum ScoreTypes {
+//   STORY_POINT : {
+//     full = 'STORY_POINT',
+//     short = 'SP',
+//   },
+//   FIBBONACCI : {
+//     full = 'FIBBONACCI',
+//     short = 'FB',
+//   }
+// }
+export enum ShortScoreTypes {
+  STORY_POINT = 'SP',
+  FIBBONACCI = 'FB',
+}
 
 export interface IIssueDetail {
   issueTitle: string;
@@ -41,6 +55,7 @@ export interface IGameSettings {
   cardChange: boolean;
   timerNeeded: boolean;
   scoreType: ScoreTypes;
+  shortScoreType: ShortScoreTypes;
   roundTime: number;
   cardValues: number[];
 }
@@ -59,6 +74,7 @@ const initialGameSettings: IGameSettings = {
   cardChange: false,
   timerNeeded: true,
   scoreType: ScoreTypes.FIBBONACCI,
+  shortScoreType: ShortScoreTypes.FIBBONACCI,
   roundTime: 120,
   cardValues: configLobby.cardCollections.FIBBONACCI,
 };
@@ -123,6 +139,19 @@ const lobbySlice = createSlice({
     },
     setScoreType(state, action) {
       state.gameSettings.scoreType = action.payload;
+      const full = `${action.payload}`;
+      switch (full) {
+        case ScoreTypes.FIBBONACCI:
+          {
+            state.gameSettings.shortScoreType = ShortScoreTypes.FIBBONACCI;
+          }
+          break;
+        case ScoreTypes.STORY_POINT:
+          {
+            state.gameSettings.shortScoreType = ShortScoreTypes.STORY_POINT;
+          }
+          break;
+      }
     },
     setCardValues(state, action) {
       state.gameSettings.cardValues = action.payload;

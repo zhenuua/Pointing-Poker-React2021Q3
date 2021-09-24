@@ -3,14 +3,16 @@ import React, { useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
 
 import editIcon from '../../assets/images/Edit-icon.svg';
+import { ShortScoreTypes } from '../../store/reducers/lobbySlice';
 
 import style from './Card.module.scss';
 
 type CardPoints = {
   cardPoints: number,
+  shortScoreType: ShortScoreTypes,
 };
 
-const Card: React.FC<CardPoints> = ({ cardPoints }): JSX.Element => {
+const Card: React.FC<CardPoints> = ({ cardPoints, shortScoreType }): JSX.Element => {
   const [isNumberCard, setIsNumberCard] = useState<number>(cardPoints);
   const [inputClassName, setInputClassName] = useState<boolean>(false);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
@@ -62,7 +64,7 @@ const Card: React.FC<CardPoints> = ({ cardPoints }): JSX.Element => {
             readOnly={isReadOnly}
           />
         </label>
-        <h2 className={style.text}>SP</h2>
+        <h2 className={style.text}>{shortScoreType}</h2>
         <span className={styleSpan}>{isNumberCard}</span>
       </OutsideClickHandler>
     </div>

@@ -45,7 +45,7 @@ const GamePage: React.FC = (): JSX.Element => {
   ]);
   const dispatch = useDispatch();
   const { gameSettings } = useTypedSelector((state) => state.lobbySlice);
-  const { cardValues } = gameSettings;
+  const { cardValues, shortScoreType } = gameSettings;
   return (
     <div className={style.gamePageWrapper}>
       <div className={style.gameWrapperLeft}>
@@ -85,7 +85,7 @@ const GamePage: React.FC = (): JSX.Element => {
         <div className={style.cardWrapper}>
           <CardCoffee />
           {cardValues.map((item) => {
-            return <Card key={item} cardPoints={item} />;
+            return <Card key={item} cardPoints={item} shortScoreType={shortScoreType} />;
           })}
         </div>
       </div>

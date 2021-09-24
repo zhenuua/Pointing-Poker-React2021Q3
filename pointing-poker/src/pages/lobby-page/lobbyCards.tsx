@@ -29,7 +29,7 @@ const cardFaces = [
 const LobbyCards: React.FC = (): JSX.Element => {
   const dispatch = useDispatch();
   const { gameSettings } = useTypedSelector((state) => state.lobbySlice);
-  const { cardValues } = gameSettings;
+  const { cardValues, shortScoreType } = gameSettings;
 
   // useEffect(() => {
   //   dispatch(setCardValues(cardValues));
@@ -85,7 +85,7 @@ const LobbyCards: React.FC = (): JSX.Element => {
       <div className={style.lobbyGameCards__faces}>
         <CardCoffee />
         {cardValues.map((item) => {
-          return <Card key={item} cardPoints={item} />;
+          return <Card key={item} cardPoints={item} shortScoreType={shortScoreType} />;
         })}
 
         <div className={style.lobbyGameCards__faces__item}>
