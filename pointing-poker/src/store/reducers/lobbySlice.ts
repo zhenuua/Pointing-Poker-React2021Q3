@@ -109,14 +109,15 @@ export const deleteUser = createAsyncThunk(
   ) => {
     try {
       const response = await axios({
-        method: 'get',
-        url: `http://localhost:5000/users/${userRole}/${socketId}`,
+        method: 'delete',
+        url: `http://localhost:5000/users/delete`,
         timeout: 2000,
+        data: { socketId, userRole },
       });
       return response.data;
     } catch (err) {
       console.error(err);
-      alert('server issue, unable to fetch user');
+      alert('server issue, delte  user');
       return rejectWithValue([]);
     }
   },
@@ -169,14 +170,22 @@ const lobbySlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.fulfilled, (state, { payload }) => {
       const { admin, players, spectators } = payload;
-      console.log(payload);
+      // console.log(payload);
       const fetchedUsers = [admin, ...players, ...spectators];
       state.users = fetchedUsers;
     });
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
-      console.log('new user info');
-      console.log(payload);
+      // console.log('new user info');
+      // console.log(payload);
       state.users.push(payload);
+    });
+    builder.addCase(deleteUser.fulfilled, (state, { payload }) => {
+      console.log('delete user info');
+      console.log(payload);
+      const { userId } = payload;
+      const index = state.users.findIndex((user) => user.socketId === userId);
+      if (index !== -1) state.users.splice(index, 1);
+      // state.users.push(payload);
     });
   },
 });

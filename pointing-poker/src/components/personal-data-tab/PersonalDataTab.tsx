@@ -20,6 +20,7 @@ const PersonalDataTab: React.FC<PersonalDataTabType> = ({
   isCurrentUser,
   isRemove,
   socketId,
+  userRole,
   deleteUser,
 }): JSX.Element => {
   const [popUpCick, setPopUpCick] = useState<boolean>(false);
@@ -55,7 +56,7 @@ const PersonalDataTab: React.FC<PersonalDataTabType> = ({
         <FormKickPlayer
           onSubmitHandler={() => {
             setPopUpCick(false);
-            if (socketId && deleteUser) deleteUser(socketId);
+            if (socketId && userRole && deleteUser) deleteUser(socketId, userRole);
           }}
           onCancelHandler={() => {
             setPopUpCick(false);

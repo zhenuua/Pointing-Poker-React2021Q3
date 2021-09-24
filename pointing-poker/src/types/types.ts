@@ -1,3 +1,5 @@
+import { UserRoles } from '../store/types/sliceTypes';
+
 export type ButtonType = {
   text: string,
   onClick?: () => void,
@@ -27,7 +29,8 @@ export type PersonalDataTabType = {
   isCurrentUser: boolean,
   isRemove: boolean,
   socketId?: string,
-  deleteUser?: (id: string) => void,
+  userRole?: UserRoles,
+  deleteUser?: (id: string, role: UserRoles) => void,
 };
 
 export type PopUpType = {

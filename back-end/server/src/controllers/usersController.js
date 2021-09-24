@@ -181,7 +181,7 @@ export const deleteUser = async (req, res) => {
           candidate = await Admin.deleteOne({ socketId });
           const { deletedCount } = candidate;
           deletedCount
-            ? res.status(200).send({ userDeleted: true })
+            ? res.status(200).send({ userId: socketId })
             : res.status(500).send("unable delete admin");
         }
         break;
@@ -190,7 +190,7 @@ export const deleteUser = async (req, res) => {
           candidate = await Player.deleteOne({ socketId });
           const { deletedCount } = candidate;
           deletedCount
-            ? res.status(200).send({ userDeleted: true })
+            ? res.status(200).send({ userId: socketId })
             : res.status(500).send("unable delete player");
         }
         break;
@@ -199,7 +199,7 @@ export const deleteUser = async (req, res) => {
           candidate = await Spectator.deleteOne({ socketId });
           const { deletedCount } = candidate;
           deletedCount
-            ? res.status(200).send({ userDeleted: true })
+            ? res.status(200).send({ userId: socketId })
             : res.status(500).send("unable delete spectator");
         }
         break;

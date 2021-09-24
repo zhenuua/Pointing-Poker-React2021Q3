@@ -14,7 +14,7 @@ import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { createAdmin } from '../../store/actionCreators/lobbyActionCreators';
 import { createPlayer } from '../../store/reducers/userSlice';
-import { fetchUser, fetchUsers } from '../../store/reducers/lobbySlice';
+import { fetchUser, fetchUsers, removeUser } from '../../store/reducers/lobbySlice';
 
 const LobbyPage: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
@@ -73,6 +73,15 @@ const LobbyPage: React.FC = (): JSX.Element => {
       const { newUser } = res;
       console.log(newUser);
       dispatch(fetchUser(newUser));
+    });
+
+    // <----------------telling that user deleted ----------------->
+
+    socket.on(EVENTS.SERVER.USER_DELETED, (res: any) => {
+      console.log(res.msg);
+      console.log(`user deleted on server ${res.socketId}`);
+      dispatch(removeUser({ socketId: res.socketId }));
+      // !!!!!!!!!!inconsistent user deletion, very hard to catch this bug!!!!!!!!!!!!!!!!
     });
 
     // ---------------------------------END-----------------------------------

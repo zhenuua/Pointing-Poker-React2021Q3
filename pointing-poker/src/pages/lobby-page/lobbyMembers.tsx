@@ -1,4 +1,5 @@
 import React, { MouseEvent, ChangeEvent, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
 import style from './Lobby-page.module.scss';
 
@@ -8,18 +9,21 @@ import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { useSocketsContext } from '../../context/socket.context';
 import { EVENTS } from '../../store/types/sockeIOEvents';
+import { deleteUser } from '../../store/reducers/lobbySlice';
 
 const LobbyMain: React.FC = (): JSX.Element => {
   const { users } = useTypedSelector((state) => state.lobbySlice);
-  const { socketId, userRole } = useTypedSelector((state) => state.userSlice);
+  const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
   const { socket } = useSocketsContext();
+  const dispatch = useDispatch();
 
-  const deleteUser = (id: string) => {
+  const handleDeleteUser = (id: string, role: string) => {
     switch (userRole) {
       case UserRoles.USER_ADMIN:
         {
-          socket.emit(EVENTS.CLIENT.FORCE_DEL_USER, id);
+          dispatch(deleteUser({ userRole: role, socketId: id }));
           console.log(`you deleted user: ${id}`);
+          socket.emit(EVENTS.CLIENT.FORCE_DEL_USER, { id, roomId });
         }
         break;
       case UserRoles.USER_PLAYER:
@@ -47,7 +51,8 @@ const LobbyMain: React.FC = (): JSX.Element => {
               isRemove={!(user.socketId === socketId)}
               key={`${user.socketId}`}
               socketId={user.socketId}
-              deleteUser={deleteUser}
+              userRole={user.userRole}
+              deleteUser={handleDeleteUser}
             />
           );
         })}

@@ -20,6 +20,7 @@ export const EVENTS = {
     LOBBY_MESSAGE: "LOBBY_MESSAGE",
     USER_JOIN: "USER_JOIN",
     PENDING_USER: "PENDING_USER",
+    USER_DELETED: 'USER_DELETED',
   },
 };
 
@@ -77,13 +78,17 @@ const socketInit = ({ io }) => {
       });
     });
 
-    socket.on(EVENTS.CLIENT.FORCE_DEL_USER, (socketId) => {
-      console.log(`force delete from admin of user id: ${socketId}`);
-    })
+    socket.on(EVENTS.CLIENT.FORCE_DEL_USER, ({ id, roomId }) => {
+      console.log(`force delete from admin of user id: ${id}`);
+      socket.to(roomId).emit(EVENTS.SERVER.USER_DELETED, {
+        msg: `user with id: ${id} deleted from your room: ${roomId}`,
+        socketId: id,
+      });
+    });
 
     socket.on(EVENTS.CLIENT.VOTE_DEL_USER, ({ voterId, suspectId }) => {
       console.log(`vote delete from user: ${voterId} of user id: ${suspectId}`);
-    })
+    });
 
     socket.on(EVENTS.disconnect, () => {
       console.log(`----User DISCONNECTED mainSpace with id: ${socket.id} ----`);
