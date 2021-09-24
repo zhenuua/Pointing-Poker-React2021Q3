@@ -15,7 +15,7 @@ export const ButtonSubmit: React.FC<ButtonType> = ({
     <button
       type="button"
       onClick={() => {
-        console.log('submit');
+        // console.log('submit');
         onclickHandler();
       }}
       className={style.button}

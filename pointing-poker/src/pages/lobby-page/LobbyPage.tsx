@@ -14,7 +14,7 @@ import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { createAdmin } from '../../store/actionCreators/lobbyActionCreators';
 import { createPlayer } from '../../store/reducers/userSlice';
-import { fetchUsers } from '../../store/reducers/lobbySlice';
+import { fetchUser, fetchUsers } from '../../store/reducers/lobbySlice';
 
 const LobbyPage: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
@@ -39,7 +39,7 @@ const LobbyPage: React.FC = (): JSX.Element => {
       // telling everyone else in the room about you're joining the room
       socket.emit(
         EVENTS.CLIENT.JOIN_LOBBY,
-        { socketId, userRole, roomId },
+        { userRole, roomId },
         ({ msg, isJoinedRoom }: { msg: string, isJoinedRoom: boolean | null }) => {
           console.log(msg);
           if (!isJoinedRoom) {
@@ -68,9 +68,11 @@ const LobbyPage: React.FC = (): JSX.Element => {
     createUser();
 
     // <---------------- handling when someone else joins room ------------->
-    socket.on(EVENTS.SERVER.USER_JOIN, (msg: any) => {
-      console.log(msg);
-      dispatch(fetchUsers({ roomId }));
+    socket.on(EVENTS.SERVER.USER_JOIN, (res: any) => {
+      console.log(res.msg);
+      const { newUser } = res;
+      console.log(newUser);
+      dispatch(fetchUser(newUser));
     });
 
     // ---------------------------------END-----------------------------------

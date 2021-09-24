@@ -74,7 +74,49 @@ export const fetchUsers = createAsyncThunk(
       return response.data;
     } catch (err) {
       console.error(err);
-      alert('server issue, unable fetch users');
+      alert('server issue, unable to fetch users');
+      return rejectWithValue([]);
+    }
+  },
+);
+
+export const fetchUser = createAsyncThunk(
+  'lobby/fetchUser',
+  async (
+    { userRole, socketId }: { userRole: string, socketId: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `http://localhost:5000/users/${userRole}/${socketId}`,
+        timeout: 2000,
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to fetch user');
+      return rejectWithValue([]);
+    }
+  },
+);
+
+export const deleteUser = createAsyncThunk(
+  'lobby/deleteUser',
+  async (
+    { userRole, socketId }: { userRole: string, socketId: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `http://localhost:5000/users/${userRole}/${socketId}`,
+        timeout: 2000,
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to fetch user');
       return rejectWithValue([]);
     }
   },
@@ -126,9 +168,15 @@ const lobbySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.fulfilled, (state, { payload }) => {
-      // const { admin, players, spectators } = payload;
-      console.log('otvet servera nizheeee');
+      const { admin, players, spectators } = payload;
       console.log(payload);
+      const fetchedUsers = [admin, ...players, ...spectators];
+      state.users = fetchedUsers;
+    });
+    builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
+      console.log('new user info');
+      console.log(payload);
+      state.users.push(payload);
     });
   },
 });

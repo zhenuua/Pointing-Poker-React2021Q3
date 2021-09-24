@@ -22,9 +22,12 @@ export type LobbyTitleType = {
 export type PersonalDataTabType = {
   userImage: string,
   userName: string,
-  userStaff: string,
+  lastName?: string,
+  userStaff?: string,
   isCurrentUser: boolean,
   isRemove: boolean,
+  socketId?: string,
+  deleteUser?: (id: string) => void,
 };
 
 export type PopUpType = {

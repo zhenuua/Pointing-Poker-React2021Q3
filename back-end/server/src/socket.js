@@ -11,6 +11,8 @@ export const EVENTS = {
     JOIN_LOBBY: "JOIN_LOBBY",
     ACCESS_REQ: "ACCESS_REQ",
     AUTH_ADMIN: "AUTH_ADMIN",
+    FORCE_DEL_USER: 'FORCE_DEL_USER',
+    VOTE_DEL_USER: 'VOTE_DEL_USER',
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -59,16 +61,29 @@ const socketInit = ({ io }) => {
   io.on(EVENTS.connection, (socket) => {
     console.log(`----User connected to mainSpace with id: ${socket.id}----`);
 
-    socket.on(EVENTS.CLIENT.JOIN_LOBBY, ({ socketId, userRole, roomId }, callback) => {
+    socket.on(EVENTS.CLIENT.JOIN_LOBBY, ({ userRole, roomId }, callback) => {
       socket.join(roomId);
-      console.log(`client with id: ${socketId}, role: ${userRole} joining room: ${roomId}`);
+      console.log(`client with id: ${socket.id}, role: ${userRole} joining room: ${roomId}`);
       callback({
         msg: `you successfully joined room: ${roomId}`,
         isJoinedRoom: true,
       });
-      socket.to(roomId).emit(EVENTS.SERVER.USER_JOIN, 
-        `user with id: ${socket.id} and role: ${userRole} joined to your room: ${roomId}`);
+      socket.to(roomId).emit(EVENTS.SERVER.USER_JOIN, {
+        msg: `user with id: ${socket.id} and role: ${userRole} joined to your room: ${roomId}`,
+        newUser: {
+          userRole,
+          socketId: socket.id,
+        },
+      });
     });
+
+    socket.on(EVENTS.CLIENT.FORCE_DEL_USER, (socketId) => {
+      console.log(`force delete from admin of user id: ${socketId}`);
+    })
+
+    socket.on(EVENTS.CLIENT.VOTE_DEL_USER, ({ voterId, suspectId }) => {
+      console.log(`vote delete from user: ${voterId} of user id: ${suspectId}`);
+    })
 
     socket.on(EVENTS.disconnect, () => {
       console.log(`----User DISCONNECTED mainSpace with id: ${socket.id} ----`);

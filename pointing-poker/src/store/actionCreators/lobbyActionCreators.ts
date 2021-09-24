@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { Socket } from 'socket.io-client';
+import { fetchUsers } from '../reducers/lobbySlice';
 import { setToken } from '../reducers/userSlice';
 import { UserRoles } from '../types/sliceTypes';
 
@@ -14,35 +15,18 @@ interface PlayerData {
   avatarImg?: string;
 }
 
-const createPlayer = createAsyncThunk(
-  'lobby/createPlayer',
-  async (playerData: PlayerData, { dispatch }) => {
-    try {
-      const response = await axios({
-        method: 'post',
-        url: 'http://localhost:5000/users/create-player',
-        timeout: 2000,
-        data: playerData,
-      });
-      const { playerToken } = response.data;
-      dispatch(setToken(playerToken));
-      dispatch(fetchUsers({ roomId: playerData.roomId }));
-    } catch (err) {
-      console.error(err);
-      alert('server issue, unable create new user');
-    }
-  },
-);
-
 export const createAdmin = createAsyncThunk(
   'lobby/createAdmin',
-  async ({
-    userData,
-    emitSocketEvent,
-  }: {
-    userData: PlayerData,
-    emitSocketEvent: () => void,
-  }) => {
+  async (
+    {
+      userData,
+      emitSocketEvent,
+    }: {
+      userData: PlayerData,
+      emitSocketEvent: () => void,
+    },
+    { dispatch },
+  ) => {
     try {
       const response = await axios({
         method: 'post',
@@ -52,6 +36,7 @@ export const createAdmin = createAsyncThunk(
       });
       console.log(response.data);
       emitSocketEvent();
+      dispatch(fetchUsers({ roomId: userData.roomId }));
       // const { playerToken } = response.data;
       // dispatch(setToken(playerToken));
     } catch (err) {
@@ -61,32 +46,52 @@ export const createAdmin = createAsyncThunk(
   },
 );
 
-const fetchUsers = createAsyncThunk(
-  'lobby/fetchUsers',
-  async ({ roomId }: { roomId: string }, { dispatch }) => {
-    try {
-      const response = await axios({
-        method: 'get',
-        url: `http://localhost:5000/users/${roomId}`,
-        timeout: 2000,
-      });
+// const fetchUsers = createAsyncThunk(
+//   'lobby/fetchUsers',
+//   async ({ roomId }: { roomId: string }, { dispatch }) => {
+//     try {
+//       const response = await axios({
+//         method: 'get',
+//         url: `http://localhost:5000/users/${roomId}`,
+//         timeout: 2000,
+//       });
 
-      console.log(response.data);
-      // const {
-      //   players,
-      //   spactators,
-      //   admin,
-      // }: { players: PlayerData, spactators: PlayerData, admin: PlayerData } =
-      //   response.data;
-      // console.log({
-      //   players,
-      //   spactators,
-      //   admin,
-      // });
-      // dispatch(setUsers(users));
-    } catch (err) {
-      console.error(err);
-      alert('server issue, unable fetch users');
-    }
-  },
-);
+//       console.log(response.data);
+//       // const {
+//       //   players,
+//       //   spactators,
+//       //   admin,
+//       // }: { players: PlayerData, spactators: PlayerData, admin: PlayerData } =
+//       //   response.data;
+//       // console.log({
+//       //   players,
+//       //   spactators,
+//       //   admin,
+//       // });
+//       // dispatch(setUsers(users));
+//     } catch (err) {
+//       console.error(err);
+//       alert('server issue, unable fetch users');
+//     }
+//   },
+// );
+
+// const createPlayer = createAsyncThunk(
+//   'lobby/createPlayer',
+//   async (playerData: PlayerData, { dispatch }) => {
+//     try {
+//       const response = await axios({
+//         method: 'post',
+//         url: 'http://localhost:5000/users/create-player',
+//         timeout: 2000,
+//         data: playerData,
+//       });
+//       const { playerToken } = response.data;
+//       dispatch(setToken(playerToken));
+//       dispatch(fetchUsers({ roomId: playerData.roomId }));
+//     } catch (err) {
+//       console.error(err);
+//       alert('server issue, unable create new user');
+//     }
+//   },
+// );
