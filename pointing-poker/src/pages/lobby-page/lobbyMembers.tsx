@@ -6,10 +6,30 @@ import authorTest from '../../assets/images/ImageUser.png';
 import dambldorImage from '../../assets/images/dambldor.jpg';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
+import { useSocketsContext } from '../../context/socket.context';
+import { EVENTS } from '../../store/types/sockeIOEvents';
 
 const LobbyMain: React.FC = (): JSX.Element => {
   const { users } = useTypedSelector((state) => state.lobbySlice);
-  const { socketId } = useTypedSelector((state) => state.userSlice);
+  const { socketId, userRole } = useTypedSelector((state) => state.userSlice);
+  const { socket } = useSocketsContext();
+
+  const deleteUser = (id: string) => {
+    switch (userRole) {
+      case UserRoles.USER_ADMIN:
+        {
+          socket.emit(EVENTS.CLIENT.FORCE_DEL_USER, id);
+          console.log(`you deleted user: ${id}`);
+        }
+        break;
+      case UserRoles.USER_PLAYER:
+        {
+          socket.emit(EVENTS.CLIENT.VOTE_DEL_USER, { voterId: socketId, suspectId: id });
+          console.log(`you vote for deleting of user: ${id}`);
+        }
+        break;
+    }
+  };
 
   return (
     <section className={style.lobbyMembers}>
@@ -26,37 +46,11 @@ const LobbyMain: React.FC = (): JSX.Element => {
               isCurrentUser={user.socketId === socketId}
               isRemove={!(user.socketId === socketId)}
               key={`${user.socketId}`}
+              socketId={user.socketId}
+              deleteUser={deleteUser}
             />
           );
         })}
-        {/* <PersonalDataTab
-          userImage={authorTest}
-          userName="John Smith"
-          userStaff="Agent 007"
-          isCurrentUser
-          isRemove
-        />
-        <PersonalDataTab
-          userImage={authorTest}
-          userName="Tim Cook"
-          userStaff="senior software"
-          isCurrentUser
-          isRemove={false}
-        />
-        <PersonalDataTab
-          userImage={dambldorImage}
-          userName="Альбус Персиваль Вульфрик Брайан Дамблдор"
-          userStaff="Director"
-          isCurrentUser={false}
-          isRemove
-        />
-        <PersonalDataTab
-          userImage={authorTest}
-          userName="John Smith"
-          userStaff="Agent 007"
-          isCurrentUser
-          isRemove
-        /> */}
       </div>
     </section>
   );

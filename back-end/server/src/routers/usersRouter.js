@@ -5,6 +5,7 @@ import { createSpectator } from "../controllers/usersController.js";
 const router = new Router();
 
 router.get("/:roomId", usersController.getUsers); //+
+router.get("/:userRole/:socketId", usersController.getUser); //+
 router.post("/create-admin", usersController.createAdmin);
 router.post("/create-player", usersController.createPlayer);
 router.delete("/delete", usersController.deleteUser);

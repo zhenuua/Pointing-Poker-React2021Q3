@@ -132,6 +132,44 @@ export const createSpectator = async (req, res) => {
   }
 };
 
+export const getUser = async (req, res) => {
+  try {
+    const { userRole, socketId } = req.params;
+    let candidate;
+    switch (userRole) {
+      case "ADMIN":
+        {
+          candidate = await Admin.findOne({ socketId });
+          candidate
+            ? res.status(200).send(candidate)
+            : res.status(403).send("unable to find admin");
+        }
+        break;
+      case "PLAYER":
+        {
+          candidate = await Player.findOne({ socketId });
+          console.log(candidate);
+          candidate
+            ? res.status(200).send(candidate)
+            : res.status(403).send("unable to find palyer");
+        }
+        break;
+      case "SPECTATOR":
+        {
+          candidate = await Spectator.findOne({ socketId });
+          candidate
+            ? res.status(200).send(candidate)
+            : res.status(403).send("unable to find spectator");
+        }
+        break;
+      default:
+        res.status(404).send("unable to find User, not found");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const deleteUser = async (req, res) => {
   const { socketId, userRole } = req.body;
 

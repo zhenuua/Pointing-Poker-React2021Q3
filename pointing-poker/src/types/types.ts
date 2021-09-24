@@ -26,6 +26,8 @@ export type PersonalDataTabType = {
   userStaff?: string,
   isCurrentUser: boolean,
   isRemove: boolean,
+  socketId?: string,
+  deleteUser?: (id: string) => void,
 };
 
 export type PopUpType = {
