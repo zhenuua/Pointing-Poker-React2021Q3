@@ -51,6 +51,11 @@ export interface IGameSettings {
   cardValues: number[];
 }
 
+export interface IBanCandidates {
+  id: string;
+  voters: string[];
+}
+
 interface IInitState {
   lobbyTitle: string;
   chatMessages: IChatMessage[];
@@ -58,6 +63,7 @@ interface IInitState {
   users: IUserInfo[];
   issues: IIssueDetail[];
   gameSettings: IGameSettings;
+  banCandidates: IBanCandidates[];
 }
 
 const initialGameSettings: IGameSettings = {
@@ -77,6 +83,7 @@ const initialState: IInitState = {
   users: [],
   issues: [],
   gameSettings: initialGameSettings,
+  banCandidates: [],
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -223,8 +230,27 @@ const lobbySlice = createSlice({
     setRoundTime(state, action) {
       state.gameSettings.roundTime = action.payload;
     },
+    addBanVote(state, action) {
+      const { candidateId, voterId } = action.payload;
+      const index = state.banCandidates.findIndex(
+        (banCandidate) => banCandidate.id === candidateId,
+      );
+      if (index === -1) {
+        state.banCandidates.push({ id: candidateId, voters: [voterId] });
+      } else {
+        const innerIndex = state.banCandidates[index].voters.findIndex(
+          (voter) => voter === voterId,
+        );
+        if (innerIndex === -1) state.banCandidates[index].voters.push(voterId);
+      }
+      // console.log(state.banCandidates);
+      // if (!candidate)
+      //   state.banCandidates.push({
+      //     id: socketId,
+      //     voteCount: 1,
+      //   }) else {}
+    },
   },
-
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.fulfilled, (state, { payload }) => {
       const { admin, players, spectators } = payload;
@@ -267,6 +293,7 @@ export const {
   setCardChange,
   setScramMaster,
   setRoundTime,
+  addBanVote,
 } = lobbySlice.actions;
 
 export default lobbySlice.reducer;
