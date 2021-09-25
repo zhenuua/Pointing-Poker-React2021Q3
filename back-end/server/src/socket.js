@@ -115,10 +115,6 @@ const socketInit = ({ io }) => {
     //   console.log(msg);
     //   socket.emit('sending', 'you have joined the room');
     // })
-
-
-    
-
   });
 
   
