@@ -32,7 +32,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
           candidateId: id,
           roomId,
         });
-        console.log(`you vote for deleting of user: ${id}`);
+        console.log(`you vote for deleting of user with id: ${id}`);
         break;
       }
     }
