@@ -19,9 +19,7 @@ export const getUsers = async (req, res) => {
     const players = await Player.find({ roomId });
     const spectators = await Spectator.find({ roomId });
     const admin = await Admin.findOne({ roomId });
-    // console.log({ players });
     res.json({ players, spectators, admin });
-    // res.json('fetching complete');
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "users fetch issue" });
@@ -148,7 +146,6 @@ export const getUser = async (req, res) => {
       case "PLAYER":
         {
           candidate = await Player.findOne({ socketId });
-          console.log(candidate);
           candidate
             ? res.status(200).send(candidate)
             : res.status(403).send("unable to find palyer");

@@ -12,8 +12,8 @@ export const EVENTS = {
     ACCESS_REQ: "ACCESS_REQ",
     AUTH_ADMIN: "AUTH_ADMIN",
     FORCE_DEL_USER: 'FORCE_DEL_USER',
-    VOTE_DEL_USER: 'VOTE_DEL_USER',
-
+    INIT_DEL_USER: 'INIT_DEL_USER',
+    BAN_VOTE_SUPPORTED: 'BAN_VOTE_SUPPORTED',
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -22,6 +22,7 @@ export const EVENTS = {
     USER_JOIN: "USER_JOIN",
     PENDING_USER: "PENDING_USER",
     USER_DELETED: 'USER_DELETED',
+    USER_BAN_VOTE: 'USER_BAN_VOTE',
   },
 };
 
@@ -87,15 +88,24 @@ const socketInit = ({ io }) => {
       });
     });
 
-    socket.on(EVENTS.CLIENT.VOTE_DEL_USER, ({ voterId, suspectId }) => {
-      console.log(`vote delete from user: ${voterId} of user id: ${suspectId}`);
+    socket.on(EVENTS.CLIENT.INIT_DEL_USER, ({ initiatorId, candidateId, roomId }) => {
+      console.log(`${initiatorId} initiated deletion of user id: ${candidateId} in room: ${roomId}`);
+      socket.to(roomId).emit(EVENTS.SERVER.USER_BAN_VOTE, { initiatorId, candidateId, roomId, originInitiator: true });
+    });
 
+    socket.on(EVENTS.CLIENT.BAN_VOTE_SUPPORTED, ({ initiatorId, candidateId, lobbyId, adminId }) => {
+      console.log(`${initiatorId} supported deletion of user id: ${candidateId} in room: ${lobbyId}`);
+      io.to(adminId).emit(EVENTS.SERVER.USER_BAN_VOTE, { initiatorId, candidateId, roomId: lobbyId , originInitiator: false});
     });
 
     socket.on(EVENTS.disconnect, () => {
       console.log(`----User DISCONNECTED mainSpace with id: ${socket.id} ----`);
     });
-    // io.emit('server-kek', {message: 'keking from the server'});
+    
+  });
+
+
+  // io.emit('server-kek', {message: 'keking from the server'});
 
     // socket.on(EVENTS.CLIENT.ACCESS_REQ, ({ roomId, userRole }) => {
     //   console.log(`user id: ${socket.id} requesting access to room: ${roomId} as ${userRole}`);
@@ -117,8 +127,6 @@ const socketInit = ({ io }) => {
     //   console.log(msg);
     //   socket.emit('sending', 'you have joined the room');
     // })
-  });
-
   
 
   // io.on('connection', (socket) => {

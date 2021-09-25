@@ -37,7 +37,7 @@ const LobbyPage: React.FC = (): JSX.Element => {
     // <-------------- handling joinnig the lobby --------->
 
     const emitJoinLobby = () => {
-      // telling everyone else in the room about you're joining the room
+      // telling everyone else in the room that you're joining the room
       socket.emit(
         EVENTS.CLIENT.JOIN_LOBBY,
         { userRole, roomId },
@@ -76,7 +76,7 @@ const LobbyPage: React.FC = (): JSX.Element => {
       dispatch(fetchUser(newUser));
     });
 
-    // <----------------telling that user deleted ----------------->
+    // <----------------when user deleted at server ----------------->
 
     socket.on(EVENTS.SERVER.USER_DELETED, (res: any) => {
       console.log(res.msg);
@@ -84,6 +84,8 @@ const LobbyPage: React.FC = (): JSX.Element => {
       dispatch(removeUser({ socketId: res.socketId }));
       // !!!!!!!!!!inconsistent user deletion, very hard to catch this bug!!!!!!!!!!!!!!!!
     });
+
+    // <-------------------------vote for deleting ---------------->
 
     // ---------------------------------END-----------------------------------
   }, []);
