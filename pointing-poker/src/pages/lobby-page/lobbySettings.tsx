@@ -1,22 +1,36 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Switcher from '../../components/swither/Switcher';
-
+import TimerComponent from '../../components/timer/TimerComponent';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
+import {
+  ScoreTypes,
+  setCardValues,
+  setScoreType,
+  setTimerNeeded,
+  setCardChange,
+  setScramMaster,
+} from '../../store/reducers/lobbySlice';
 import style from './Lobby-page.module.scss';
+import { configLobby } from './config';
 
 const LobbySettings: React.FC = (): JSX.Element => {
-  const [masterAsPlayer, setMasterAsPlayer] = useState<boolean>(true);
-  const [timerNeed, setTimerNeed] = useState<boolean>(true);
-  const [changeCard, setChangeCard] = useState<boolean>(false);
-  const [scoreType, setScoreType] = useState<string>('story point');
-  const [scoreTypeShort, setScoreTypeShort] = useState<string>('SP');
-
-  useEffect(() => {
-    setScoreTypeShort(scoreType === 'story point' ? 'SP' : 'ST');
-  }, [scoreType]);
+  const dispatch = useDispatch();
+  const { gameSettings } = useTypedSelector((state) => state.lobbySlice);
+  const { cardChange, scoreType, shortScoreType, scramMaster, timerNeeded } =
+    gameSettings;
 
   const changeScoreType = (e: ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
-    setScoreType(value);
+    dispatch(setScoreType(value));
+
+    if (value === ScoreTypes.STORY_POINT) {
+      dispatch(setCardValues(configLobby.cardCollections.STORY_POINT));
+    } else if (value === ScoreTypes.FIBBONACCI) {
+      dispatch(setCardValues(configLobby.cardCollections.FIBBONACCI));
+    } else {
+      dispatch(setCardValues(configLobby.cardCollections.FIBBONACCI));
+    }
   };
   return (
     <section className={style.lobbyGameSettings}>
@@ -25,10 +39,10 @@ const LobbySettings: React.FC = (): JSX.Element => {
         <div className={style.lobbyGameSettings__item}>
           <p className={style.lobbyGameSettings__item__title}>Scram master as player:</p>
           <Switcher
-            status={masterAsPlayer}
+            status={scramMaster}
             id="masterAsPlayer"
             setStatus={(status: boolean) => {
-              setMasterAsPlayer(status);
+              dispatch(setScramMaster(status));
             }}
           />
         </div>
@@ -37,20 +51,20 @@ const LobbySettings: React.FC = (): JSX.Element => {
             Changing card in round end:
           </p>
           <Switcher
-            status={changeCard}
-            id="changeCard"
+            status={cardChange}
+            id="cardChange"
             setStatus={(status: boolean) => {
-              setChangeCard(status);
+              dispatch(setCardChange(status));
             }}
           />
         </div>
         <div className={style.lobbyGameSettings__item}>
           <p className={style.lobbyGameSettings__item__title}>Is timer needed:</p>
           <Switcher
-            status={timerNeed}
+            status={timerNeeded}
             id="timerNeed"
             setStatus={(status: boolean) => {
-              setTimerNeed(status);
+              dispatch(setTimerNeeded(status));
             }}
           />
         </div>
@@ -60,18 +74,18 @@ const LobbySettings: React.FC = (): JSX.Element => {
             className={style.lobbyGameSettings__item__input}
             onChange={changeScoreType}
           >
-            <option value="story point">story point</option>
-            <option value="story time">story time</option>
+            <option value={ScoreTypes.FIBBONACCI}>{ScoreTypes.FIBBONACCI}</option>
+            <option value={ScoreTypes.STORY_POINT}>{ScoreTypes.STORY_POINT}</option>
           </select>
         </div>
         <div className={style.lobbyGameSettings__item}>
           <p className={style.lobbyGameSettings__item__title}>Score type (Short):</p>
-          <div className={style.lobbyGameSettings__item__input}>{scoreTypeShort}</div>
+          <div className={style.lobbyGameSettings__item__input}>{shortScoreType}</div>
         </div>
         <div className={style.lobbyGameSettings__item}>
           <p className={style.lobbyGameSettings__item__title}>Round time:</p>
-          {timerNeed ? (
-            <div>TIMER</div>
+          {timerNeeded ? (
+            <TimerComponent isEditMode isStartTimer={false} />
           ) : (
             <p className={style.lobbyGameSettings__item__title}>No timer</p>
           )}

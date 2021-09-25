@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { Socket } from 'socket.io-client';
+import { configLobby } from '../../pages/lobby-page/config';
 import { UserRoles } from '../types/sliceTypes';
 
 export interface IUserInfo {
@@ -28,9 +29,14 @@ export enum ScoreTypes {
   FIBBONACCI = 'FIBBONACCI',
 }
 
+export enum ShortScoreTypes {
+  STORY_POINT = 'SP',
+  FIBBONACCI = 'FB',
+}
+
 export interface IIssueDetail {
   issueTitle: string;
-  issueLink: string;
+  // issueLink: string;
   priority: IssuesPriority;
   issueId: string;
 }
@@ -40,8 +46,9 @@ export interface IGameSettings {
   cardChange: boolean;
   timerNeeded: boolean;
   scoreType: ScoreTypes;
-  roundTime: string;
-  cardValues: string[];
+  shortScoreType: ShortScoreTypes;
+  roundTime: number;
+  cardValues: number[];
 }
 
 interface IInitState {
@@ -50,8 +57,18 @@ interface IInitState {
   pendingUsers: IUserInfo[];
   users: IUserInfo[];
   issues: IIssueDetail[];
-  gameSettings: IGameSettings | null;
+  gameSettings: IGameSettings;
 }
+
+const initialGameSettings: IGameSettings = {
+  scramMaster: true,
+  cardChange: false,
+  timerNeeded: true,
+  scoreType: ScoreTypes.FIBBONACCI,
+  shortScoreType: ShortScoreTypes.FIBBONACCI,
+  roundTime: 120,
+  cardValues: configLobby.cardCollections.FIBBONACCI,
+};
 
 const initialState: IInitState = {
   lobbyTitle: '',
@@ -59,7 +76,7 @@ const initialState: IInitState = {
   pendingUsers: [],
   users: [],
   issues: [],
-  gameSettings: null,
+  gameSettings: initialGameSettings,
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -159,14 +176,55 @@ const lobbySlice = createSlice({
     },
     removeIssue(state, action) {
       const index = state.issues.findIndex(
-        (issue) => issue.issueId === action.payload.issueId,
+        (issue) => issue.issueTitle === action.payload,
       );
       if (index !== -1) state.issues.splice(index, 1);
     },
     setGameSettings(state, action) {
       state.gameSettings = action.payload;
     },
+    editIssue(state, action) {
+      const index = state.issues.findIndex(
+        (issue) => issue.issueTitle === action.payload.issueId,
+      );
+      if (index !== -1) state.issues.splice(index, 1, action.payload);
+    },
+    setScoreType(state, action) {
+      state.gameSettings.scoreType = action.payload;
+      const full = `${action.payload}`;
+      switch (full) {
+        case ScoreTypes.FIBBONACCI:
+          {
+            state.gameSettings.shortScoreType = ShortScoreTypes.FIBBONACCI;
+          }
+          break;
+        case ScoreTypes.STORY_POINT:
+          {
+            state.gameSettings.shortScoreType = ShortScoreTypes.STORY_POINT;
+          }
+          break;
+      }
+    },
+    setCardValues(state, action) {
+      state.gameSettings.cardValues = action.payload;
+    },
+    addCardValue(state, action) {
+      state.gameSettings.cardValues.push(action.payload);
+    },
+    setTimerNeeded(state, action) {
+      state.gameSettings.timerNeeded = action.payload;
+    },
+    setCardChange(state, action) {
+      state.gameSettings.cardChange = action.payload;
+    },
+    setScramMaster(state, action) {
+      state.gameSettings.scramMaster = action.payload;
+    },
+    setRoundTime(state, action) {
+      state.gameSettings.roundTime = action.payload;
+    },
   },
+
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.fulfilled, (state, { payload }) => {
       const { admin, players, spectators } = payload;
@@ -200,7 +258,15 @@ export const {
   setUsers,
   addIssue,
   removeIssue,
+  editIssue,
   setGameSettings,
+  setScoreType,
+  setCardValues,
+  addCardValue,
+  setTimerNeeded,
+  setCardChange,
+  setScramMaster,
+  setRoundTime,
 } = lobbySlice.actions;
 
 export default lobbySlice.reducer;

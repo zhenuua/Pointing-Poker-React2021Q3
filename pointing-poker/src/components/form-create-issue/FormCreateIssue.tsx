@@ -1,8 +1,11 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
+import { useDispatch } from 'react-redux';
+import { IssuesPriority, addIssue, removeIssue } from '../../store/reducers/lobbySlice';
 import ButtonSubmit from '../buttonSubmit/ButtonSubmit';
 import ButtonCancel from '../buttonCancel/ButtonCancel';
 import style from './FormCreateIssue.module.scss';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
 
 type PopUpType = {
   onSubmitHandler: () => void,
@@ -13,50 +16,112 @@ export const FormCreateIssue: React.FC<PopUpType> = ({
   onCancelHandler,
   onSubmitHandler,
 }): JSX.Element => {
-  const [titleIssue, seTitleIssue] = useState<string>('');
-  const [priority, setPriority] = useState<string>('Low');
+  const [titleIssueСurrent, setTitleIssueСurrent] = useState<string>('');
+  const [priorityСurrent, setPriorityСurrent] = useState<string>(IssuesPriority.LOW);
+  const [errorTitle, setErrorTitle] = useState<string>('');
 
+  const dispatch = useDispatch();
+  const { issues } = useTypedSelector((state) => state.lobbySlice);
   useEffect(() => {
-    seTitleIssue(titleIssue);
-  }, [titleIssue]);
+    setTitleIssueСurrent(titleIssueСurrent);
+  }, [titleIssueСurrent]);
 
+  const createIssue = () => {
+    dispatch(
+      addIssue({
+        issueTitle: titleIssueСurrent,
+        priority: priorityСurrent,
+        issueId: titleIssueСurrent,
+      }),
+    );
+    setTitleIssueСurrent('');
+    setPriorityСurrent(IssuesPriority.LOW);
+    setErrorTitle('');
+  };
+  const submitAddIsssue = () => {
+    if (validateIssueTitle()) {
+      createIssue();
+      onSubmitHandler();
+    }
+  };
+  const validateIssueTitle = () => {
+    const isValid = true;
+    const reNumber = /^[0-9]+$/;
+    const reSimbols = /[~!@#$%*()_—+=|:;"'`<>,.?/^]+/;
+    const reSpace = /^[ ]+$/;
+    if (!titleIssueСurrent) {
+      setErrorTitle('title cannot be empty');
+      return !isValid;
+    }
+    if (titleIssueСurrent.length > 11) {
+      setErrorTitle('the title cannot be longer than 11 simbols');
+      return !isValid;
+    }
+    if (titleIssueСurrent.length < 3) {
+      setErrorTitle('the title cannot be shorter than 3 simbols');
+      return !isValid;
+    }
+    if (reNumber.test(titleIssueСurrent)) {
+      setErrorTitle('the title cannot consist only of numbers');
+      return !isValid;
+    }
+    if (reSpace.test(titleIssueСurrent)) {
+      setErrorTitle('the title cannot consist only of spaces');
+      return !isValid;
+    }
+    if (reSimbols.test(titleIssueСurrent)) {
+      setErrorTitle('the title cannot consist only of simbols');
+      return !isValid;
+    }
+    for (let i = 0; i < issues.length; i += 1) {
+      if (issues[i].issueTitle === titleIssueСurrent) {
+        setErrorTitle('Issue with this title already exists');
+        return !isValid;
+      }
+    }
+    return isValid;
+  };
   return (
     <div className={style.popupCreateIssue}>
       <h2 className={style.popupCreateIssue__title}>Create Issue</h2>
       <div className={style.popupCreateIssue__options}>
-        <label className={style.popupCreateIssue__options__item} htmlFor="titleIssue">
+        <label
+          className={style.popupCreateIssue__options__item}
+          htmlFor="titleIssueСurrent"
+        >
           <p className={style.popupCreateIssue__text}>Title:</p>
           <input
-            value={titleIssue}
+            value={titleIssueСurrent}
             className={`${style.popupCreateIssue__text} ${style.popupCreateIssue__input}`}
-            id="titleIssue"
+            id="titleIssueСurrent"
             type="text"
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              seTitleIssue(e.target.value);
+              setTitleIssueСurrent(e.target.value);
             }}
           />
+          <span className={style.popupCreateIssue__title__error}>{errorTitle}</span>
         </label>
-        <label className={style.popupCreateIssue__options__item} htmlFor="linkIssue">
+        {/* <label className={style.popupCreateIssue__options__item} htmlFor="linkIssue">
           <p className={style.popupCreateIssue__text}>Link:</p>
           <input
             className={`${style.popupCreateIssue__text} ${style.popupCreateIssue__input}`}
             id="linkIssue"
             type="text"
           />
-        </label>
+        </label> */}
         <label className={style.popupCreateIssue__options__item} htmlFor="priority">
           <p className={style.popupCreateIssue__text}>Priority:</p>
           <select
             className={style.popupCreateIssue__select}
             id="priority"
-            value={priority}
+            value={priorityСurrent}
             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-              setPriority(e.target.value);
+              setPriorityСurrent(e.target.value);
             }}
           >
-            <option value="Low">Low</option>
-            <option value="Middle">Middle</option>
-            <option value="Hight">Hight</option>
+            <option value={IssuesPriority.LOW}>{IssuesPriority.LOW}</option>
+            <option value={IssuesPriority.MIDDLE}>{IssuesPriority.MIDDLE}</option>
+            <option value={IssuesPriority.HIGH}>{IssuesPriority.HIGH}</option>
           </select>
         </label>
       </div>
@@ -64,13 +129,16 @@ export const FormCreateIssue: React.FC<PopUpType> = ({
       <div className={style.popupCreateIssue__control}>
         <ButtonSubmit
           onclickHandler={() => {
-            onSubmitHandler();
+            submitAddIsssue();
           }}
           text="Yes"
         />
         <ButtonCancel
           onclickHandler={() => {
             onCancelHandler();
+            setTitleIssueСurrent('');
+            setPriorityСurrent(IssuesPriority.LOW);
+            setErrorTitle('');
           }}
           text="No"
         />

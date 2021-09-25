@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import avatar from '../../assets/images/Avatar(Auto).png';
 import { useActions } from '../../hooks/useActions';
+
 import { UserRoles } from '../../store/types/sliceTypes';
 
 import { FormType } from '../../types/types';
@@ -14,6 +15,7 @@ const Form: React.FC<FormType> = ({ setActive, isConnect = false }): JSX.Element
   const [lastName, setLastName] = useState<string>('');
   const [jobPosition, setJobPosition] = useState<string>('');
   const history = useHistory();
+
   const {
     setUsername,
     setLastName: setLast,

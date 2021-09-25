@@ -6,6 +6,9 @@ import logo from '../../assets/images/Logo.svg';
 import style from './Header.module.scss';
 
 const Header: React.FC = (): JSX.Element => {
+  const hundlerChat = () => {
+    console.log('openchat');
+  };
   return (
     <header className={style.header}>
       <div className={style.headerWrapper}>
@@ -20,6 +23,8 @@ const Header: React.FC = (): JSX.Element => {
           src={messenger}
           alt="messenger pictures"
           draggable={false}
+          aria-hidden="true"
+          onClick={() => hundlerChat()}
         />
       </div>
     </header>

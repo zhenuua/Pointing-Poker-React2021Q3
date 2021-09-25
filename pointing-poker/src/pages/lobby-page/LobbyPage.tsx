@@ -15,6 +15,7 @@ import { UserRoles } from '../../store/types/sliceTypes';
 import { createAdmin } from '../../store/actionCreators/lobbyActionCreators';
 import { createPlayer } from '../../store/reducers/userSlice';
 import { fetchUser, fetchUsers, removeUser } from '../../store/reducers/lobbySlice';
+import LobbyChat from '../../components/lobby-chat/lobbyChat';
 
 const LobbyPage: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
@@ -87,12 +88,15 @@ const LobbyPage: React.FC = (): JSX.Element => {
     // ---------------------------------END-----------------------------------
   }, []);
   return (
-    <div className={style.wrapperLobby}>
-      <LobbyMain />
-      <LobbyMembers />
-      {userRole === UserRoles.USER_ADMIN && <LobbyIssues />}
-      {userRole === UserRoles.USER_ADMIN && <LobbySettings />}
-      {userRole === UserRoles.USER_ADMIN && <LobbyCards />}
+    <div className={style.wrapperLobbyPage}>
+      <div className={style.wrapperLobby}>
+        <LobbyMain />
+        <LobbyMembers />
+        {userRole === UserRoles.USER_ADMIN && <LobbyIssues />}
+        {userRole === UserRoles.USER_ADMIN && <LobbySettings />}
+        {userRole === UserRoles.USER_ADMIN && <LobbyCards />}
+      </div>
+      <LobbyChat />
     </div>
   );
 };

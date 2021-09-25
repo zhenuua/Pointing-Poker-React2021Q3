@@ -13,6 +13,7 @@ export const EVENTS = {
     AUTH_ADMIN: "AUTH_ADMIN",
     FORCE_DEL_USER: 'FORCE_DEL_USER',
     VOTE_DEL_USER: 'VOTE_DEL_USER',
+
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -88,6 +89,7 @@ const socketInit = ({ io }) => {
 
     socket.on(EVENTS.CLIENT.VOTE_DEL_USER, ({ voterId, suspectId }) => {
       console.log(`vote delete from user: ${voterId} of user id: ${suspectId}`);
+
     });
 
     socket.on(EVENTS.disconnect, () => {

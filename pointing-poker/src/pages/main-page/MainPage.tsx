@@ -15,6 +15,7 @@ import ConnectForm from '../../components/connect-form/ConnectForm';
 const MainPage: React.FC = (): JSX.Element => {
   const [modalActive, setModalActive] = useState<boolean>(false);
   const [isConnect, setIsConnect] = useState<boolean>(false);
+
   const connectRef = React.useRef<HTMLInputElement | null>(null);
   const [lobbyLink, setLobbyLink] = useState<string>('');
   const history = useHistory();
