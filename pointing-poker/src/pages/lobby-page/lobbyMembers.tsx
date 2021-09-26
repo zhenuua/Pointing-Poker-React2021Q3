@@ -82,7 +82,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
           if (user.userRole === UserRoles.USER_ADMIN) return null;
           return (
             <PersonalDataTab
-              userImage={authorTest}
+              userImage={user.avatarImg ? user.avatarImg : authorTest}
               userName={user.username}
               lastName={user.lastName}
               userStaff={user.jobPosition}

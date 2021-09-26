@@ -1,59 +1,90 @@
-import React, { MouseEvent, ChangeEvent, useEffect, useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { ChangeEvent, useEffect, useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
+
+import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { useSocketsContext } from '../../context/socket.context';
 
 import style from './Lobby-chat.module.scss';
-import PersonalDataTab from '../personal-data-tab/PersonalDataTab';
-import authorTest from '../../assets/images/ImageUser.png';
-import dambldorImage from '../../assets/images/dambldor.jpg';
-import roomsChats from '../../pages/lobby-page/massages';
-
-const currentUser = 'Zhenuua';
-const activeChat = true;
 
 const LobbyChat: React.FC = (): JSX.Element => {
-  const [courantMassage, setСourantMassage] = useState<string>('');
+  const { socket } = useSocketsContext();
+  const activeChat = useSelector((state: any) => state.controlSlice.isActiveChat);
+
+  const [formMessage, setFormMessage] = useState([{ name: 'Max', message: 'Hi Jim!' }]);
+  const [currentMessage, setCurrentMessage] = useState<string>('');
   const messageRef = useRef<HTMLDivElement>(null);
+
+  const { socketId, roomId, username } = useTypedSelector((state) => state.userSlice);
+  const { users } = useSelector((state: any) => state.lobbySlice);
+
   useEffect(() => {
     messageRef.current?.scrollIntoView({
       behavior: 'smooth',
       block: 'nearest',
       inline: 'start',
     });
-  }, [roomsChats.room1]);
+  }, [currentMessage]);
+
+  useEffect(() => {
+    socket.on('ADD_MESSAGE', (data) => {
+      // const currUser = users.filter(
+      //   (item: any) => item.socketId === String(data.socketId),
+      // );
+      const curName = data.username;
+      const curMsg = data.courantMassage;
+
+      setFormMessage((state) => [
+        ...state,
+        {
+          name: curName,
+          message: curMsg,
+        },
+      ]);
+    });
+  }, [socket]);
+
   const handleSubmit = () => {
-    if (/\S/.test(courantMassage)) {
-      console.log('send massage');
-      roomsChats.room1.push({
-        palyerName: currentUser,
-        massage: courantMassage,
-        isYou: true,
-      });
-      setСourantMassage('');
+    if (/\S/.test(currentMessage)) {
+      setFormMessage((state) => [
+        ...state,
+        {
+          name: username,
+          message: currentMessage,
+        },
+      ]);
+      setCurrentMessage('');
     }
+    socket.emit('SEND_MESSAGE', {
+      currentMessage,
+      socketId,
+      roomId,
+      username,
+    });
   };
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setСourantMassage(value);
+    setCurrentMessage(value);
   };
+
   return (
     <section className={`${activeChat ? style.LobbyChat : style.LobbyChatOff}`}>
       <div className={style.wrapperChat}>
-        {roomsChats.room1.map((item) => {
+        {formMessage.map((item) => {
           return (
-            <div key={item.massage + item.palyerName} className={style.chatMassage}>
+            <div key={Math.random() * 1000} className={style.chatMassage}>
               <div
                 className={`${style.chatMassage__text} ${
-                  item.isYou ? style.greyBackground : ''
+                  false ? style.greyBackground : ''
                 }`}
               >
-                <p>{item.massage}</p>
+                <p>{item.message}</p>
               </div>
               <div
                 className={`${style.chatMassage__player} ${
-                  item.isYou ? style.greyBackground : ''
+                  true ? style.greyBackground : ''
                 }`}
               >
-                <p>{item.palyerName}</p>
+                <p>{item.name}</p>
               </div>
             </div>
           );
@@ -73,7 +104,7 @@ const LobbyChat: React.FC = (): JSX.Element => {
             id="send-massage"
             className={style.massageSend__input}
             type="text"
-            value={courantMassage}
+            value={currentMessage}
             onChange={handleChange}
           />
         </label>

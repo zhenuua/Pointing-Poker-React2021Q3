@@ -5,6 +5,7 @@ const controlSlice = createSlice({
   initialState: {
     loading: false,
     error: null,
+    isActiveChat: true,
   },
   reducers: {
     setLoading(state) {
@@ -13,9 +14,12 @@ const controlSlice = createSlice({
     setError(state, action) {
       state.error = action.payload;
     },
+    isActiveChat(state) {
+      state.isActiveChat = !state.isActiveChat;
+    },
   },
 });
 
-export const { setLoading, setError } = controlSlice.actions;
+export const { setLoading, setError, isActiveChat } = controlSlice.actions;
 
 export default controlSlice.reducer;

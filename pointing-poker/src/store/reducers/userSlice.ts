@@ -160,6 +160,9 @@ const userSlice = createSlice({
     setRoomId(state, action) {
       state.roomId = action.payload;
     },
+    setUserAvatar(state, action) {
+      state.avatarImg = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createPlayer.fulfilled, (state, { payload }) => {
@@ -177,6 +180,7 @@ export const {
   setToken,
   setRoomId,
   setJobPosition,
+  setUserAvatar,
 } = userSlice.actions;
 
 export default userSlice.reducer;

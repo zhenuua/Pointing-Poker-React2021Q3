@@ -16,7 +16,6 @@ const Card: React.FC<CardPoints> = ({ cardPoints, shortScoreType }): JSX.Element
   const [isNumberCard, setIsNumberCard] = useState<number>(cardPoints);
   const [inputClassName, setInputClassName] = useState<boolean>(false);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
-
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setIsNumberCard(+value);

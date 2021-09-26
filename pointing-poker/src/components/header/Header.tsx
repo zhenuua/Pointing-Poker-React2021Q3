@@ -4,6 +4,7 @@ import messenger from '../../assets/images/Messenger.svg';
 import logo from '../../assets/images/Logo.svg';
 
 import style from './Header.module.scss';
+import ButtonIconChat from '../buttonIconChat/ButtonIconChat';
 
 const Header: React.FC = (): JSX.Element => {
   const hundlerChat = () => {
@@ -18,14 +19,7 @@ const Header: React.FC = (): JSX.Element => {
           alt="logo pictures"
           draggable={false}
         />
-        <img
-          className={style.messengerPicture}
-          src={messenger}
-          alt="messenger pictures"
-          draggable={false}
-          aria-hidden="true"
-          onClick={() => hundlerChat()}
-        />
+        <ButtonIconChat />
       </div>
     </header>
   );

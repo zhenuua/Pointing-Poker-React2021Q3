@@ -48,7 +48,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
         <h3 className={style.lobbyTitle__text__scrum}>Scram master:</h3>
         {admin ? (
           <PersonalDataTab
-            userImage={authorTest}
+            userImage={admin.avatarImg ? admin.avatarImg : authorTest}
             userName={admin ? admin.username : 'no admin data'}
             lastName={admin ? admin.lastName : 'no admin data'}
             userStaff={admin ? admin.jobPosition : 'no admin data'}

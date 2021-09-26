@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 
-import { useDispatch } from 'react-redux';
-import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
-
 import authorTest from '../../assets/images/ImageUser.png';
 
 import style from './Game-page.module.scss';
 
+import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
 import Card from '../../components/card/Card';
 import ScoreTab from '../../components/score-tab/ScoreTab';
 import PersonalDataTabMini from '../../components/personal-data-tab-mini/PersonalDataTabMini';
@@ -24,7 +22,6 @@ import travolta from '../../assets/images/user/Travolta.jpg';
 import brad from '../../assets/images/user/Brad.jpg';
 
 import { useTypedSelector } from '../../hooks/useTypedSelector';
-// import frodo from '../../assets/images/user/Frodo.jpg';
 
 type dataType = {
   id: number,
@@ -42,7 +39,6 @@ const GamePage: React.FC = (): JSX.Element => {
     { id: 4, name: 'Adam Sendler', staff: 'Physics', current: false, photo: sendler },
     { id: 5, name: 'Petter Peddigry', staff: 'Wizzard', current: false, photo: petter },
   ]);
-  const dispatch = useDispatch();
   const { gameSettings } = useTypedSelector((state) => state.lobbySlice);
   const { cardValues, shortScoreType } = gameSettings;
   return (

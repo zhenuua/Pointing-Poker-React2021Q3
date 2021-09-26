@@ -1,9 +1,8 @@
-import React, { MouseEvent, ChangeEvent, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import style from './Lobby-page.module.scss';
-
 import LobbyMain from './lobbyMain';
+
 import LobbyMembers from './lobbyMembers';
 import LobbySettings from './lobbySettings';
 import LobbyIssues from './lobbyIssues';
@@ -16,6 +15,8 @@ import { createAdmin } from '../../store/actionCreators/lobbyActionCreators';
 import { createPlayer } from '../../store/reducers/userSlice';
 import { fetchUser, fetchUsers, removeUser } from '../../store/reducers/lobbySlice';
 import LobbyChat from '../../components/lobby-chat/lobbyChat';
+
+import style from './Lobby-page.module.scss';
 
 const LobbyPage: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
@@ -60,7 +61,7 @@ const LobbyPage: React.FC = (): JSX.Element => {
       }
     };
 
-    // additinal logic for rejecting/accepting player/spectator
+    // additional logic for rejecting/accepting player/spectator
     if (userRole !== UserRoles.USER_ADMIN) {
       console.log('additional logic required for non admin users');
     }

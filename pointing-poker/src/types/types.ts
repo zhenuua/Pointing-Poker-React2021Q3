@@ -22,7 +22,7 @@ export type LobbyTitleType = {
 };
 
 export type PersonalDataTabType = {
-  userImage: string,
+  userImage: string | undefined,
   userName: string,
   lastName?: string,
   userStaff?: string,
