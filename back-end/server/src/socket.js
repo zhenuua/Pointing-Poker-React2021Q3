@@ -132,10 +132,10 @@ const socketInit = ({ io }) => {
 
     socket.on(
       "SEND_MESSAGE",
-      ({ courantMassage, socketId, roomId, username }) => {
-        console.log(courantMassage, socketId);
+      ({ currentMessage, socketId, roomId, username }) => {
+        console.log(currentMessage, socketId);
         socket.to(roomId).emit("ADD_MESSAGE", {
-          courantMassage,
+          currentMessage,
           socketId,
           roomId,
           username,

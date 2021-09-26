@@ -31,7 +31,7 @@ const LobbyChat: React.FC = (): JSX.Element => {
       //   (item: any) => item.socketId === String(data.socketId),
       // );
       const curName = data.username;
-      const curMsg = data.courantMassage;
+      const curMsg = data.currentMessage;
 
       setFormMessage((state) => [
         ...state,
