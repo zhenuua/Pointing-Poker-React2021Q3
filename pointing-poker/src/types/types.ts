@@ -41,3 +41,11 @@ export type PopUpType = {
 export type ScoreTabType = {
   status: string,
 };
+
+export type TLobbyChat = {
+  name: string,
+  message: string,
+  ava: string,
+  isCurrentUser: boolean,
+  jobPosition: string,
+};

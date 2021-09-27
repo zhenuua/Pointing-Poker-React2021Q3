@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import LobbyMain from './lobbyMain';
-
 import LobbyMembers from './lobbyMembers';
 import LobbySettings from './lobbySettings';
 import LobbyIssues from './lobbyIssues';
@@ -13,7 +12,7 @@ import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { createAdmin } from '../../store/actionCreators/lobbyActionCreators';
 import { createPlayer } from '../../store/reducers/userSlice';
-import { fetchUser, fetchUsers, removeUser } from '../../store/reducers/lobbySlice';
+import { fetchUser, removeUser } from '../../store/reducers/lobbySlice';
 import LobbyChat from '../../components/lobby-chat/lobbyChat';
 
 import style from './Lobby-page.module.scss';

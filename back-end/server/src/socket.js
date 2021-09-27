@@ -132,13 +132,24 @@ const socketInit = ({ io }) => {
 
     socket.on(
       "SEND_MESSAGE",
-      ({ currentMessage, socketId, roomId, username }) => {
-        console.log(currentMessage, socketId);
+      ({
+        currentMessage,
+        socketId,
+        roomId,
+        username,
+        avatarImg,
+        lastName,
+        jobPosition,
+      }) => {
+        console.log(currentMessage, socketId, avatarImg);
         socket.to(roomId).emit("ADD_MESSAGE", {
           currentMessage,
           socketId,
           roomId,
           username,
+          avatarImg,
+          lastName,
+          jobPosition,
         });
       }
     );
