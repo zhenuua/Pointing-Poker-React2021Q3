@@ -13,6 +13,7 @@ export const EVENTS = {
     FORCE_DEL_USER: "FORCE_DEL_USER",
     INIT_DEL_USER: "INIT_DEL_USER",
     BAN_VOTE_SUPPORTED: "BAN_VOTE_SUPPORTED",
+    BANNED_USER_LEAVE: 'BANNED_USER_LEAVE',
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -123,6 +124,11 @@ const socketInit = ({ io }) => {
         });
       }
     );
+
+    socket.on(EVENTS.CLIENT.BANNED_USER_LEAVE, ({ roomId }) => {
+      socket.leave(roomId);
+      console.log(`banned user id: ${socket.id} leaved room: ${roomId}`);
+    });
 
     socket.on(EVENTS.disconnect, () => {
       console.log(`----User DISCONNECTED mainSpace with id: ${socket.id} ----`);
