@@ -1,7 +1,6 @@
-import { createUser } from './z-unneccesary-files/lobby.js';
+import { createUser } from "./z-unneccesary-files/lobby.js";
 import { lobbiesData } from "./z-unneccesary-files/lobbiesData.js";
 
-  
 export const EVENTS = {
   connection: "connection",
   disconnect: "disconnect",
@@ -11,9 +10,9 @@ export const EVENTS = {
     JOIN_LOBBY: "JOIN_LOBBY",
     ACCESS_REQ: "ACCESS_REQ",
     AUTH_ADMIN: "AUTH_ADMIN",
-    FORCE_DEL_USER: 'FORCE_DEL_USER',
-    INIT_DEL_USER: 'INIT_DEL_USER',
-    BAN_VOTE_SUPPORTED: 'BAN_VOTE_SUPPORTED',
+    FORCE_DEL_USER: "FORCE_DEL_USER",
+    INIT_DEL_USER: "INIT_DEL_USER",
+    BAN_VOTE_SUPPORTED: "BAN_VOTE_SUPPORTED",
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -21,27 +20,31 @@ export const EVENTS = {
     LOBBY_MESSAGE: "LOBBY_MESSAGE",
     USER_JOIN: "USER_JOIN",
     PENDING_USER: "PENDING_USER",
-    USER_DELETED: 'USER_DELETED',
-    USER_BAN_VOTE: 'USER_BAN_VOTE',
+    USER_DELETED: "USER_DELETED",
+    USER_BAN_VOTE: "USER_BAN_VOTE",
   },
 };
 
 const socketInit = ({ io }) => {
-  console.log('----SOCKETS ENABLED----');
+  console.log("----SOCKETS ENABLED----");
 
-  const adminSpace = io.of('/admin');
+  const adminSpace = io.of("/admin");
 
   adminSpace.use((socket, next) => {
-    const combinedToken = socket.handshake.auth.token.split(' ');
+    const combinedToken = socket.handshake.auth.token.split(" ");
     const [token, roomId] = combinedToken;
-    console.log(`-----token provided from client ${token}, room - ${roomId} ----`);
-    const { adminToken } = lobbiesData.find(lobby => lobby.lobbyId == roomId);
-    adminToken === token ? next() : next(new Error('unauthorized access'));
+    console.log(
+      `-----token provided from client ${token}, room - ${roomId} ----`
+    );
+    const { adminToken } = lobbiesData.find((lobby) => lobby.lobbyId == roomId);
+    adminToken === token ? next() : next(new Error("unauthorized access"));
   });
 
   adminSpace.on(EVENTS.connection, (socket) => {
     console.log(`----User connected adminSpace with id: ${socket.id}----`);
-    console.log(`//-----token provided from client ${socket.handshake.auth.token}----//`);
+    console.log(
+      `//-----token provided from client ${socket.handshake.auth.token}----//`
+    );
 
     // socket.on(EVENTS.CLIENT.AUTH_ADMIN, (userData) => {
     //   // const { token, roomId, userRole, username, lastName, jobPosition } = userData;
@@ -56,9 +59,10 @@ const socketInit = ({ io }) => {
     // })
 
     socket.on(EVENTS.disconnect, () => {
-      console.log(`----User DISCONNECTED adminSpace with id: ${socket.id} ----`);
+      console.log(
+        `----User DISCONNECTED adminSpace with id: ${socket.id} ----`
+      );
     });
-    
   });
 
   io.on(EVENTS.connection, (socket) => {
@@ -66,7 +70,9 @@ const socketInit = ({ io }) => {
 
     socket.on(EVENTS.CLIENT.JOIN_LOBBY, ({ userRole, roomId }, callback) => {
       socket.join(roomId);
-      console.log(`client with id: ${socket.id}, role: ${userRole} joining room: ${roomId}`);
+      console.log(
+        `client with id: ${socket.id}, role: ${userRole} joining room: ${roomId}`
+      );
       callback({
         msg: `you successfully joined room: ${roomId}`,
         isJoinedRoom: true,
@@ -88,53 +94,96 @@ const socketInit = ({ io }) => {
       });
     });
 
-    socket.on(EVENTS.CLIENT.INIT_DEL_USER, ({ initiatorId, candidateId, roomId }) => {
-      console.log(`${initiatorId} initiated deletion of user id: ${candidateId} in room: ${roomId}`);
-      socket.to(roomId).emit(EVENTS.SERVER.USER_BAN_VOTE, { initiatorId, candidateId, roomId, originInitiator: true });
-    });
+    socket.on(
+      EVENTS.CLIENT.INIT_DEL_USER,
+      ({ initiatorId, candidateId, roomId }) => {
+        console.log(
+          `${initiatorId} initiated deletion of user id: ${candidateId} in room: ${roomId}`
+        );
+        socket.to(roomId).emit(EVENTS.SERVER.USER_BAN_VOTE, {
+          initiatorId,
+          candidateId,
+          roomId,
+          originInitiator: true,
+        });
+      }
+    );
 
-    socket.on(EVENTS.CLIENT.BAN_VOTE_SUPPORTED, ({ initiatorId, candidateId, lobbyId, adminId }) => {
-      console.log(`${initiatorId} supported deletion of user id: ${candidateId} in room: ${lobbyId}`);
-      io.to(adminId).emit(EVENTS.SERVER.USER_BAN_VOTE, { initiatorId, candidateId, roomId: lobbyId , originInitiator: false});
-    });
+    socket.on(
+      EVENTS.CLIENT.BAN_VOTE_SUPPORTED,
+      ({ initiatorId, candidateId, lobbyId, adminId }) => {
+        console.log(
+          `${initiatorId} supported deletion of user id: ${candidateId} in room: ${lobbyId}`
+        );
+        io.to(adminId).emit(EVENTS.SERVER.USER_BAN_VOTE, {
+          initiatorId,
+          candidateId,
+          roomId: lobbyId,
+          originInitiator: false,
+        });
+      }
+    );
 
     socket.on(EVENTS.disconnect, () => {
       console.log(`----User DISCONNECTED mainSpace with id: ${socket.id} ----`);
     });
-    
-  });
 
+    // Chat
+
+    socket.on(
+      "SEND_MESSAGE",
+      ({
+        currentMessage,
+        socketId,
+        roomId,
+        username,
+        avatarImg,
+        lastName,
+        jobPosition,
+      }) => {
+        console.log(currentMessage, socketId, avatarImg);
+        socket.to(roomId).emit("ADD_MESSAGE", {
+          currentMessage,
+          socketId,
+          roomId,
+          username,
+          avatarImg,
+          lastName,
+          jobPosition,
+        });
+      }
+    );
+  });
 
   // io.emit('server-kek', {message: 'keking from the server'});
 
-    // socket.on(EVENTS.CLIENT.ACCESS_REQ, ({ roomId, userRole }) => {
-    //   console.log(`user id: ${socket.id} requesting access to room: ${roomId} as ${userRole}`);
-    //   const userSocketId = socket.id;
-    //   const users = lobbiesData.find(lobby => lobby.lobbyId === roomId).users;
-    //   const adminId = users.find(user => user.userRole === 'ADMIN').socketId;
-    //   // console.log('--//--');
-    //   // console.log(adminId);
-    //   // console.log('--//--');
+  // socket.on(EVENTS.CLIENT.ACCESS_REQ, ({ roomId, userRole }) => {
+  //   console.log(`user id: ${socket.id} requesting access to room: ${roomId} as ${userRole}`);
+  //   const userSocketId = socket.id;
+  //   const users = lobbiesData.find(lobby => lobby.lobbyId === roomId).users;
+  //   const adminId = users.find(user => user.userRole === 'ADMIN').socketId;
+  //   // console.log('--//--');
+  //   // console.log(adminId);
+  //   // console.log('--//--');
 
-    //   adminSpace.to(adminId).emit(EVENTS.SERVER.PENDING_USER, { userSocketId, userRole });
-    // });
+  //   adminSpace.to(adminId).emit(EVENTS.SERVER.PENDING_USER, { userSocketId, userRole });
+  // });
 
-    // socket.on('lobby-connect', (msg) => {
-    //   console.log(msg);
-    // })
+  // socket.on('lobby-connect', (msg) => {
+  //   console.log(msg);
+  // })
 
-    // socket.on('lobby-create', (msg) => {
-    //   console.log(msg);
-    //   socket.emit('sending', 'you have joined the room');
-    // })
-  
+  // socket.on('lobby-create', (msg) => {
+  //   console.log(msg);
+  //   socket.emit('sending', 'you have joined the room');
+  // })
 
   // io.on('connection', (socket) => {
-//   console.log(socket.id + ' connected to server');
-//   socket.on('disconnect', () => {
-//     console.log('user disconnected ' + socket.id);
-//   });
-// });
+  //   console.log(socket.id + ' connected to server');
+  //   socket.on('disconnect', () => {
+  //     console.log('user disconnected ' + socket.id);
+  //   });
+  // });
 };
 
 export default socketInit;

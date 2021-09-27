@@ -22,7 +22,7 @@ export type LobbyTitleType = {
 };
 
 export type PersonalDataTabType = {
-  userImage: string,
+  userImage: string | undefined,
   userName: string,
   lastName?: string,
   userStaff?: string,
@@ -40,4 +40,12 @@ export type PopUpType = {
 
 export type ScoreTabType = {
   status: string,
+};
+
+export type TLobbyChat = {
+  name: string,
+  message: string,
+  ava: string,
+  isCurrentUser: boolean,
+  jobPosition: string,
 };

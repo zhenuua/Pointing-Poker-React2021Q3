@@ -6,7 +6,7 @@ import avatar from '../../assets/images/Avatar(Auto).png';
 import { useSocketsContext } from '../../context/socket.context';
 import { useActions } from '../../hooks/useActions';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
-import { checkLobby, createLobby } from '../../store/reducers/userSlice';
+import { checkLobby, createLobby, setUserAvatar } from '../../store/reducers/userSlice';
 import { UserRoles } from '../../store/types/sliceTypes';
 
 import { FormType } from '../../types/types';
@@ -51,6 +51,7 @@ const ConnectForm: React.FC<FormType> = ({
     setUsername(firstName);
     setLast(lastName);
     setJob(jobPosition);
+    dispatch(setUserAvatar(userImage));
     if (isConnect) {
       dispatch(checkLobby({ lobbyId: lobbyLink }));
       setIsRoomId(true);

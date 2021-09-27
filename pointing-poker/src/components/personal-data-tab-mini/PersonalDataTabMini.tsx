@@ -7,14 +7,14 @@ import RemoveIcon from '../../assets/images/Remove-icon.svg';
 import style from './Personal-data-tab-mini.module.scss';
 
 type PersonalDataTabMiniType = {
-  userImage: string,
+  userImage?: string,
   userName: string,
-  userStaff: string,
-  isCurrentUser: boolean,
-  isRemove: boolean,
-  id: number,
-  setData: any,
-  data: any,
+  userStaff?: string,
+  isCurrentUser?: boolean,
+  isRemove?: boolean,
+  id?: number,
+  setData?: any,
+  data?: any,
 };
 
 const PersonalDataTabMini: React.FC<PersonalDataTabMiniType> = ({
