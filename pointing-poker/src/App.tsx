@@ -32,6 +32,9 @@ const App: React.FC = (): JSX.Element => {
             <Route exact path="/lobby-page/:lobbyId">
               <LobbyPage />
             </Route>
+            {/* <Route exact path="/lobby-page/:lobbyId/game">
+              <GamePage />
+            </Route> */}
             <Route exact path="/game-page/:gameId">
               <GamePage />
             </Route>

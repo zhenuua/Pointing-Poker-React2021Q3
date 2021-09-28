@@ -16,6 +16,7 @@ export const EVENTS = {
     BANNED_USER_LEAVE: 'BANNED_USER_LEAVE',
     CANCEL_GAME: 'CANCEL_GAME',
     USER_LEAVE: 'USER_LEAVE',
+    GAME_STARTING: 'GAME_STARTING',
   },
   SERVER: {
     LOBBIES: 'LOBBIES',
@@ -26,5 +27,27 @@ export const EVENTS = {
     USER_DELETED: 'USER_DELETED',
     USER_BAN_VOTE: 'USER_BAN_VOTE',
     GAME_CANCLED: 'GAME_CANCLED',
+    FETCH_GAME_DATA: 'FETCH_GAME_DATA',
   },
+};
+
+const mapOfEvnetsServer = {
+  USER_JOIN: ['lobbyPage'],
+  USER_DELETED: ['lobbyPage'],
+  USER_BAN_VOTE: ['banPoPUp', ''],
+  GAME_CANCLED: ['lobbyMain'],
+  ADD_MESSAGE: ['lobbyChat'],
+};
+
+const mapOfEvnetsClient = {
+  JOIN_LOBBY: ['lobbyPage', ''],
+  FORCE_DEL_USER: ['lobbyMembers', ''],
+  INIT_DEL_USER: ['lobbyMembers', ''],
+  BANNED_USER_LEAVE: ['lobbyMembers', ''],
+  BAN_VOTE_SUPPORTED: ['banPoPUp', ''],
+  CANCEL_GAME: ['lobbyMain', ''],
+  USER_LEAVE: ['lobbyMain', ''],
+  SEND_MESSAGE: ['lobbyChat'],
+  GAME_STARTING: ['lobbyMain', ''],
+  FETCH_GAME_DATA: ['lobbyMain', ''],
 };

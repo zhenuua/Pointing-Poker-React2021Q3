@@ -16,6 +16,7 @@ export const EVENTS = {
     BANNED_USER_LEAVE: 'BANNED_USER_LEAVE',
     CANCEL_GAME: "CANCEL_GAME",
     USER_LEAVE: 'USER_LEAVE',
+    GAME_STARTING: 'GAME_STARTING',
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -26,6 +27,7 @@ export const EVENTS = {
     USER_DELETED: "USER_DELETED",
     USER_BAN_VOTE: "USER_BAN_VOTE",
     GAME_CANCLED: "GAME_CANCLED",
+    FETCH_GAME_DATA: "FETCH_GAME_DATA",
   },
 };
 
@@ -130,18 +132,23 @@ const socketInit = ({ io }) => {
 
     socket.on(EVENTS.CLIENT.BANNED_USER_LEAVE, ({ roomId }) => {
       socket.leave(roomId);
+      socket.removeAllListeners();
       console.log(`banned user id: ${socket.id} has left room: ${roomId}`);
     });
 
+    // console.log(io.of('/').sockets.clients(roomId)); - this is an attempt to acquire all connected users' socketIds
+    // further search needed for event below
     socket.on(EVENTS.CLIENT.CANCEL_GAME, ({ roomId }) => {
       console.log(`game ${roomId} canceled by admin: ${socket.id}`);
       socket.to(roomId).emit(EVENTS.SERVER.GAME_CANCLED, { gameCanceled: true });
       socket.leave(roomId);
+      // socket.removeAllListeners();
     });
 
     socket.on(EVENTS.CLIENT.USER_LEAVE, ({ roomId, gameCanceled, userRole }) => {
       if (gameCanceled) {
         socket.leave(roomId);
+        // socket.removeAllListeners();
         return;
       }
 
@@ -151,6 +158,12 @@ const socketInit = ({ io }) => {
         userRole,
       });
       socket.leave(roomId);
+
+      // socket.removeAllListeners();
+    });
+
+    socket.on(EVENTS.CLIENT.GAME_STARTING, ({ roomId }) => {
+      socket.to(roomId).emit(EVENTS.SERVER.FETCH_GAME_DATA, 'fetch data from server NOW!!!!!!!');
     });
 
     socket.on(EVENTS.disconnect, () => {

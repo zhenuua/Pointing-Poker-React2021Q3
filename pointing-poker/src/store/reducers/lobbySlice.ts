@@ -166,6 +166,80 @@ export const cancelGame = createAsyncThunk(
   },
 );
 
+interface IPostSettingsIssues {
+  roomId: string;
+  gameSettings: IGameSettings;
+  issues: IIssueDetail[];
+  emitEvent: () => void;
+}
+
+export const postSettingsIssues = createAsyncThunk(
+  'lobby/settingsIssues',
+  async (
+    { roomId, gameSettings, issues, emitEvent }: IPostSettingsIssues,
+    { rejectWithValue },
+  ) => {
+    try {
+      const responseSettings = await axios({
+        method: 'post',
+        url: `http://localhost:5000/lobby/game-settings`,
+        timeout: 2000,
+        data: { roomId, gameSettings },
+      });
+      const responseIssues = await axios({
+        method: 'post',
+        url: `http://localhost:5000/lobby/issues`,
+        timeout: 2000,
+        data: { roomId, issues },
+      });
+      emitEvent();
+      return {
+        msg: `${responseSettings.data}  ${responseIssues.data}`,
+      };
+    } catch (err) {
+      console.log(err);
+      alert('unable to add setting or issues');
+      return rejectWithValue('unable to add setting or issues');
+    }
+  },
+);
+
+export const fetchGameSettings = createAsyncThunk(
+  'lobby/fetchGameSettings',
+  async ({ roomId }: { roomId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `http://localhost:5000/lobby/game-settings/${roomId}`,
+        timeout: 2000,
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to fetch game settings');
+      return rejectWithValue([]);
+    }
+  },
+);
+
+export const fetchIssues = createAsyncThunk(
+  'lobby/fetchIssues',
+  async ({ roomId }: { roomId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `http://localhost:5000/lobby/issues/${roomId}`,
+        timeout: 2000,
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to fetch issues');
+      return rejectWithValue([]);
+    }
+  },
+);
+
 const lobbySlice = createSlice({
   name: 'lobby',
   initialState,
@@ -327,6 +401,17 @@ const lobbySlice = createSlice({
       // state.issues = issues;
       // state.gameSettings = gameSettings;
       // state.banCandidates = banCandidates;
+    });
+    builder.addCase(postSettingsIssues.fulfilled, (state, { payload }) => {
+      console.log(payload);
+    });
+    builder.addCase(fetchGameSettings.fulfilled, (state, { payload }) => {
+      console.log(payload);
+      state.gameSettings = payload;
+    });
+    builder.addCase(fetchIssues.fulfilled, (state, { payload }) => {
+      console.log(payload);
+      state.issues = payload;
     });
   },
 });

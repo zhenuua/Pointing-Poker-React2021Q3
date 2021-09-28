@@ -64,7 +64,7 @@ export const BanPopUpContainer: React.FC = () => {
         }
       },
     );
-    socket.on('notice_of_vote', (msg) => console.log(msg));
+    // socket.on('notice_of_vote', (msg) => console.log(msg));
   }, []);
 
   return (

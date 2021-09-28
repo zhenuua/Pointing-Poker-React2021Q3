@@ -90,6 +90,9 @@ const LobbyPage: React.FC = (): JSX.Element => {
     // <-------------------------vote for deleting ---------------->
 
     // ---------------------------------END-----------------------------------
+    // return () => {
+    //   socket.removeAllListeners();
+    // }
   }, []);
   return (
     <div className={style.wrapperLobbyPage}>
