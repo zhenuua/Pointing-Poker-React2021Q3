@@ -147,6 +147,25 @@ export const deleteUser = createAsyncThunk(
   },
 );
 
+export const cancelGame = createAsyncThunk(
+  'lobby/cancelGame',
+  async ({ roomId }: { roomId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios({
+        method: 'delete',
+        url: `http://localhost:5000/lobby/delete`,
+        timeout: 2000,
+        data: { roomId },
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to delte lobby');
+      return rejectWithValue([]);
+    }
+  },
+);
+
 const lobbySlice = createSlice({
   name: 'lobby',
   initialState,
@@ -250,6 +269,24 @@ const lobbySlice = createSlice({
       //     voteCount: 1,
       //   }) else {}
     },
+    resetLobby(state, { payload }) {
+      const {
+        lobbyTitle,
+        chatMessages,
+        pendingUsers,
+        users,
+        issues,
+        gameSettings,
+        banCandidates,
+      } = initialState;
+      state.lobbyTitle = lobbyTitle;
+      state.chatMessages = chatMessages;
+      state.pendingUsers = pendingUsers;
+      state.users = users;
+      state.issues = issues;
+      state.gameSettings = gameSettings;
+      state.banCandidates = banCandidates;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.fulfilled, (state, { payload }) => {
@@ -270,6 +307,26 @@ const lobbySlice = createSlice({
       const index = state.users.findIndex((user) => user.socketId === userId);
       if (index !== -1) state.users.splice(index, 1);
       // state.users.push(payload);
+    });
+    builder.addCase(cancelGame.fulfilled, (state, { payload }) => {
+      const { msg } = payload;
+      console.log(msg);
+      // const {
+      //   lobbyTitle,
+      //   chatMessages,
+      //   pendingUsers,
+      //   users,
+      //   issues,
+      //   gameSettings,
+      //   banCandidates,
+      // } = initialState;
+      // state.lobbyTitle = lobbyTitle;
+      // state.chatMessages = chatMessages;
+      // state.pendingUsers = pendingUsers;
+      // state.users = users;
+      // state.issues = issues;
+      // state.gameSettings = gameSettings;
+      // state.banCandidates = banCandidates;
     });
   },
 });
@@ -294,6 +351,7 @@ export const {
   setScramMaster,
   setRoundTime,
   addBanVote,
+  resetLobby,
 } = lobbySlice.actions;
 
 export default lobbySlice.reducer;

@@ -1,6 +1,9 @@
 import { nanoid } from "nanoid";
 
 import Lobby from '../models/lobbyModel.js';
+import Admin from "../models/adminModel.js";
+import Player from "../models/playerModel.js";
+import Spectator from "../models/spectatorModel.js";
 import { generateAccessToken } from '../utils/jwt.js';
 
 export const createLobby = async (req, res) => {
@@ -32,29 +35,19 @@ export const checkLobby = async (req, res) => {
   }
 };
 
-export const getUsers = async (req, res) => {
+export const deleteLobby = async (req, res) => {
+  const { roomId } = req.body;
+
   try {
-    console.log('requesting something from users...');
-    res.json('server is working');
-  } catch (err) {
-
-  } 
-
-};
-
-export const addUser = async (req, res) => {
-  try {
-
-  } catch (err) {
-
-  } 
-
-};
-
-export const deleteUser = async (req, res) => {
-  try {
-    
-  } catch (err) {
-
-  }  
+    const candidateLobby = await Lobby.deleteOne({ lobbyId: roomId });
+    await Player.deleteMany({ roomId });
+    await Admin.deleteMany({ roomId });
+    await Spectator.deleteMany({ roomId });
+    const { deletedCount } = candidateLobby;
+    deletedCount
+      ? res.status(200).send({ msg: `lobby ${roomId} deleted` })
+      : res.status(500).send("unable to delete lobby");
+  } catch (error) {
+    console.log(error);
+  }
 };

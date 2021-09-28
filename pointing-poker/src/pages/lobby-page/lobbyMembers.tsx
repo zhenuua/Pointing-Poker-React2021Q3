@@ -84,7 +84,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
     if (index === -1) {
       socket.emit(EVENTS.CLIENT.BANNED_USER_LEAVE, { roomId });
       alert('you have been banned from lobby, mua-ha-ha');
-      history.push('/');
+      history.goBack();
     }
   }, [users]);
 
@@ -101,7 +101,10 @@ const LobbyMain: React.FC = (): JSX.Element => {
               lastName={user.lastName}
               userStaff={user.jobPosition}
               isCurrentUser={user.socketId === socketId}
-              isRemove={!(user.socketId === socketId) && playerCounter() > 3}
+              isRemove={
+                userRole === UserRoles.USER_ADMIN ||
+                (!(user.socketId === socketId) && playerCounter() > 3)
+              }
               key={`${user.socketId}`}
               socketId={user.socketId}
               userRole={user.userRole}

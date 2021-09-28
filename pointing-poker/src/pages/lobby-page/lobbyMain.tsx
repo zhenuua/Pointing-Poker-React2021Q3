@@ -1,5 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-non-null-assertion */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import ButtonSubmit from '../../components/buttonSubmit/ButtonSubmit';
 import ButtonCancel from '../../components/buttonCancel/ButtonCancel';
 import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
@@ -8,30 +10,50 @@ import style from './Lobby-page.module.scss';
 import authorTest from '../../assets/images/ImageUser.png';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
+import { useSocketsContext } from '../../context/socket.context';
+import { cancelGame } from '../../store/reducers/lobbySlice';
+import { EVENTS } from '../../store/types/sockeIOEvents';
 
 const LobbyMain: React.FC = (): JSX.Element => {
-  const [isGame, setIsGame] = useState<boolean>(false);
   const { users } = useTypedSelector((state) => state.lobbySlice);
   const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
-  // !!!!!!!!!!!!!! below bug with lobby link!!!!!!!!!!!!!!!!!!!!
-  const [link, setLink] = useState<string>(`http://localhost:3000/${roomId}`);
+  const { socket } = useSocketsContext();
+  const dispatch = useDispatch();
+  const history = useHistory();
+
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
+
+  const [link, setLink] = useState<string>(`http://localhost:3000/${roomId}`);
+  const [isGame, setIsGame] = useState<boolean>(false);
+
   const startGame = () => {
     console.log('game is start');
     setIsGame(true);
   };
-  const cancelGame = () => {
-    console.log('cancel is cancel');
+  const cancelGameHandler = () => {
+    socket.emit(EVENTS.CLIENT.CANCEL_GAME, { roomId });
     setIsGame(false);
+    dispatch(cancelGame({ roomId }));
+    history.goBack();
   };
   const exitGame = () => {
     console.log('exiting lobby/game');
     setIsGame(false);
+    socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled: false, userRole });
+    history.goBack();
   };
   const copyLink = () => {
     console.log('copy link');
     navigator.clipboard.writeText(link);
   };
+
+  useEffect(() => {
+    socket.on(EVENTS.SERVER.GAME_CANCLED, ({ gameCanceled }) => {
+      socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled });
+      history.goBack();
+    });
+  }, []);
+
   return (
     <section className={style.lobbyMain}>
       <div className={style.lobbyMain__title}>
@@ -90,7 +112,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
             />
             <ButtonCancel
               onclickHandler={() => {
-                cancelGame();
+                cancelGameHandler();
               }}
               text="Cancel game"
             />

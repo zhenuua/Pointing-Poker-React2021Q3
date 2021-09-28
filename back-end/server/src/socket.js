@@ -14,6 +14,8 @@ export const EVENTS = {
     INIT_DEL_USER: "INIT_DEL_USER",
     BAN_VOTE_SUPPORTED: "BAN_VOTE_SUPPORTED",
     BANNED_USER_LEAVE: 'BANNED_USER_LEAVE',
+    CANCEL_GAME: "CANCEL_GAME",
+    USER_LEAVE: 'USER_LEAVE',
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -23,6 +25,7 @@ export const EVENTS = {
     PENDING_USER: "PENDING_USER",
     USER_DELETED: "USER_DELETED",
     USER_BAN_VOTE: "USER_BAN_VOTE",
+    GAME_CANCLED: "GAME_CANCLED",
   },
 };
 
@@ -127,7 +130,27 @@ const socketInit = ({ io }) => {
 
     socket.on(EVENTS.CLIENT.BANNED_USER_LEAVE, ({ roomId }) => {
       socket.leave(roomId);
-      console.log(`banned user id: ${socket.id} leaved room: ${roomId}`);
+      console.log(`banned user id: ${socket.id} has left room: ${roomId}`);
+    });
+
+    socket.on(EVENTS.CLIENT.CANCEL_GAME, ({ roomId }) => {
+      console.log(`game ${roomId} canceled by admin: ${socket.id}`);
+      socket.to(roomId).emit(EVENTS.SERVER.GAME_CANCLED, { gameCanceled: true });
+      socket.leave(roomId);
+    });
+
+    socket.on(EVENTS.CLIENT.USER_LEAVE, ({ roomId, gameCanceled, userRole }) => {
+      if (gameCanceled) {
+        socket.leave(roomId);
+        return;
+      }
+
+      socket.to(roomId).emit(EVENTS.SERVER.USER_DELETED, {
+        msg: `user with id: ${socket.id} has left your room: ${roomId}`,
+        socketId: socket.id,
+        userRole,
+      });
+      socket.leave(roomId);
     });
 
     socket.on(EVENTS.disconnect, () => {
