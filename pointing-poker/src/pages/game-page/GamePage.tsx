@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
+import { useDispatch } from 'react-redux';
 import authorTest from '../../assets/images/ImageUser.png';
 
 import style from './Game-page.module.scss';
@@ -22,6 +23,8 @@ import travolta from '../../assets/images/user/Travolta.jpg';
 import brad from '../../assets/images/user/Brad.jpg';
 
 import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { UserRoles } from '../../store/types/sliceTypes';
+import { IGameIssue, setGameIssues } from '../../store/reducers/gameSlice';
 
 type dataType = {
   id: number,
@@ -32,6 +35,13 @@ type dataType = {
 };
 
 const GamePage: React.FC = (): JSX.Element => {
+  const { users, gameSettings, issues } = useTypedSelector((state) => state.lobbySlice);
+  const { socketId, userRole } = useTypedSelector((state) => state.userSlice);
+  const { curIssue, gameIssues } = useTypedSelector((state) => state.gameSlice);
+  const dispatch = useDispatch();
+
+  const { cardValues, shortScoreType } = gameSettings;
+  const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
   const [data, setData] = useState<dataType[]>([
     { id: 1, name: 'Max Kalevich', staff: 'Senior', current: true, photo: travolta },
     { id: 2, name: 'Brad Pitt', staff: 'Cleaner', current: false, photo: brad },
@@ -39,8 +49,25 @@ const GamePage: React.FC = (): JSX.Element => {
     { id: 4, name: 'Adam Sendler', staff: 'Physics', current: false, photo: sendler },
     { id: 5, name: 'Petter Peddigry', staff: 'Wizzard', current: false, photo: petter },
   ]);
-  const { gameSettings } = useTypedSelector((state) => state.lobbySlice);
-  const { cardValues, shortScoreType } = gameSettings;
+
+  useEffect(() => {
+    const arr = issues.map((issue) => {
+      const item = {
+        issueId: issue.issueTitle,
+        scores: users.map((user) => {
+          if (user.userRole === UserRoles.USER_ADMIN && !gameSettings.scramMaster) return;
+          // eslint-disable-next-line consistent-return
+          return {
+            socketId: user.socketId,
+            score: null,
+          };
+        }),
+      };
+      return item;
+    });
+    dispatch(setGameIssues(arr));
+  }, []);
+
   return (
     <div className={style.gamePageWrapper}>
       <div className={style.gameWrapperLeft}>
@@ -49,10 +76,10 @@ const GamePage: React.FC = (): JSX.Element => {
           <div className={style.scrumMasterWrapper}>
             <span className={style.scrumMasterText}>Scrum Master:</span>
             <PersonalDataTab
-              userImage={authorTest}
-              userName="Tim Cook"
-              userStaff="senior software"
-              isCurrentUser
+              userImage={admin?.avatarImg}
+              userName={admin?.username || 'no data'}
+              userStaff={admin?.lastName || 'no data'}
+              isCurrentUser={admin?.socketId === socketId}
               isRemove={false}
             />
           </div>
@@ -63,11 +90,20 @@ const GamePage: React.FC = (): JSX.Element => {
         </div>
         <div className={style.wrapper}>
           <div className={style.issueTabWrapper}>
-            <IssueTab status="Issue 13" isCurrent priority="Low Priority" />
+            {issues.length &&
+              issues.map((issue) => (
+                <IssueTab
+                  status={issue.issueTitle}
+                  isCurrent={curIssue === issue.issueTitle}
+                  priority={issue.priority}
+                  key={issue.issueTitle}
+                />
+              ))}
+            {/* <IssueTab status="Issue 13" isCurrent priority="Low Priority" />
             <IssueTab status="Issue 542" isCurrent={false} priority="Low Priority" />
             <IssueTab status="Issue 6421" isCurrent={false} priority="High Priority" />
             <IssueTab status="Issue 13" isCurrent={false} priority="Low Priority" />
-            <NewIssue />
+            <NewIssue /> */}
           </div>
           <div className={style.runRoundWrapper}>
             <TimerComponent isEditMode={false} isStartTimer={false} />
@@ -87,29 +123,44 @@ const GamePage: React.FC = (): JSX.Element => {
       <div className={style.gameWrapperRight}>
         <div className={style.scoreColumn}>
           <span className={style.headerText}>Score:</span>
+          {gameIssues.length &&
+            gameIssues.map((issue: IGameIssue) => {
+              if (issue.issueId !== curIssue) return;
+              // eslint-disable-next-line consistent-return
+              return issue.scores.map((score) => (
+                <ScoreTab status={score.score === null ? 'In Progress' : 'Done'} />
+              ));
+            })}
+          {/* <ScoreTab status="In Progress" />
           <ScoreTab status="In Progress" />
           <ScoreTab status="In Progress" />
           <ScoreTab status="In Progress" />
-          <ScoreTab status="In Progress" />
-          <ScoreTab status="In Progress" />
+          <ScoreTab status="In Progress" /> */}
         </div>
         <div className={style.playersColumn}>
           <span className={style.headerText}>Players:</span>
           <div>
-            {data.map((user) => (
-              <div>
-                <PersonalDataTabMini
-                  userImage={user.photo}
-                  userName={user.name}
-                  userStaff={user.staff}
-                  isCurrentUser={user.current}
-                  isRemove
-                  id={user.id}
-                  setData={setData}
-                  data={data}
-                />
-              </div>
-            ))}
+            {users.map((user) => {
+              if (user.userRole === UserRoles.USER_ADMIN && !gameSettings.scramMaster)
+                return;
+              // eslint-disable-next-line consistent-return
+              return (
+                <div>
+                  <PersonalDataTabMini
+                    userImage={user.avatarImg}
+                    userName={user.username}
+                    userStaff={user.jobPosition}
+                    isCurrentUser={user.socketId === socketId}
+                    isRemove={
+                      userRole === UserRoles.USER_ADMIN && user.socketId !== socketId
+                    }
+                    // id={user.socketId}
+                    // setData={setData}
+                    // data={data}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
