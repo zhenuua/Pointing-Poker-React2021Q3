@@ -214,7 +214,7 @@ export const deleteAllUser = async (req, res) => {
     await Player.deleteMany({ roomId });
     await Admin.deleteMany({ roomId });
     await Spectator.deleteMany({ roomId });
-    res.status(200).send("All users have been removed");
+    res.status(200).send(`all users from ${roomId} have been deleted`);
   } catch (error) {
     console.log(error);
     res.status(404).send("Unable to delete users");

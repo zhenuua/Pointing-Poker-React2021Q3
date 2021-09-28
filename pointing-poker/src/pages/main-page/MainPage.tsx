@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import logo from '../../assets/images/Poker-Planning-picture.svg';
 
@@ -12,12 +12,17 @@ import Form from '../../components/form/Form';
 import { useResetUser } from '../../hooks/useResetUser';
 import ConnectForm from '../../components/connect-form/ConnectForm';
 
+interface ParamsQueries {
+  lobbyParam?: string;
+}
+
 const MainPage: React.FC = (): JSX.Element => {
   const [modalActive, setModalActive] = useState<boolean>(false);
   const [isConnect, setIsConnect] = useState<boolean>(false);
 
+  const { lobbyParam } = useParams<ParamsQueries>();
   const connectRef = React.useRef<HTMLInputElement | null>(null);
-  const [lobbyLink, setLobbyLink] = useState<string>('');
+  const [lobbyLink, setLobbyLink] = useState<string>(`${lobbyParam || ''}`);
   const history = useHistory();
 
   // resets userdata, by useEffect

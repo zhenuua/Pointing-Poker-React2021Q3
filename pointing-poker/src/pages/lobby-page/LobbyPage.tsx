@@ -12,7 +12,7 @@ import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { createAdmin } from '../../store/actionCreators/lobbyActionCreators';
 import { createPlayer } from '../../store/reducers/userSlice';
-import { fetchUser, removeUser } from '../../store/reducers/lobbySlice';
+import { deleteUser, fetchUser, removeUser } from '../../store/reducers/lobbySlice';
 import LobbyChat from '../../components/lobby-chat/lobbyChat';
 
 import style from './Lobby-page.module.scss';
@@ -69,25 +69,30 @@ const LobbyPage: React.FC = (): JSX.Element => {
     createUser();
 
     // <---------------- handling when someone else joins room ------------->
-    socket.on(EVENTS.SERVER.USER_JOIN, (res: any) => {
-      console.log(res.msg);
-      const { newUser } = res;
+    socket.on(EVENTS.SERVER.USER_JOIN, (req: any) => {
+      console.log(req.msg);
+      const { newUser } = req;
       console.log(newUser);
       dispatch(fetchUser(newUser));
     });
 
-    // <----------------when user deleted at server ----------------->
+    // <----------------when user deleted at server or left room ----------------->
 
-    socket.on(EVENTS.SERVER.USER_DELETED, (res: any) => {
-      console.log(res.msg);
-      console.log(`user deleted on server ${res.socketId}`);
-      dispatch(removeUser({ socketId: res.socketId }));
+    socket.on(EVENTS.SERVER.USER_DELETED, (req: any) => {
+      console.log(req.msg);
+      console.log(`user deleted on server ${req.socketId}`);
+      userRole !== UserRoles.USER_ADMIN
+        ? dispatch(removeUser({ socketId: req.socketId }))
+        : dispatch(deleteUser({ userRole: req.userRole, socketId: req.socketId }));
       // !!!!!!!!!!inconsistent user deletion, very hard to catch this bug!!!!!!!!!!!!!!!!
     });
 
     // <-------------------------vote for deleting ---------------->
 
     // ---------------------------------END-----------------------------------
+    // return () => {
+    //   socket.removeAllListeners();
+    // }
   }, []);
   return (
     <div className={style.wrapperLobbyPage}>

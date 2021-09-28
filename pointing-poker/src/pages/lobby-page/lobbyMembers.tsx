@@ -1,5 +1,6 @@
 import React, { MouseEvent, ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
 import style from './Lobby-page.module.scss';
 
@@ -17,6 +18,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
   const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
   const { socket } = useSocketsContext();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleDeleteUser = (id: string, role: string) => {
     switch (userRole) {
@@ -74,6 +76,18 @@ const LobbyMain: React.FC = (): JSX.Element => {
     });
   }, [banCandidates]);
 
+  //  <-----------handling leaving room when you're banned------------->
+
+  useEffect(() => {
+    if (users.length === 0) return;
+    const index = users.findIndex((user) => user.socketId === socketId);
+    if (index === -1) {
+      socket.emit(EVENTS.CLIENT.BANNED_USER_LEAVE, { roomId });
+      alert('you have been banned from lobby, mua-ha-ha');
+      history.goBack();
+    }
+  }, [users]);
+
   return (
     <section className={style.lobbyMembers}>
       <h2 className={`${style.lobbyText} ${style.lobbyTextTitle}`}>Members:</h2>
@@ -87,7 +101,10 @@ const LobbyMain: React.FC = (): JSX.Element => {
               lastName={user.lastName}
               userStaff={user.jobPosition}
               isCurrentUser={user.socketId === socketId}
-              isRemove={!(user.socketId === socketId) && playerCounter() > 3}
+              isRemove={
+                userRole === UserRoles.USER_ADMIN ||
+                (!(user.socketId === socketId) && playerCounter() > 3)
+              }
               key={`${user.socketId}`}
               socketId={user.socketId}
               userRole={user.userRole}

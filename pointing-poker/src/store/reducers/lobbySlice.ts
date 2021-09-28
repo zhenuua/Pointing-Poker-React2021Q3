@@ -147,6 +147,99 @@ export const deleteUser = createAsyncThunk(
   },
 );
 
+export const cancelGame = createAsyncThunk(
+  'lobby/cancelGame',
+  async ({ roomId }: { roomId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios({
+        method: 'delete',
+        url: `http://localhost:5000/lobby/delete`,
+        timeout: 2000,
+        data: { roomId },
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to delte lobby');
+      return rejectWithValue([]);
+    }
+  },
+);
+
+interface IPostSettingsIssues {
+  roomId: string;
+  gameSettings: IGameSettings;
+  issues: IIssueDetail[];
+  emitEvent: () => void;
+}
+
+export const postSettingsIssues = createAsyncThunk(
+  'lobby/settingsIssues',
+  async (
+    { roomId, gameSettings, issues, emitEvent }: IPostSettingsIssues,
+    { rejectWithValue },
+  ) => {
+    try {
+      const responseSettings = await axios({
+        method: 'post',
+        url: `http://localhost:5000/lobby/game-settings`,
+        timeout: 2000,
+        data: { roomId, gameSettings },
+      });
+      const responseIssues = await axios({
+        method: 'post',
+        url: `http://localhost:5000/lobby/issues`,
+        timeout: 2000,
+        data: { roomId, issues },
+      });
+      emitEvent();
+      return {
+        msg: `${responseSettings.data}  ${responseIssues.data}`,
+      };
+    } catch (err) {
+      console.log(err);
+      alert('unable to add setting or issues');
+      return rejectWithValue('unable to add setting or issues');
+    }
+  },
+);
+
+export const fetchGameSettings = createAsyncThunk(
+  'lobby/fetchGameSettings',
+  async ({ roomId }: { roomId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `http://localhost:5000/lobby/game-settings/${roomId}`,
+        timeout: 2000,
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to fetch game settings');
+      return rejectWithValue([]);
+    }
+  },
+);
+
+export const fetchIssues = createAsyncThunk(
+  'lobby/fetchIssues',
+  async ({ roomId }: { roomId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `http://localhost:5000/lobby/issues/${roomId}`,
+        timeout: 2000,
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to fetch issues');
+      return rejectWithValue([]);
+    }
+  },
+);
+
 const lobbySlice = createSlice({
   name: 'lobby',
   initialState,
@@ -250,6 +343,24 @@ const lobbySlice = createSlice({
       //     voteCount: 1,
       //   }) else {}
     },
+    resetLobby(state, { payload }) {
+      const {
+        lobbyTitle,
+        chatMessages,
+        pendingUsers,
+        users,
+        issues,
+        gameSettings,
+        banCandidates,
+      } = initialState;
+      state.lobbyTitle = lobbyTitle;
+      state.chatMessages = chatMessages;
+      state.pendingUsers = pendingUsers;
+      state.users = users;
+      state.issues = issues;
+      state.gameSettings = gameSettings;
+      state.banCandidates = banCandidates;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.fulfilled, (state, { payload }) => {
@@ -270,6 +381,37 @@ const lobbySlice = createSlice({
       const index = state.users.findIndex((user) => user.socketId === userId);
       if (index !== -1) state.users.splice(index, 1);
       // state.users.push(payload);
+    });
+    builder.addCase(cancelGame.fulfilled, (state, { payload }) => {
+      const { msg } = payload;
+      console.log(msg);
+      // const {
+      //   lobbyTitle,
+      //   chatMessages,
+      //   pendingUsers,
+      //   users,
+      //   issues,
+      //   gameSettings,
+      //   banCandidates,
+      // } = initialState;
+      // state.lobbyTitle = lobbyTitle;
+      // state.chatMessages = chatMessages;
+      // state.pendingUsers = pendingUsers;
+      // state.users = users;
+      // state.issues = issues;
+      // state.gameSettings = gameSettings;
+      // state.banCandidates = banCandidates;
+    });
+    builder.addCase(postSettingsIssues.fulfilled, (state, { payload }) => {
+      console.log(payload);
+    });
+    builder.addCase(fetchGameSettings.fulfilled, (state, { payload }) => {
+      console.log(payload);
+      state.gameSettings = payload;
+    });
+    builder.addCase(fetchIssues.fulfilled, (state, { payload }) => {
+      console.log(payload);
+      state.issues = payload;
     });
   },
 });
@@ -294,6 +436,7 @@ export const {
   setScramMaster,
   setRoundTime,
   addBanVote,
+  resetLobby,
 } = lobbySlice.actions;
 
 export default lobbySlice.reducer;
