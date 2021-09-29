@@ -13,15 +13,15 @@ export interface IGameIssue {
 }
 
 export interface IInitState {
-  curIssue: string;
+  curIssue: IGameIssue | null;
   gameIssues: IGameIssue[];
   gameOn: boolean;
   gameOver: boolean;
   roundOn: boolean;
 }
 
-const initialState = {
-  curIssue: '',
+const initialState: IInitState = {
+  curIssue: null,
   gameIssues: [],
   gameOn: false,
   gameOver: false,

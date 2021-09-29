@@ -24,7 +24,8 @@ import brad from '../../assets/images/user/Brad.jpg';
 
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
-import { IGameIssue, setGameIssues } from '../../store/reducers/gameSlice';
+import { IGameIssue, setCurIssue, setGameIssues } from '../../store/reducers/gameSlice';
+import { IUserInfo } from '../../store/reducers/lobbySlice';
 
 type dataType = {
   id: number,
@@ -37,36 +38,50 @@ type dataType = {
 const GamePage: React.FC = (): JSX.Element => {
   const { users, gameSettings, issues } = useTypedSelector((state) => state.lobbySlice);
   const { socketId, userRole } = useTypedSelector((state) => state.userSlice);
-  const { curIssue, gameIssues } = useTypedSelector((state) => state.gameSlice);
+  const { curIssue, gameIssues, roundOn } = useTypedSelector((state) => state.gameSlice);
   const dispatch = useDispatch();
 
   const { cardValues, shortScoreType } = gameSettings;
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
-  const [data, setData] = useState<dataType[]>([
-    { id: 1, name: 'Max Kalevich', staff: 'Senior', current: true, photo: travolta },
-    { id: 2, name: 'Brad Pitt', staff: 'Cleaner', current: false, photo: brad },
-    { id: 3, name: 'John Travolta', staff: 'Actor', current: false, photo: travolta },
-    { id: 4, name: 'Adam Sendler', staff: 'Physics', current: false, photo: sendler },
-    { id: 5, name: 'Petter Peddigry', staff: 'Wizzard', current: false, photo: petter },
-  ]);
+  const [players, setPlayers] = useState<IUserInfo[]>();
+
+  // useEffect(() => {
+  //   let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
+  //   if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
+  //   const arr = issues.map((issue) => {
+  //     const item = {
+  //       issueId: issue.issueTitle,
+  //       scores: playersArr.map((user) => ({ socketId: user.socketId, score: null })),
+  //     };
+  //     return item;
+  //   });
+  //   dispatch(setGameIssues(arr));
+  // }, []);
 
   useEffect(() => {
-    const arr = issues.map((issue) => {
-      const item = {
-        issueId: issue.issueTitle,
-        scores: users.map((user) => {
-          if (user.userRole === UserRoles.USER_ADMIN && !gameSettings.scramMaster) return;
-          // eslint-disable-next-line consistent-return
-          return {
-            socketId: user.socketId,
-            score: null,
-          };
-        }),
-      };
-      return item;
-    });
-    dispatch(setGameIssues(arr));
-  }, []);
+    if (!gameIssues.length) {
+      let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
+      if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
+      const arr = issues.map((issue) => {
+        const item = {
+          issueId: issue.issueTitle,
+          scores: playersArr.map((user) => ({ socketId: user.socketId, score: null })),
+        };
+        return item;
+      });
+      dispatch(setGameIssues(arr));
+    }
+  }, [issues]);
+
+  useEffect(() => {
+    let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
+    if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
+    setPlayers(playersArr);
+  }, [users]);
+
+  useEffect(() => {
+    if (!curIssue && gameIssues.length) dispatch(setCurIssue(gameIssues[0]));
+  }, [gameIssues]);
 
   return (
     <div className={style.gamePageWrapper}>
@@ -94,7 +109,7 @@ const GamePage: React.FC = (): JSX.Element => {
               issues.map((issue) => (
                 <IssueTab
                   status={issue.issueTitle}
-                  isCurrent={curIssue === issue.issueTitle}
+                  isCurrent={!!(curIssue && curIssue.issueId === issue.issueTitle)}
                   priority={issue.priority}
                   key={issue.issueTitle}
                 />
@@ -123,14 +138,22 @@ const GamePage: React.FC = (): JSX.Element => {
       <div className={style.gameWrapperRight}>
         <div className={style.scoreColumn}>
           <span className={style.headerText}>Score:</span>
-          {gameIssues.length &&
-            gameIssues.map((issue: IGameIssue) => {
-              if (issue.issueId !== curIssue) return;
-              // eslint-disable-next-line consistent-return
-              return issue.scores.map((score) => (
-                <ScoreTab status={score.score === null ? 'In Progress' : 'Done'} />
-              ));
-            })}
+          {curIssue &&
+            curIssue.scores.map((score) =>
+              roundOn ? (
+                <ScoreTab
+                  status={score === null ? 'In Progress' : 'Ready'}
+                  key={`${score.socketId}`}
+                />
+              ) : (
+                <ScoreTab
+                  status={
+                    score.score === null ? 'waiting to vote' : `${score.score} points`
+                  }
+                  key={`${score.socketId}`}
+                />
+              ),
+            )}
           {/* <ScoreTab status="In Progress" />
           <ScoreTab status="In Progress" />
           <ScoreTab status="In Progress" />
@@ -140,27 +163,22 @@ const GamePage: React.FC = (): JSX.Element => {
         <div className={style.playersColumn}>
           <span className={style.headerText}>Players:</span>
           <div>
-            {users.map((user) => {
-              if (user.userRole === UserRoles.USER_ADMIN && !gameSettings.scramMaster)
-                return;
-              // eslint-disable-next-line consistent-return
-              return (
-                <div>
-                  <PersonalDataTabMini
-                    userImage={user.avatarImg}
-                    userName={user.username}
-                    userStaff={user.jobPosition}
-                    isCurrentUser={user.socketId === socketId}
-                    isRemove={
-                      userRole === UserRoles.USER_ADMIN && user.socketId !== socketId
-                    }
-                    // id={user.socketId}
-                    // setData={setData}
-                    // data={data}
-                  />
-                </div>
-              );
-            })}
+            {players &&
+              players.map((user) => (
+                <PersonalDataTabMini
+                  userImage={user.avatarImg}
+                  userName={user.username}
+                  userStaff={user.jobPosition}
+                  isCurrentUser={user.socketId === socketId}
+                  isRemove={
+                    userRole === UserRoles.USER_ADMIN && user.socketId !== socketId
+                  }
+                  // id={user.socketId}
+                  // setData={setData}
+                  // data={data}
+                  key={user.socketId}
+                />
+              ))}
           </div>
         </div>
       </div>
