@@ -231,7 +231,7 @@ export const fetchIssues = createAsyncThunk(
         url: `http://localhost:5000/lobby/issues/${roomId}`,
         timeout: 2000,
       });
-      return response.data;
+      return response.data.issues;
     } catch (err) {
       console.error(err);
       alert('server issue, unable to fetch issues');
