@@ -25,63 +25,82 @@ import brad from '../../assets/images/user/Brad.jpg';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { IGameIssue, setCurIssue, setGameIssues } from '../../store/reducers/gameSlice';
-import { IUserInfo } from '../../store/reducers/lobbySlice';
-
-type dataType = {
-  id: number,
-  name: string,
-  staff: string,
-  current: boolean,
-  photo: any,
-};
+import {
+  fetchGameSettings,
+  fetchIssues,
+  IScore,
+  IUserInfo,
+} from '../../store/reducers/lobbySlice';
 
 const GamePage: React.FC = (): JSX.Element => {
-  const { users, gameSettings, issues } = useTypedSelector((state) => state.lobbySlice);
-  const { socketId, userRole } = useTypedSelector((state) => state.userSlice);
-  const { curIssue, gameIssues, roundOn } = useTypedSelector((state) => state.gameSlice);
+  const { users, gameSettings, issues, players } = useTypedSelector(
+    (state) => state.lobbySlice,
+  );
+  const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
+  const { roundOn } = useTypedSelector((state) => state.gameSlice);
+  const { curIssue } = useTypedSelector((state) => state.lobbySlice);
   const dispatch = useDispatch();
+  const [curScoreIndex, setCurScoreIndex] = useState<number>();
 
   const { cardValues, shortScoreType } = gameSettings;
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
-  const [players, setPlayers] = useState<IUserInfo[]>();
 
+  // const dispatchChaining = async () => {
+  //   await Promise.all([
+  //     dispatch(fetchGameSettings({ roomId })),
+  //     dispatch(fetchIssues({ roomId })),
+  //   ]);
+  // };
+
+  // useEffect(() => {
+  //   dispatchChaining();
+  // }, []);
+
+  // below is obsolite!!!!!!!!!
   // useEffect(() => {
   //   let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
   //   if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
-  //   const arr = issues.map((issue) => {
-  //     const item = {
-  //       issueId: issue.issueTitle,
-  //       scores: playersArr.map((user) => ({ socketId: user.socketId, score: null })),
-  //     };
-  //     return item;
-  //   });
-  //   dispatch(setGameIssues(arr));
-  // }, []);
+  //   setPlayers(playersArr);
+  // }, [users, gameSettings]);
 
   useEffect(() => {
-    if (!gameIssues.length) {
-      let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
-      if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
+    if (!players.length && players) {
+      // let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
+      // if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
       const arr = issues.map((issue) => {
         const item = {
           issueId: issue.issueTitle,
-          scores: playersArr.map((user) => ({ socketId: user.socketId, score: null })),
+          scores: players.map((user) => ({ socketId: user.socketId, score: null })),
         };
         return item;
       });
       dispatch(setGameIssues(arr));
     }
-  }, [issues]);
+  }, [issues, players]);
+
+  // useEffect(() => {
+  //   players &&
+  //     players.map((user) => {
+  //       if (curIssue) {
+  //         const check =
+  //           curIssue.scores.find((score) => score.socketId === user.socketId);
+  //         if (!check) {
+
+  //         }
+  //       }
+  //     });
+  // }, [players]);
 
   useEffect(() => {
-    let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
-    if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
-    setPlayers(playersArr);
-  }, [users]);
+    // if (!curIssue && players.length) dispatch(setCurIssue(issues[0]));
 
-  useEffect(() => {
-    if (!curIssue && gameIssues.length) dispatch(setCurIssue(gameIssues[0]));
-  }, [gameIssues]);
+    const index =
+      players.length && issues.length && curIssue
+        ? players[0].scores.findIndex((score) => score.issueTitle === curIssue.issueTitle)
+        : null;
+    console.log(`---------------index ------------${index}---------------`);
+    if (index !== -1 && index !== null) setCurScoreIndex(index);
+  }, [curIssue]);
 
   return (
     <div className={style.gamePageWrapper}>
@@ -109,7 +128,7 @@ const GamePage: React.FC = (): JSX.Element => {
               issues.map((issue) => (
                 <IssueTab
                   status={issue.issueTitle}
-                  isCurrent={!!(curIssue && curIssue.issueId === issue.issueTitle)}
+                  isCurrent={!!(curIssue && curIssue.issueTitle === issue.issueTitle)}
                   priority={issue.priority}
                   key={issue.issueTitle}
                 />
@@ -128,29 +147,44 @@ const GamePage: React.FC = (): JSX.Element => {
         <div className={style.statisticsWrapper}>
           <div className={style.issuesText}>Statistics:</div>
         </div>
-        <div className={style.cardWrapper}>
-          <CardCoffee />
-          {cardValues.map((item) => {
-            return <Card key={item} cardPoints={item} shortScoreType={shortScoreType} />;
-          })}
-        </div>
+        {(userRole === UserRoles.USER_PLAYER ||
+          (userRole === UserRoles.USER_ADMIN && gameSettings.scramMaster)) && (
+          <div className={style.cardWrapper}>
+            <CardCoffee />
+            {cardValues.map((item) => {
+              return (
+                <Card
+                  key={item}
+                  cardPoints={item}
+                  shortScoreType={shortScoreType}
+                  gameOn
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
       <div className={style.gameWrapperRight}>
         <div className={style.scoreColumn}>
           <span className={style.headerText}>Score:</span>
-          {curIssue &&
-            curIssue.scores.map((score) =>
+          {players.length &&
+            curScoreIndex !== undefined &&
+            players.map((player) =>
               roundOn ? (
                 <ScoreTab
-                  status={score === null ? 'In Progress' : 'Ready'}
-                  key={`${score.socketId}`}
+                  status={
+                    player.scores[curScoreIndex].score === null ? 'In Progress' : 'Ready'
+                  }
+                  key={`${player.socketId}`}
                 />
               ) : (
                 <ScoreTab
                   status={
-                    score.score === null ? 'waiting to vote' : `${score.score} points`
+                    player.scores[curScoreIndex].score === null
+                      ? 'waiting to vote'
+                      : `${player.scores[curScoreIndex].score} points`
                   }
-                  key={`${score.socketId}`}
+                  key={`${player.socketId}`}
                 />
               ),
             )}

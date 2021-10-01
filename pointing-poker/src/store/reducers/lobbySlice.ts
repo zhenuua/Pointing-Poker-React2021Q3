@@ -56,6 +56,25 @@ export interface IBanCandidates {
   voters: string[];
 }
 
+// export interface IScore {
+//   socketId: string;
+//   score: number | null;
+// }
+
+export interface IScore {
+  issueTitle: string;
+  score: number | null;
+}
+
+// export interface IGameIssue {
+//   issueId: string;
+//   scores: IScore[];
+// }
+
+export interface IGamePlayer extends IUserInfo {
+  scores: IScore[];
+}
+
 interface IInitState {
   lobbyTitle: string;
   chatMessages: IChatMessage[];
@@ -64,6 +83,10 @@ interface IInitState {
   issues: IIssueDetail[];
   gameSettings: IGameSettings;
   banCandidates: IBanCandidates[];
+  players: IGamePlayer[];
+  curIssue: IIssueDetail | null;
+  // curIssue: IGameIssue | null;
+  // gameIssues: IGameIssue[];
 }
 
 const initialGameSettings: IGameSettings = {
@@ -84,6 +107,9 @@ const initialState: IInitState = {
   issues: [],
   gameSettings: initialGameSettings,
   banCandidates: [],
+  players: [],
+  curIssue: null,
+  // gameIssues: [],
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -211,7 +237,7 @@ export const fetchGameSettings = createAsyncThunk(
       const response = await axios({
         method: 'get',
         url: `http://localhost:5000/lobby/game-settings/${roomId}`,
-        timeout: 2000,
+        timeout: 5000,
       });
       return response.data;
     } catch (err) {
@@ -229,7 +255,7 @@ export const fetchIssues = createAsyncThunk(
       const response = await axios({
         method: 'get',
         url: `http://localhost:5000/lobby/issues/${roomId}`,
-        timeout: 2000,
+        timeout: 5000,
       });
       return response.data.issues;
     } catch (err) {
@@ -239,6 +265,35 @@ export const fetchIssues = createAsyncThunk(
     }
   },
 );
+
+const checkScrumMaster = (state: IInitState, scrumMaster: any) => {
+  if (scrumMaster) {
+    const adminIndex = state.players.findIndex(
+      (user) => user.userRole === UserRoles.USER_ADMIN,
+    );
+    if (adminIndex === -1) {
+      const arr = state.issues.map((issue) => ({
+        issueTitle: issue.issueTitle,
+        score: null,
+      }));
+      state.players = [{ ...state.users[0], scores: arr }, ...state.players];
+      // state.gameIssues.forEach((issue) => {
+      //   const adminScore = { socketId: state.users[0].socketId, score: null };
+      //   issue.scores.unshift(adminScore);
+      // });
+    }
+  } else {
+    const adminIndex = state.players.findIndex(
+      (user) => user.userRole === UserRoles.USER_ADMIN,
+    );
+    if (adminIndex !== -1) {
+      state.players.splice(adminIndex, 1);
+      // state.gameIssues.forEach((issue) => {
+      //   issue.scores.shift();
+      // });
+    }
+  }
+};
 
 const lobbySlice = createSlice({
   name: 'lobby',
@@ -272,22 +327,78 @@ const lobbySlice = createSlice({
       state.users = action.payload;
     },
     addIssue(state, action) {
+      if (!state.issues.length) {
+        state.curIssue = action.payload;
+      }
       state.issues.push(action.payload);
+      state.players.forEach((user) => {
+        const newScore = {
+          issueTitle: action.payload.issueTitle,
+          score: null,
+        };
+        user.scores.push(newScore);
+      });
+      // const gameIssue = {
+      //   issueId: action.payload.issueTitle,
+      //   scores: state.players.map((user) => ({
+      //     socketId: user.socketId,
+      //     score: null,
+      //   })),
+      // };
+      // state.gameIssues.push(gameIssue);
+      // state.gameIssues
     },
     removeIssue(state, action) {
+      // if (state.issues.length === 1) state.curIssue = null;
       const index = state.issues.findIndex(
         (issue) => issue.issueTitle === action.payload,
       );
-      if (index !== -1) state.issues.splice(index, 1);
+      if (index !== -1) {
+        state.issues.splice(index, 1);
+        const matchIndex = state.issues.findIndex(
+          (issue) => issue.issueTitle === state.curIssue?.issueTitle,
+        );
+        if (matchIndex === -1) [state.curIssue] = state.issues;
+        if (!state.issues.length) state.curIssue = null;
+        state.players.forEach((user) => {
+          user.scores.splice(index, 1);
+        });
+      }
     },
     setGameSettings(state, action) {
       state.gameSettings = action.payload;
+      checkScrumMaster(state, action.payload.scramMaster);
+      // if (action.payload.scramMaster) {
+      //   const adminIndex = state.players.findIndex(
+      //     (user) => user.userRole === UserRoles.USER_ADMIN,
+      //   );
+      //   if (adminIndex === -1) state.players = [state.users[0], ...state.players];
+      // } else {
+      //   const adminIndex = state.players.findIndex(
+      //     (user) => user.userRole === UserRoles.USER_ADMIN,
+      //   );
+      //   if (adminIndex !== -1) state.players.splice(adminIndex, 1);
+      // }
     },
     editIssue(state, action) {
       const index = state.issues.findIndex(
         (issue) => issue.issueTitle === action.payload.issueId,
       );
-      if (index !== -1) state.issues.splice(index, 1, action.payload);
+      if (index !== -1) {
+        console.log(index);
+        state.issues.splice(index, 1, action.payload);
+        if (state.players.length) {
+          state.players.forEach((user) => {
+            const newScore = {
+              issueTitle: action.payload.issueId,
+              score: null,
+            };
+            console.log(newScore);
+            user.scores.splice(index, 1, newScore);
+            // donesnt work dont know why!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          });
+        }
+      }
     },
     setScoreType(state, action) {
       state.gameSettings.scoreType = action.payload;
@@ -319,6 +430,18 @@ const lobbySlice = createSlice({
     },
     setScramMaster(state, action) {
       state.gameSettings.scramMaster = action.payload;
+      checkScrumMaster(state, action.payload);
+      // if (action.payload) {
+      //   const adminIndex = state.players.findIndex(
+      //     (user) => user.userRole === UserRoles.USER_ADMIN,
+      //   );
+      //   if (adminIndex === -1) state.players = [state.users[0], ...state.players];
+      // } else {
+      //   const adminIndex = state.players.findIndex(
+      //     (user) => user.userRole === UserRoles.USER_ADMIN,
+      //   );
+      //   if (adminIndex !== -1) state.players.splice(adminIndex, 1);
+      // }
     },
     setRoundTime(state, action) {
       state.gameSettings.roundTime = action.payload;
@@ -336,12 +459,9 @@ const lobbySlice = createSlice({
         );
         if (innerIndex === -1) state.banCandidates[index].voters.push(voterId);
       }
-      // console.log(state.banCandidates);
-      // if (!candidate)
-      //   state.banCandidates.push({
-      //     id: socketId,
-      //     voteCount: 1,
-      //   }) else {}
+    },
+    setCurIssue(state, action) {
+      state.curIssue = action.payload;
     },
     resetLobby(state, { payload }) {
       const {
@@ -365,14 +485,44 @@ const lobbySlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.fulfilled, (state, { payload }) => {
       const { admin, players, spectators } = payload;
-      // console.log(payload);
       const fetchedUsers = [admin, ...players, ...spectators];
       state.users = fetchedUsers;
+      const scores = state.issues.map((issue) => ({
+        issueTitle: issue.issueTitle,
+        // !!!!!!!!!!below coub be a bug cause it forces nulls!!!!!!!!!!!!!!!!
+        score: null,
+      }));
+      state.players = state.gameSettings.scramMaster
+        ? [
+            { ...admin, scores },
+            ...players.map((user: IUserInfo) => ({
+              ...user,
+              scores,
+            })),
+          ]
+        : players.map((user: IUserInfo) => ({
+            ...user,
+            scores,
+          }));
     });
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
-      // console.log('new user info');
-      // console.log(payload);
+      const { userRole } = payload;
       state.users.push(payload);
+      if (userRole === UserRoles.USER_PLAYER) {
+        const scores = state.issues.map((issue) => ({
+          issueTitle: issue.issueTitle,
+          // !!!!!!!!!!below coub be a bug cause it forces nulls!!!!!!!!!!!!!!!!
+          score: null,
+        }));
+        state.players.push({ ...payload, scores });
+        // state.gameIssues.forEach((issue) => {
+        //   const newScore = { socketId: payload.socketId, score: null };
+        //   issue.scores.push(newScore);
+        // });
+      }
+      // may be not enough logic to handle admin joining????
+      // if (userRole === UserRoles.USER_ADMIN && state.gameSettings.scramMaster || userRole === UserRoles.USER_PLAYER)
+      // state.gameIssues = newGameIssues;
     });
     builder.addCase(deleteUser.fulfilled, (state, { payload }) => {
       console.log('delete user info');
@@ -380,27 +530,12 @@ const lobbySlice = createSlice({
       const { userId } = payload;
       const index = state.users.findIndex((user) => user.socketId === userId);
       if (index !== -1) state.users.splice(index, 1);
-      // state.users.push(payload);
+      const indexPlayer = state.players.findIndex((user) => user.socketId === userId);
+      if (indexPlayer !== -1) state.players.splice(indexPlayer, 1);
     });
     builder.addCase(cancelGame.fulfilled, (state, { payload }) => {
       const { msg } = payload;
       console.log(msg);
-      // const {
-      //   lobbyTitle,
-      //   chatMessages,
-      //   pendingUsers,
-      //   users,
-      //   issues,
-      //   gameSettings,
-      //   banCandidates,
-      // } = initialState;
-      // state.lobbyTitle = lobbyTitle;
-      // state.chatMessages = chatMessages;
-      // state.pendingUsers = pendingUsers;
-      // state.users = users;
-      // state.issues = issues;
-      // state.gameSettings = gameSettings;
-      // state.banCandidates = banCandidates;
     });
     builder.addCase(postSettingsIssues.fulfilled, (state, { payload }) => {
       console.log(payload);
@@ -408,10 +543,21 @@ const lobbySlice = createSlice({
     builder.addCase(fetchGameSettings.fulfilled, (state, { payload }) => {
       console.log(payload);
       state.gameSettings = payload;
+      checkScrumMaster(state, payload.scrumMaster);
     });
     builder.addCase(fetchIssues.fulfilled, (state, { payload }) => {
       console.log(payload);
       state.issues = payload;
+      state.players.length &&
+        state.players.forEach((user) => {
+          payload.map((issue: any) => {
+            const newScore = {
+              issueTitle: issue.issueTitle,
+              score: null,
+            };
+            user.scores.push(newScore);
+          });
+        });
     });
   },
 });
@@ -437,6 +583,7 @@ export const {
   setRoundTime,
   addBanVote,
   resetLobby,
+  setCurIssue,
 } = lobbySlice.actions;
 
 export default lobbySlice.reducer;

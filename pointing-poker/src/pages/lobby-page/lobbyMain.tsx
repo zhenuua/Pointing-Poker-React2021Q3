@@ -58,6 +58,12 @@ const LobbyMain: React.FC = (): JSX.Element => {
   const copyLink = () => {
     navigator.clipboard.writeText(`http://localhost:3000/${roomId}`);
   };
+  const dispatchChaining = async () => {
+    await Promise.all([
+      dispatch(fetchGameSettings({ roomId })),
+      dispatch(fetchIssues({ roomId })),
+    ]);
+  };
 
   useEffect(() => {
     socket.on(EVENTS.SERVER.GAME_CANCLED, ({ gameCanceled }) => {
@@ -66,8 +72,9 @@ const LobbyMain: React.FC = (): JSX.Element => {
     });
     socket.on(EVENTS.SERVER.FETCH_GAME_DATA, (msg) => {
       console.log(msg);
-      dispatch(fetchGameSettings({ roomId }));
-      dispatch(fetchIssues({ roomId }));
+      // dispatch(fetchGameSettings({ roomId }));
+      // dispatch(fetchIssues({ roomId }));
+      dispatchChaining();
       history.push(`/game-page/${roomId}`);
     });
   }, []);
