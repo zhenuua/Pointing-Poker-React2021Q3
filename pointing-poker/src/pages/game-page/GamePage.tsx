@@ -53,11 +53,11 @@ const GamePage: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     const index =
-      players.length &&
-      curScoreIndex &&
-      players.findIndex((player) => player.scores[curScoreIndex].score !== null);
-    index !== -1 ? setRestartRound(true) : setRestartRound(false);
-  }, [curScoreIndex]);
+      players.length && curScoreIndex !== undefined
+        ? players.findIndex((player) => player.scores[curScoreIndex].score !== null)
+        : null;
+    index !== -1 && index !== null ? setRestartRound(true) : setRestartRound(false);
+  }, [curScoreIndex, players]);
 
   // const dispatchChaining = async () => {
   //   await Promise.all([
