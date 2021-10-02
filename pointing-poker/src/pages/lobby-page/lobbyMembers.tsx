@@ -84,7 +84,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
     if (index === -1) {
       socket.emit(EVENTS.CLIENT.BANNED_USER_LEAVE, { roomId });
       alert('you have been banned from lobby, mua-ha-ha');
-      history.goBack();
+      history.push('/');
     }
   }, [users]);
 

@@ -196,15 +196,12 @@ interface IPostSettingsIssues {
   roomId: string;
   gameSettings: IGameSettings;
   issues: IIssueDetail[];
-  emitEvent: () => void;
+  // emitEvent: () => void;
 }
 
 export const postSettingsIssues = createAsyncThunk(
   'lobby/settingsIssues',
-  async (
-    { roomId, gameSettings, issues, emitEvent }: IPostSettingsIssues,
-    { rejectWithValue },
-  ) => {
+  async ({ roomId, gameSettings, issues }: IPostSettingsIssues, { rejectWithValue }) => {
     try {
       const responseSettings = await axios({
         method: 'post',
@@ -218,7 +215,7 @@ export const postSettingsIssues = createAsyncThunk(
         timeout: 2000,
         data: { roomId, issues },
       });
-      emitEvent();
+      // emitEvent();
       return {
         msg: `${responseSettings.data}  ${responseIssues.data}`,
       };
@@ -229,6 +226,37 @@ export const postSettingsIssues = createAsyncThunk(
     }
   },
 );
+
+// export const postSettingsIssues = createAsyncThunk(
+//   'lobby/settingsIssues',
+//   async (
+//     { roomId, gameSettings, issues, emitEvent }: IPostSettingsIssues,
+//     { rejectWithValue },
+//   ) => {
+//     try {
+//       const responseSettings = await axios({
+//         method: 'post',
+//         url: `http://localhost:5000/lobby/game-settings`,
+//         timeout: 2000,
+//         data: { roomId, gameSettings },
+//       });
+//       const responseIssues = await axios({
+//         method: 'post',
+//         url: `http://localhost:5000/lobby/issues`,
+//         timeout: 2000,
+//         data: { roomId, issues },
+//       });
+//       emitEvent();
+//       return {
+//         msg: `${responseSettings.data}  ${responseIssues.data}`,
+//       };
+//     } catch (err) {
+//       console.log(err);
+//       alert('unable to add setting or issues');
+//       return rejectWithValue('unable to add setting or issues');
+//     }
+//   },
+// );
 
 export const fetchGameSettings = createAsyncThunk(
   'lobby/fetchGameSettings',
@@ -321,7 +349,14 @@ const lobbySlice = createSlice({
       const index = state.users.findIndex(
         (user) => user.socketId === action.payload.socketId,
       );
-      if (index !== -1) state.users.splice(index, 1);
+      if (index !== -1) {
+        const indexPlayer = state.players.findIndex(
+          (player) => player.socketId === action.payload.socketId,
+        );
+        if (indexPlayer !== -1) state.players.splice(indexPlayer, 1);
+
+        state.users.splice(index, 1);
+      }
     },
     setUsers(state, action) {
       state.users = action.payload;
