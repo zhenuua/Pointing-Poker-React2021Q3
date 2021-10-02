@@ -16,6 +16,15 @@ import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { setGameIssues } from '../../store/reducers/gameSlice';
 import { setChatIconVisible } from '../../store/reducers/controlSlice';
+import {
+  fetchGameSettings,
+  fetchIssues,
+  IScore,
+  IUserInfo,
+  setCurIssue,
+} from '../../store/reducers/lobbySlice';
+import { useSocketsContext } from '../../context/socket.context';
+import { EVENTS } from '../../store/types/sockeIOEvents';
 
 import style from './Game-page.module.scss';
 
@@ -23,14 +32,25 @@ const GamePage: React.FC = (): JSX.Element => {
   const { users, gameSettings, issues, players } = useTypedSelector(
     (state) => state.lobbySlice,
   );
-  const { socketId, userRole } = useTypedSelector((state) => state.userSlice);
-  const [curScoreIndex, setCurScoreIndex] = useState<number>();
+  const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
   const { roundOn } = useTypedSelector((state) => state.gameSlice);
   const { curIssue } = useTypedSelector((state) => state.lobbySlice);
   const dispatch = useDispatch();
+  const { socket } = useSocketsContext();
+
+  const [curScoreIndex, setCurScoreIndex] = useState<number>();
+  const [restartRound, setRestartRound] = useState<boolean>(false);
 
   const { cardValues, shortScoreType } = gameSettings;
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
+
+  useEffect(() => {
+    const index =
+      players.length && curScoreIndex !== undefined
+        ? players.findIndex((player) => player.scores[curScoreIndex].score !== null)
+        : null;
+    index !== -1 && index !== null ? setRestartRound(true) : setRestartRound(false);
+  }, [curScoreIndex, players]);
 
   // const dispatchChaining = async () => {
   //   await Promise.all([
@@ -43,52 +63,31 @@ const GamePage: React.FC = (): JSX.Element => {
   //   dispatchChaining();
   // }, []);
 
-  // below is obsolite!!!!!!!!!
-  // useEffect(() => {
-  //   let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
-  //   if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
-  //   setPlayers(playersArr);
-  // }, [users, gameSettings]);
-
   useEffect(() => {
-    if (!players.length && players) {
-      // let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
-      // if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
-      const arr = issues.map((issue) => {
-        const item = {
-          issueId: issue.issueTitle,
-          scores: players.map((user) => ({ socketId: user.socketId, score: null })),
-        };
-        return item;
-      });
-      dispatch(setGameIssues(arr));
-    }
-  }, [issues, players]);
-
-  // useEffect(() => {
-  //   players &&
-  //     players.map((user) => {
-  //       if (curIssue) {
-  //         const check =
-  //           curIssue.scores.find((score) => score.socketId === user.socketId);
-  //         if (!check) {
-
-  //         }
-  //       }
-  //     });
-  // }, [players]);
-
-  useEffect(() => {
-    // if (!curIssue && players.length) dispatch(setCurIssue(issues[0]));
     dispatch(setChatIconVisible(true));
     const index =
       players.length && issues.length && curIssue
         ? players[0].scores.findIndex((score) => score.issueTitle === curIssue.issueTitle)
         : null;
-    console.log(`${curScoreIndex} curScoreIndex`);
-    console.log(`---------------index ------------${index}---------------`);
     if (index !== -1 && index !== null) setCurScoreIndex(index);
-  }, [curIssue]);
+  }, [curIssue, issues]);
+
+  const handleIssueClick = async (issueTitle: string) => {
+    if (roundOn) {
+      alert('switching curIssue is not allowed during active round');
+      return;
+    }
+    const newCurIssue = issues.find((issue) => issue.issueTitle === issueTitle);
+    if (newCurIssue) {
+      dispatch(setCurIssue(newCurIssue.issueTitle));
+      socket.emit(EVENTS.CLIENT.NEW_CURISSUE, {
+        issueTitle: newCurIssue.issueTitle,
+        roomId,
+      });
+    } else {
+      alert('no match for curIssue found in issues ');
+    }
+  };
 
   return (
     <div className={style.gamePageWrapper}>
@@ -119,6 +118,9 @@ const GamePage: React.FC = (): JSX.Element => {
                   isCurrent={!!(curIssue && curIssue.issueTitle === issue.issueTitle)}
                   priority={issue.priority}
                   key={issue.issueTitle}
+                  handleIssueClick={
+                    userRole === UserRoles.USER_ADMIN ? handleIssueClick : undefined
+                  }
                 />
               ))}
             {/* <IssueTab status="Issue 13" isCurrent priority="Low Priority" />
@@ -129,7 +131,12 @@ const GamePage: React.FC = (): JSX.Element => {
           </div>
           <div className={style.runRoundWrapper}>
             <TimerComponent isEditMode={false} isStartTimer={false} />
-            <ButtonMini text="Run Round" />
+            {userRole === UserRoles.USER_ADMIN && !roundOn && (
+              <ButtonMini text={restartRound ? 'Restart' : 'Run Round'} />
+            )}
+            {userRole === UserRoles.USER_ADMIN && !roundOn && restartRound && (
+              <ButtonMini text="Next Issue" />
+            )}
           </div>
         </div>
         <div className={style.statisticsWrapper}>
@@ -209,3 +216,38 @@ const GamePage: React.FC = (): JSX.Element => {
 };
 
 export default GamePage;
+
+// below is obsolite!!!!!!!!!
+// useEffect(() => {
+//   let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
+//   if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
+//   setPlayers(playersArr);
+// }, [users, gameSettings]);
+
+// useEffect(() => {
+//   if (!players.length && players) {
+//     // let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
+//     // if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
+//     const arr = issues.map((issue) => {
+//       const item = {
+//         issueId: issue.issueTitle,
+//         scores: players.map((user) => ({ socketId: user.socketId, score: null })),
+//       };
+//       return item;
+//     });
+//     dispatch(setGameIssues(arr));
+//   }
+// }, [issues, players]);
+
+// useEffect(() => {
+//   players &&
+//     players.map((user) => {
+//       if (curIssue) {
+//         const check =
+//           curIssue.scores.find((score) => score.socketId === user.socketId);
+//         if (!check) {
+
+//         }
+//       }
+//     });
+// }, [players]);
