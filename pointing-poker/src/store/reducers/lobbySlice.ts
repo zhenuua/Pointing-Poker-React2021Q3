@@ -266,8 +266,8 @@ export const fetchIssues = createAsyncThunk(
   },
 );
 
-const checkScrumMaster = (state: IInitState, scrumMaster: any) => {
-  if (scrumMaster) {
+const checkScramMaster = (state: IInitState, scramMaster: any) => {
+  if (scramMaster) {
     const adminIndex = state.players.findIndex(
       (user) => user.userRole === UserRoles.USER_ADMIN,
     );
@@ -367,7 +367,7 @@ const lobbySlice = createSlice({
     },
     setGameSettings(state, action) {
       state.gameSettings = action.payload;
-      checkScrumMaster(state, action.payload.scramMaster);
+      checkScramMaster(state, action.payload.scramMaster);
       // if (action.payload.scramMaster) {
       //   const adminIndex = state.players.findIndex(
       //     (user) => user.userRole === UserRoles.USER_ADMIN,
@@ -430,7 +430,7 @@ const lobbySlice = createSlice({
     },
     setScramMaster(state, action) {
       state.gameSettings.scramMaster = action.payload;
-      checkScrumMaster(state, action.payload);
+      checkScramMaster(state, action.payload);
       // if (action.payload) {
       //   const adminIndex = state.players.findIndex(
       //     (user) => user.userRole === UserRoles.USER_ADMIN,
@@ -461,7 +461,12 @@ const lobbySlice = createSlice({
       }
     },
     setCurIssue(state, action) {
-      state.curIssue = action.payload;
+      const newCurIssue = state.issues.find(
+        (issue) => issue.issueTitle === action.payload,
+      );
+      if (newCurIssue) {
+        state.curIssue = newCurIssue;
+      } else alert('cannot set new current Issue, no match');
     },
     resetLobby(state, { payload }) {
       const {
@@ -543,10 +548,10 @@ const lobbySlice = createSlice({
     builder.addCase(fetchGameSettings.fulfilled, (state, { payload }) => {
       console.log(payload);
       state.gameSettings = payload;
-      checkScrumMaster(state, payload.scrumMaster);
+      checkScramMaster(state, payload.scramMaster);
     });
     builder.addCase(fetchIssues.fulfilled, (state, { payload }) => {
-      console.log(payload);
+      // console.log(payload);
       state.issues = payload;
       state.players.length &&
         state.players.forEach((user) => {
@@ -558,6 +563,7 @@ const lobbySlice = createSlice({
             user.scores.push(newScore);
           });
         });
+      state.curIssue = payload.length ? payload[0] : null;
     });
   },
 });

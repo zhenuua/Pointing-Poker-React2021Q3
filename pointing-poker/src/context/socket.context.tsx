@@ -1,6 +1,9 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import io, { Socket } from 'socket.io-client';
 import { useActions } from '../hooks/useActions';
+import { useTypedSelector } from '../hooks/useTypedSelector';
+import { setCurIssue } from '../store/reducers/lobbySlice';
 import { EVENTS } from '../store/types/sockeIOEvents';
 
 interface Context {
@@ -24,7 +27,10 @@ const SocketsContext = createContext<Context>({
 });
 
 const SocketsProvider = ({ children }: { children: ReactNode }) => {
+  const { issues } = useTypedSelector((state) => state.lobbySlice);
+
   const { setSocketId } = useActions();
+  const dispatch = useDispatch();
   socket.on(EVENTS.connect, () => {
     console.log(`you have connected to Socket.IO server`);
     setSocketId(socket.id);
@@ -32,9 +38,12 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
     // socket.emit(EVENTS.CLIENT.ACCESS_REQ, { roomId, userRole });
   });
 
-  socket.on('sending', (msg) => {
-    console.log(msg);
-  });
+  useEffect(() => {
+    // ------------- GAME PAGE --------------
+    socket.on(EVENTS.SERVER.SET_CURISSUE, ({ issueTitle }) => {
+      dispatch(setCurIssue(issueTitle));
+    });
+  }, []);
 
   return (
     <SocketsContext.Provider

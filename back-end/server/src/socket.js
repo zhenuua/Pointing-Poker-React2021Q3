@@ -17,6 +17,7 @@ export const EVENTS = {
     CANCEL_GAME: "CANCEL_GAME",
     USER_LEAVE: 'USER_LEAVE',
     GAME_STARTING: 'GAME_STARTING',
+    NEW_CURISSUE: 'NEW_CURISSUE',
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -28,6 +29,7 @@ export const EVENTS = {
     USER_BAN_VOTE: "USER_BAN_VOTE",
     GAME_CANCLED: "GAME_CANCLED",
     FETCH_GAME_DATA: "FETCH_GAME_DATA",
+    SET_CURISSUE: "SET_CURISSUE",
   },
 };
 
@@ -163,8 +165,12 @@ const socketInit = ({ io }) => {
     });
 
     socket.on(EVENTS.CLIENT.GAME_STARTING, ({ roomId }) => {
-      socket.to(roomId).emit(EVENTS.SERVER.FETCH_GAME_DATA, 'fetch data from server NOW!!!!!!!');
+      socket.to(roomId).emit(EVENTS.SERVER.FETCH_GAME_DATA, 'admin started the game; fetching gamesettings and issues...');
     });
+
+    socket.on(EVENTS.CLIENT.NEW_CURISSUE, ({ roomId, issueTitle }) => {
+      socket.to(roomId).emit(EVENTS.SERVER.SET_CURISSUE, { issueTitle });
+    })
 
     socket.on(EVENTS.disconnect, () => {
       console.log(`----User DISCONNECTED mainSpace with id: ${socket.id} ----`);

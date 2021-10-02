@@ -15,6 +15,7 @@ export type IssueTabType = {
   status: string,
   isCurrent: boolean,
   priority: string,
+  handleIssueClick?: (issueTitle: string) => void,
 };
 
 export type LobbyTitleType = {
