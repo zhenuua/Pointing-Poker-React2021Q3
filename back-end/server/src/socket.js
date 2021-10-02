@@ -13,11 +13,11 @@ export const EVENTS = {
     FORCE_DEL_USER: "FORCE_DEL_USER",
     INIT_DEL_USER: "INIT_DEL_USER",
     BAN_VOTE_SUPPORTED: "BAN_VOTE_SUPPORTED",
-    BANNED_USER_LEAVE: 'BANNED_USER_LEAVE',
+    BANNED_USER_LEAVE: "BANNED_USER_LEAVE",
     CANCEL_GAME: "CANCEL_GAME",
-    USER_LEAVE: 'USER_LEAVE',
-    GAME_STARTING: 'GAME_STARTING',
-    NEW_CURISSUE: 'NEW_CURISSUE',
+    USER_LEAVE: "USER_LEAVE",
+    GAME_STARTING: "GAME_STARTING",
+    NEW_CURISSUE: "NEW_CURISSUE",
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -75,6 +75,29 @@ const socketInit = ({ io }) => {
 
   io.on(EVENTS.connection, (socket) => {
     console.log(`----User connected to mainSpace with id: ${socket.id}----`);
+
+    // ------------------RoundOn-----------------------
+
+    socket.on("START_ROUND_CLIENT", ({ roomId, roundOn }) => {
+      console.log(roomId, roundOn);
+      socket.to(roomId).emit("START_ROUND_SERVER", {
+        roundOn,
+      });
+    });
+
+    socket.on(
+      "SCORE_CURRENT_USER_VALUE_CLIENT",
+      ({ card, socketId, curScoreIndex, roomId }) => {
+        console.log(card, socketId, curScoreIndex);
+        socket.to(roomId).emit("SCORE_CURRENT_USER_VALUE_SERVER", {
+          card,
+          socketId,
+          curScoreIndex,
+        });
+      }
+    );
+
+    // ------------------------------------------------
 
     socket.on(EVENTS.CLIENT.JOIN_LOBBY, ({ userRole, roomId }, callback) => {
       socket.join(roomId);
@@ -142,35 +165,45 @@ const socketInit = ({ io }) => {
     // further search needed for event below
     socket.on(EVENTS.CLIENT.CANCEL_GAME, ({ roomId }) => {
       console.log(`game ${roomId} canceled by admin: ${socket.id}`);
-      socket.to(roomId).emit(EVENTS.SERVER.GAME_CANCLED, { gameCanceled: true });
+      socket
+        .to(roomId)
+        .emit(EVENTS.SERVER.GAME_CANCLED, { gameCanceled: true });
       socket.leave(roomId);
       // socket.removeAllListeners();
     });
 
-    socket.on(EVENTS.CLIENT.USER_LEAVE, ({ roomId, gameCanceled, userRole }) => {
-      if (gameCanceled) {
+    socket.on(
+      EVENTS.CLIENT.USER_LEAVE,
+      ({ roomId, gameCanceled, userRole }) => {
+        if (gameCanceled) {
+          socket.leave(roomId);
+          // socket.removeAllListeners();
+          return;
+        }
+
+        socket.to(roomId).emit(EVENTS.SERVER.USER_DELETED, {
+          msg: `user with id: ${socket.id} has left your room: ${roomId}`,
+          socketId: socket.id,
+          userRole,
+        });
         socket.leave(roomId);
+
         // socket.removeAllListeners();
-        return;
       }
-
-      socket.to(roomId).emit(EVENTS.SERVER.USER_DELETED, {
-        msg: `user with id: ${socket.id} has left your room: ${roomId}`,
-        socketId: socket.id,
-        userRole,
-      });
-      socket.leave(roomId);
-
-      // socket.removeAllListeners();
-    });
+    );
 
     socket.on(EVENTS.CLIENT.GAME_STARTING, ({ roomId }) => {
-      socket.to(roomId).emit(EVENTS.SERVER.FETCH_GAME_DATA, 'admin started the game; fetching gamesettings and issues...');
+      socket
+        .to(roomId)
+        .emit(
+          EVENTS.SERVER.FETCH_GAME_DATA,
+          "admin started the game; fetching gamesettings and issues..."
+        );
     });
 
     socket.on(EVENTS.CLIENT.NEW_CURISSUE, ({ roomId, issueTitle }) => {
       socket.to(roomId).emit(EVENTS.SERVER.SET_CURISSUE, { issueTitle });
-    })
+    });
 
     socket.on(EVENTS.disconnect, () => {
       console.log(`----User DISCONNECTED mainSpace with id: ${socket.id} ----`);

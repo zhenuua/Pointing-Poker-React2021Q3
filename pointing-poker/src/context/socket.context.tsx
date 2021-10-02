@@ -1,10 +1,11 @@
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import io, { Socket } from 'socket.io-client';
 import { useActions } from '../hooks/useActions';
 import { useTypedSelector } from '../hooks/useTypedSelector';
-import { setCurIssue } from '../store/reducers/lobbySlice';
+import { setCurCardValueInScorePlayer, setCurIssue } from '../store/reducers/lobbySlice';
 import { EVENTS } from '../store/types/sockeIOEvents';
+import { setRoundOn } from '../store/reducers/gameSlice';
 
 interface Context {
   socket: Socket;
@@ -12,6 +13,7 @@ interface Context {
   playerSocket: Socket | null;
   chatSocket: Socket | null;
 }
+
 const SERVER_URL = 'http://localhost:5000/';
 
 const socket = io(SERVER_URL, {
@@ -42,6 +44,14 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
     // ------------- GAME PAGE --------------
     socket.on(EVENTS.SERVER.SET_CURISSUE, ({ issueTitle }) => {
       dispatch(setCurIssue(issueTitle));
+    });
+
+    socket.on('START_ROUND_SERVER', ({ roundOn }) => {
+      dispatch(setRoundOn(roundOn));
+    });
+
+    socket.on('SCORE_CURRENT_USER_VALUE_SERVER', ({ card, socketId, curScoreIndex }) => {
+      dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex }));
     });
   }, []);
 

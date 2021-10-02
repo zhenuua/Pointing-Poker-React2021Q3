@@ -12,37 +12,56 @@ import ButtonMini from '../../components/button-blue-mini/ButtonMini';
 import TimerComponent from '../../components/timer/TimerComponent';
 import CardCoffee from '../../components/card-coffee/CardCoffee';
 
+import avatar from '../../assets/images/ImageUser.png';
+
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
-import { setGameIssues } from '../../store/reducers/gameSlice';
 import { setChatIconVisible } from '../../store/reducers/controlSlice';
 import {
   fetchGameSettings,
   fetchIssues,
   IScore,
   IUserInfo,
+  setCurCardValueInScorePlayer,
   setCurIssue,
 } from '../../store/reducers/lobbySlice';
 import { useSocketsContext } from '../../context/socket.context';
 import { EVENTS } from '../../store/types/sockeIOEvents';
 
 import style from './Game-page.module.scss';
+import { setRoundOn } from '../../store/reducers/gameSlice';
 
 const GamePage: React.FC = (): JSX.Element => {
+  const [restartRound, setRestartRound] = useState<boolean>(false);
+  const [curScoreIndex, setCurScoreIndex] = useState<number>();
   const { users, gameSettings, issues, players } = useTypedSelector(
     (state) => state.lobbySlice,
   );
   const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
   const { roundOn } = useTypedSelector((state) => state.gameSlice);
   const { curIssue } = useTypedSelector((state) => state.lobbySlice);
-  const dispatch = useDispatch();
-  const { socket } = useSocketsContext();
 
-  const [curScoreIndex, setCurScoreIndex] = useState<number>();
-  const [restartRound, setRestartRound] = useState<boolean>(false);
+  const { socket } = useSocketsContext();
+  const dispatch = useDispatch();
 
   const { cardValues, shortScoreType } = gameSettings;
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
+
+  const roundStart = () => {
+    dispatch(setRoundOn(true));
+    socket.emit('START_ROUND_CLIENT', { roomId, roundOn: true });
+  };
+
+  const setValueIssue = (card: number | string) => {
+    if (!roundOn) return;
+    dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex }));
+    socket.emit('SCORE_CURRENT_USER_VALUE_CLIENT', {
+      card,
+      socketId,
+      curScoreIndex,
+      roomId,
+    });
+  };
 
   useEffect(() => {
     const index =
@@ -50,6 +69,8 @@ const GamePage: React.FC = (): JSX.Element => {
         ? players.findIndex((player) => player.scores[curScoreIndex].score !== null)
         : null;
     index !== -1 && index !== null ? setRestartRound(true) : setRestartRound(false);
+    console.log(`${index} index`);
+    console.log(`${curScoreIndex} curScoreIndex`);
   }, [curScoreIndex, players]);
 
   // const dispatchChaining = async () => {
@@ -97,7 +118,7 @@ const GamePage: React.FC = (): JSX.Element => {
           <div className={style.scrumMasterWrapper}>
             <span className={style.scrumMasterText}>Scrum Master:</span>
             <PersonalDataTab
-              userImage={admin?.avatarImg}
+              userImage={admin?.avatarImg ? admin?.avatarImg : avatar}
               userName={admin?.username || 'no data'}
               userStaff={admin?.jobPosition || 'no data'}
               isCurrentUser={admin?.socketId === socketId}
@@ -130,9 +151,18 @@ const GamePage: React.FC = (): JSX.Element => {
             <NewIssue /> */}
           </div>
           <div className={style.runRoundWrapper}>
-            <TimerComponent isEditMode={false} isStartTimer={false} />
+            <TimerComponent isEditMode={false} isStartTimer={roundOn} />
             {userRole === UserRoles.USER_ADMIN && !roundOn && (
-              <ButtonMini text={restartRound ? 'Restart' : 'Run Round'} />
+              <ButtonMini
+                text={restartRound ? 'Restart' : 'Run Round'}
+                onClick={() =>
+                  !restartRound
+                    ? roundStart()
+                    : () => {
+                        console.log('Empty');
+                      }
+                }
+              />
             )}
             {userRole === UserRoles.USER_ADMIN && !roundOn && restartRound && (
               <ButtonMini text="Next Issue" />
@@ -153,6 +183,7 @@ const GamePage: React.FC = (): JSX.Element => {
                   cardPoints={item}
                   shortScoreType={shortScoreType}
                   gameOn
+                  setValueIssue={setValueIssue}
                 />
               );
             })}
@@ -195,7 +226,7 @@ const GamePage: React.FC = (): JSX.Element => {
             {players &&
               players.map((user) => (
                 <PersonalDataTabMini
-                  userImage={user.avatarImg}
+                  userImage={user.avatarImg ? user.avatarImg : avatar}
                   userName={user.username}
                   userStaff={user.jobPosition}
                   isCurrentUser={user.socketId === socketId}

@@ -27,7 +27,7 @@ const TimerComponent: React.FC<TimerType> = ({
     } else {
       setTimeout(() => setCurrentRoundTime(currentRoundTime - 1), 1000);
     }
-  }, [roundTime, currentRoundTime, minutes, seconds]);
+  }, [roundTime, currentRoundTime, minutes, seconds, isStartTimer]);
 
   const getMinutesTimer = (secondsMatch: number) => {
     const minutesTimer = Math.floor(secondsMatch / 60);

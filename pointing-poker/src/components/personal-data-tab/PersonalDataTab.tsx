@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 
 import Marquee from 'react-double-marquee';
-import PopUp from '../popup/PopUp';
 
-import RemoveIcon from '../../assets/images/Remove-icon.svg';
+import PopUp from '../popup/PopUp';
 import FormKickPlayer from '../form-kick-player/FormKickPlayer';
 
 import { PersonalDataTabType } from '../../types/types';
 
+import RemoveIcon from '../../assets/images/Remove-icon.svg';
+
 import style from './Personal-data-tab.module.scss';
-import { useTypedSelector } from '../../hooks/useTypedSelector';
-// import { state } from '../../pages/main/main-config';
 
 const PersonalDataTab: React.FC<PersonalDataTabType> = ({
   userImage,
@@ -23,7 +22,7 @@ const PersonalDataTab: React.FC<PersonalDataTabType> = ({
   userRole,
   deleteUser,
 }): JSX.Element => {
-  const [popUpCick, setPopUpCick] = useState<boolean>(false);
+  const [popUpKick, setPopUpKick] = useState<boolean>(false);
 
   return (
     <div className={style.userTab}>
@@ -31,7 +30,7 @@ const PersonalDataTab: React.FC<PersonalDataTabType> = ({
       {isRemove ? (
         <img
           onClick={() => {
-            setPopUpCick(true);
+            setPopUpKick(true);
           }}
           className={style.removeIcon}
           src={RemoveIcon}
@@ -49,17 +48,17 @@ const PersonalDataTab: React.FC<PersonalDataTabType> = ({
       <p className={style.staff}>{userStaff}</p>
       <div className={style.marquee} title={userName}>
         <Marquee direction="left" scrollWhen="overflow">
-          {`${userName} ${lastName}`}
+          {`${userName} ${lastName || ''}`}
         </Marquee>
       </div>
-      <PopUp active={popUpCick} setActive={setPopUpCick}>
+      <PopUp active={popUpKick} setActive={setPopUpKick}>
         <FormKickPlayer
           onSubmitHandler={() => {
-            setPopUpCick(false);
+            setPopUpKick(false);
             if (socketId && userRole && deleteUser) deleteUser(socketId, userRole);
           }}
           onCancelHandler={() => {
-            setPopUpCick(false);
+            setPopUpKick(false);
           }}
           namePlayer={userName}
         />

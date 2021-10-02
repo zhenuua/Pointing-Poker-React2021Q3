@@ -428,6 +428,19 @@ const lobbySlice = createSlice({
     setCardChange(state, action) {
       state.gameSettings.cardChange = action.payload;
     },
+    setCurCardValueInScorePlayer(state, action) {
+      let roundEnd = true;
+      state.players.forEach((player) => {
+        if (player.socketId === action.payload.socketId) {
+          const { issueTitle } = player.scores[action.payload.curScoreIndex];
+          player.scores.splice(action.payload.curIndexIssue, 1, {
+            issueTitle,
+            score: action.payload.card,
+          });
+        }
+        if (player.scores[action.payload.curScoreIndex].score === null) roundEnd = false;
+      });
+    },
     setScramMaster(state, action) {
       state.gameSettings.scramMaster = action.payload;
       checkScramMaster(state, action.payload);
@@ -590,6 +603,7 @@ export const {
   addBanVote,
   resetLobby,
   setCurIssue,
+  setCurCardValueInScorePlayer,
 } = lobbySlice.actions;
 
 export default lobbySlice.reducer;

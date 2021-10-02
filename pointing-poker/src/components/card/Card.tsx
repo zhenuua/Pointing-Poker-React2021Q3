@@ -2,25 +2,32 @@ import React, { useState } from 'react';
 
 import OutsideClickHandler from 'react-outside-click-handler';
 
-import editIcon from '../../assets/images/Edit-icon.svg';
-import { ShortScoreTypes } from '../../store/reducers/lobbySlice';
+import { useDispatch } from 'react-redux';
 
+import editIcon from '../../assets/images/Edit-icon.svg';
+
+import { ShortScoreTypes } from '../../store/reducers/lobbySlice';
 import style from './Card.module.scss';
+import { useSocketsContext } from '../../context/socket.context';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
 
 type CardPoints = {
   cardPoints: number,
   shortScoreType: ShortScoreTypes,
   gameOn?: boolean,
+  setValueIssue?: any,
 };
 
 const Card: React.FC<CardPoints> = ({
   cardPoints,
   shortScoreType,
   gameOn = false,
+  setValueIssue,
 }): JSX.Element => {
   const [isNumberCard, setIsNumberCard] = useState<number>(cardPoints);
   const [inputClassName, setInputClassName] = useState<boolean>(false);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
+
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setIsNumberCard(+value);
@@ -38,7 +45,11 @@ const Card: React.FC<CardPoints> = ({
   }
 
   return (
-    <div className={style.cardWrapper}>
+    <div
+      className={style.cardWrapper}
+      onClick={() => setValueIssue(isNumberCard)}
+      aria-hidden="true"
+    >
       {!gameOn ? (
         <OutsideClickHandler
           onOutsideClick={() => {
