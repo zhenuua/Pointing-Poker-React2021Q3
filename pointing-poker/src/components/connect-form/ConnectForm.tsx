@@ -1,15 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Redirect, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import avatar from '../../assets/images/Avatar(Auto).png';
-import { useSocketsContext } from '../../context/socket.context';
 import { useActions } from '../../hooks/useActions';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
-import { checkLobby, createLobby, setUserAvatar } from '../../store/reducers/userSlice';
+import {
+  checkLobby,
+  createLobby,
+  setIsObserver,
+  setUserAvatar,
+} from '../../store/reducers/userSlice';
 import { UserRoles } from '../../store/types/sliceTypes';
-
 import { FormType } from '../../types/types';
+import { Switcher } from '../swither/Switcher';
 
 import style from './Forma.module.scss';
 
@@ -24,27 +28,26 @@ const ConnectForm: React.FC<FormType> = ({
   const [isRoomId, setIsRoomId] = useState<boolean>(false);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { roomId, socketId } = useTypedSelector((state) => state.userSlice);
+  const { roomId, socketId, isObserver } = useTypedSelector((state) => state.userSlice);
   const [userImage, setUserImage] = useState<string>('');
 
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      console.log(event.target.files[0]);
       const img = event.target.files[0];
       setUserImage(URL.createObjectURL(img));
     }
   };
 
-  const {
-    setUsername,
-    setLastName: setLast,
-    setJobPosition: setJob,
-    setUserRole,
-  } = useActions();
+  const { setUsername, setLastName: setLast, setJobPosition: setJob } = useActions();
 
   // const { socket } = useSocketsContext();
 
-  const handleSubmit1 = (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleSwitch = () => {
+    console.log('Switch Change');
+    dispatch(setIsObserver());
+  };
+
+  const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     // setUserRole(UserRoles.USER_ADMIN);
     // let id;
@@ -76,8 +79,16 @@ const ConnectForm: React.FC<FormType> = ({
   }, [roomId]);
 
   return (
-    <form className={style.form} onSubmit={handleSubmit1}>
+    <form className={style.form} onSubmit={handleSubmit}>
       <h1 className={style.headerForm}>Connect to lobby</h1>
+      {lobbyLink ? (
+        <div className={style.switchWrapper}>
+          <span className={style.switcherText}>Connect as Observer</span>
+          <Switcher status={isObserver} setStatus={handleSwitch} id="observer" />
+        </div>
+      ) : (
+        ''
+      )}
       <label htmlFor="firstName">
         <span className={style.header}>Your first name:</span>
         <br />
@@ -86,7 +97,9 @@ const ConnectForm: React.FC<FormType> = ({
           type="text"
           id="firstName"
           name="firstName"
+          placeholder="Enter your name"
           value={firstName}
+          required
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
             setFirstName(event.target.value)
           }
@@ -100,6 +113,7 @@ const ConnectForm: React.FC<FormType> = ({
           type="text"
           id="lastName"
           name="lastName"
+          placeholder="Enter your last name"
           value={lastName}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
             setLastName(event.target.value)
@@ -114,6 +128,7 @@ const ConnectForm: React.FC<FormType> = ({
           type="text"
           id="jobPosition"
           name="jobPosition"
+          placeholder="Enter your job position"
           value={jobPosition}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
             setJobPosition(event.target.value)

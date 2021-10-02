@@ -16,6 +16,7 @@ import { deleteUser, fetchUser, removeUser } from '../../store/reducers/lobbySli
 import LobbyChat from '../../components/lobby-chat/lobbyChat';
 
 import style from './Lobby-page.module.scss';
+import { setChatIconVisible } from '../../store/reducers/controlSlice';
 
 const LobbyPage: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
@@ -35,7 +36,7 @@ const LobbyPage: React.FC = (): JSX.Element => {
   // <------------- joining lobby on page load-------->
   useEffect(() => {
     // <-------------- handling joinnig the lobby --------->
-
+    dispatch(setChatIconVisible(true));
     const emitJoinLobby = () => {
       // telling everyone else in the room that you're joining the room
       socket.emit(
@@ -103,7 +104,6 @@ const LobbyPage: React.FC = (): JSX.Element => {
         {userRole === UserRoles.USER_ADMIN && <LobbySettings />}
         {userRole === UserRoles.USER_ADMIN && <LobbyCards />}
       </div>
-      <LobbyChat />
     </div>
   );
 };

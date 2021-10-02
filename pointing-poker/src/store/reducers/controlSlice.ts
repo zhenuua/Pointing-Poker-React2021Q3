@@ -6,6 +6,7 @@ const controlSlice = createSlice({
     loading: false,
     error: null,
     isActiveChat: true,
+    chatIconVisible: false,
   },
   reducers: {
     setLoading(state) {
@@ -17,9 +18,13 @@ const controlSlice = createSlice({
     isActiveChat(state) {
       state.isActiveChat = !state.isActiveChat;
     },
+    setChatIconVisible(state, action) {
+      state.chatIconVisible = action.payload;
+    },
   },
 });
 
-export const { setLoading, setError, isActiveChat } = controlSlice.actions;
+export const { setLoading, setError, isActiveChat, setChatIconVisible } =
+  controlSlice.actions;
 
 export default controlSlice.reducer;

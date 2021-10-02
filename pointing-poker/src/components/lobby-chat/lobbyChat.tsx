@@ -8,8 +8,9 @@ import PersonalDataTabMini from '../personal-data-tab-mini/PersonalDataTabMini';
 import { TLobbyChat } from '../../types/types';
 import { RootState } from '../../store/store';
 
-import style from './Lobby-chat.module.scss';
 import { EVENTS } from '../../store/types/sockeIOEvents';
+
+import style from './Lobby-chat.module.scss';
 
 const LobbyChat: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
@@ -87,29 +88,36 @@ const LobbyChat: React.FC = (): JSX.Element => {
 
   return (
     <section className={`${activeChat ? style.LobbyChat : style.LobbyChatOff}`}>
-      <div className={style.wrapperChat}>
-        {formMessage.map((item) => {
-          return (
-            <div key={Math.random() * 1000} className={style.chatMassage}>
-              <div
-                className={`${style.chatMassage__text} ${
-                  item.isCurrentUser ? style.greyBackground : ''
-                }`}
-              >
-                <span className={item.isCurrentUser ? style.circular : style.none} />
-                <p>{item.message}</p>
+      {formMessage.length === 0 ? (
+        <span className={`${style.chatMassage} ${style.welcomeChat}`}>
+          Welcome to the chat. Write your first message.
+        </span>
+      ) : (
+        <div className={style.wrapperChat}>
+          {formMessage.map((item) => {
+            return (
+              <div key={Math.random() * 1000} className={style.chatMassage}>
+                <div
+                  className={`${style.chatMassage__text} ${
+                    item.isCurrentUser ? style.greyBackground : ''
+                  }`}
+                >
+                  <span className={item.isCurrentUser ? style.circular : style.none} />
+                  <p>{item.message}</p>
+                </div>
+                <PersonalDataTabMini
+                  userName={item.name}
+                  userImage={item.ava ? item.ava : avatarDefault}
+                  isCurrentUser={item.isCurrentUser}
+                  userStaff={item.jobPosition}
+                />
               </div>
-              <PersonalDataTabMini
-                userName={item.name}
-                userImage={item.ava ? item.ava : avatarDefault}
-                isCurrentUser={item.isCurrentUser}
-                userStaff={item.jobPosition}
-              />
-            </div>
-          );
-        })}
-        <div ref={messageRef} />
-      </div>
+            );
+          })}
+          <div ref={messageRef} />
+        </div>
+      )}
+
       <form
         className={style.massageSend}
         onSubmit={(e: ChangeEvent<HTMLFormElement>) => {
@@ -117,11 +125,12 @@ const LobbyChat: React.FC = (): JSX.Element => {
           handleSubmit();
         }}
       >
-        <label htmlFor="send-massage">
+        <label className={style.labelSendMessage} htmlFor="send-massage">
           <input
             id="send-massage"
             className={style.massageSend__input}
             type="text"
+            placeholder="Write a message..."
             value={currentMessage}
             onChange={handleChange}
           />

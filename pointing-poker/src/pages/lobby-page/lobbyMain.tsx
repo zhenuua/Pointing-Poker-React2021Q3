@@ -18,6 +18,7 @@ import {
   postSettingsIssues,
 } from '../../store/reducers/lobbySlice';
 import { EVENTS } from '../../store/types/sockeIOEvents';
+import { setChatIconVisible } from '../../store/reducers/controlSlice';
 
 const LobbyMain: React.FC = (): JSX.Element => {
   const { users } = useTypedSelector((state) => state.lobbySlice);
@@ -26,8 +27,11 @@ const LobbyMain: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
   const dispatch = useDispatch();
   const history = useHistory();
-
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
+
+  const cancelPlay = () => {
+    dispatch(setChatIconVisible(false));
+  };
 
   const startGame = () => {
     console.log('game is start');
@@ -58,6 +62,12 @@ const LobbyMain: React.FC = (): JSX.Element => {
   const copyLink = () => {
     navigator.clipboard.writeText(`http://localhost:3000/${roomId}`);
   };
+  const dispatchChaining = async () => {
+    await Promise.all([
+      dispatch(fetchGameSettings({ roomId })),
+      dispatch(fetchIssues({ roomId })),
+    ]);
+  };
 
   useEffect(() => {
     socket.on(EVENTS.SERVER.GAME_CANCLED, ({ gameCanceled }) => {
@@ -66,8 +76,9 @@ const LobbyMain: React.FC = (): JSX.Element => {
     });
     socket.on(EVENTS.SERVER.FETCH_GAME_DATA, (msg) => {
       console.log(msg);
-      dispatch(fetchGameSettings({ roomId }));
-      dispatch(fetchIssues({ roomId }));
+      // dispatch(fetchGameSettings({ roomId }));
+      // dispatch(fetchIssues({ roomId }));
+      dispatchChaining();
       history.push(`/game-page/${roomId}`);
     });
   }, []);
@@ -129,6 +140,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
               text="Start Game"
             />
             <ButtonCancel
+              cancelPlay={() => cancelPlay()}
               onclickHandler={() => {
                 cancelGameHandler();
               }}
@@ -137,6 +149,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
           </>
         ) : (
           <ButtonCancel
+            cancelPlay={() => cancelPlay()}
             onclickHandler={() => {
               exitGame();
             }}

@@ -8,12 +8,14 @@ const PopUp: React.FC<PopUpType> = ({ active, setActive, children }): JSX.Elemen
   return (
     <div
       className={active ? `${style.modal} ${style.active}` : style.modal}
-      onClick={() => setActive(false)}
+      onMouseDown={() => {
+        setActive(false);
+      }}
       aria-hidden="true"
     >
       <div
         className={active ? `${style.modalContent} ${style.active}` : style.modalContent}
-        onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
+        onMouseDown={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
         aria-hidden="true"
       >
         {children}
