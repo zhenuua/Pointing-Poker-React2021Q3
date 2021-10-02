@@ -46,9 +46,18 @@ const GamePage: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
 
   const [curScoreIndex, setCurScoreIndex] = useState<number>();
+  const [restartRound, setRestartRound] = useState<boolean>(false);
 
   const { cardValues, shortScoreType } = gameSettings;
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
+
+  useEffect(() => {
+    const index =
+      players.length &&
+      curScoreIndex &&
+      players.findIndex((player) => player.scores[curScoreIndex].score !== null);
+    index !== -1 ? setRestartRound(true) : setRestartRound(false);
+  }, [curScoreIndex]);
 
   // const dispatchChaining = async () => {
   //   await Promise.all([
@@ -129,7 +138,12 @@ const GamePage: React.FC = (): JSX.Element => {
           </div>
           <div className={style.runRoundWrapper}>
             <TimerComponent isEditMode={false} isStartTimer={false} />
-            <ButtonMini text="Run Round" />
+            {userRole === UserRoles.USER_ADMIN && !roundOn && (
+              <ButtonMini text={restartRound ? 'Restart' : 'Run Round'} />
+            )}
+            {userRole === UserRoles.USER_ADMIN && !roundOn && restartRound && (
+              <ButtonMini text="Next Issue" />
+            )}
           </div>
         </div>
         <div className={style.statisticsWrapper}>
