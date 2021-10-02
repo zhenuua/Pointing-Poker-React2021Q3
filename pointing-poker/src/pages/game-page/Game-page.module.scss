@@ -93,4 +93,6 @@
 
 .cardWrapper {
   display: flex;
+  max-width: 742px;
+  flex-wrap: wrap;
 }

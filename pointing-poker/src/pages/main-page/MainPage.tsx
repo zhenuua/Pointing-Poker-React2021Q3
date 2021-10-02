@@ -1,16 +1,18 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
+import { useDispatch, useSelector } from 'react-redux';
 import logo from '../../assets/images/Poker-Planning-picture.svg';
 
 import Button from '../../components/button/Button';
 import InputComponent from '../../components/input/InputComponent';
-
 import style from './Main-page.module.scss';
 import PopUp from '../../components/popup/PopUp';
-import Form from '../../components/form/Form';
 import { useResetUser } from '../../hooks/useResetUser';
 import ConnectForm from '../../components/connect-form/ConnectForm';
+import { RootState } from '../../store/store';
+import ErrorWindow from '../../components/error-window/ErrorWindow';
+import { setLobbyIdMissing, setServerError } from '../../store/reducers/userSlice';
 
 interface ParamsQueries {
   lobbyParam?: string;
@@ -19,14 +21,28 @@ interface ParamsQueries {
 const MainPage: React.FC = (): JSX.Element => {
   const [modalActive, setModalActive] = useState<boolean>(false);
   const [isConnect, setIsConnect] = useState<boolean>(false);
-
+  const dispatch = useDispatch();
   const { lobbyParam } = useParams<ParamsQueries>();
-  const connectRef = React.useRef<HTMLInputElement | null>(null);
   const [lobbyLink, setLobbyLink] = useState<string>(`${lobbyParam || ''}`);
-  const history = useHistory();
+
+  const { lobbyIdMissing, serverError } = useSelector(
+    (state: RootState) => state.userSlice,
+  );
 
   // resets userdata, by useEffect
   useResetUser();
+
+  const setActiveStore = (flag: boolean) => {
+    if (!flag) {
+      dispatch(setLobbyIdMissing(false));
+    }
+  };
+
+  const setActiveStoreServerError = (flag: boolean) => {
+    if (!flag) {
+      dispatch(setServerError(false));
+    }
+  };
 
   return (
     <>
@@ -78,6 +94,12 @@ const MainPage: React.FC = (): JSX.Element => {
           isConnect={isConnect}
           lobbyLink={lobbyLink}
         />
+      </PopUp>
+      <PopUp active={lobbyIdMissing} setActive={setActiveStore}>
+        <ErrorWindow text="Lobby Not Found..." />
+      </PopUp>
+      <PopUp active={serverError} setActive={setActiveStoreServerError}>
+        <ErrorWindow text="Server issue. Unable to create new lobby." />
       </PopUp>
     </>
   );

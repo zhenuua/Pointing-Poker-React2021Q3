@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { Socket } from 'socket.io-client';
 import { UserRoles } from '../types/sliceTypes';
 import { fetchUsers } from './lobbySlice';
 
@@ -13,6 +12,9 @@ interface IInitState {
   token: string;
   roomId: string;
   avatarImg: string;
+  lobbyIdMissing: boolean;
+  serverError: boolean;
+  isObserver: boolean;
 }
 
 const initialState: IInitState = {
@@ -24,6 +26,9 @@ const initialState: IInitState = {
   token: '',
   roomId: '',
   avatarImg: '',
+  lobbyIdMissing: false,
+  serverError: false,
+  isObserver: false,
 };
 
 export const createLobby = createAsyncThunk(
@@ -48,7 +53,7 @@ export const createLobby = createAsyncThunk(
       dispatch(setToken(adminToken));
     } catch (err) {
       console.error(err);
-      alert('server issue, unable to create new lobby');
+      dispatch(setServerError(true));
     }
   },
 );
@@ -72,7 +77,8 @@ export const checkLobby = createAsyncThunk(
       // }
     } catch (err) {
       console.error(err);
-      alert('lobby not found');
+      dispatch(setLobbyIdMissing(true));
+      // alert('lobby not found');
     }
   },
 );
@@ -163,6 +169,15 @@ const userSlice = createSlice({
     setUserAvatar(state, action) {
       state.avatarImg = action.payload;
     },
+    setLobbyIdMissing(state, action) {
+      state.lobbyIdMissing = action.payload;
+    },
+    setServerError(state, action) {
+      state.serverError = action.payload;
+    },
+    setIsObserver(state) {
+      state.isObserver = !state.isObserver;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createPlayer.fulfilled, (state, { payload }) => {
@@ -181,6 +196,9 @@ export const {
   setRoomId,
   setJobPosition,
   setUserAvatar,
+  setLobbyIdMissing,
+  setServerError,
+  setIsObserver,
 } = userSlice.actions;
 
 export default userSlice.reducer;

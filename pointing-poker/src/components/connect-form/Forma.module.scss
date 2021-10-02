@@ -24,14 +24,19 @@
   border-radius: 0 0 0 15px;
   border: 1px solid #2B3A67;
   box-shadow: inset 1px 2px 3px -1px rgba(0, 0, 0, 0.6);
-  margin-left: 39px;
   outline: none;
+  font-size: 25px;
+  padding-left: 5px;
+}
+
+:focus::-webkit-input-placeholder {
+  color: transparent
 }
 
 .header {
   font-size: 24px;
   font-weight: 700;
-  margin: 0 0 0 39px;
+  margin: 0 0 0 5px;
   padding-top: 20px;
 }
 
@@ -40,7 +45,6 @@
   display: inline-block;
   width: 276px;
   height: 47px;
-  margin-left: 39px;
   background-color: #fff;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, .2);
   border: none;
@@ -65,7 +69,7 @@
 
 .avatar {
   display: block;
-  margin: 15px 0 0 39px;
+  margin: 15px 0 0 0;
   width: 70px;
   height: 70px;
   border-radius: 50%;
@@ -110,7 +114,33 @@
   justify-content: space-between;
 }
 
+label {
+  margin-bottom: 7px;
+  margin-left: 39px;
+  max-width: 505px;
+}
+
 .labelFile {
   height: 90px;
   width: 505px;
+  margin-left: 39px;
+}
+
+.switcherText {
+  display: inline-block;
+  font-size: 24px;
+  font-family: 'Ruda', sans-serif;
+  font-weight: 700;
+  width: 133px;
+  position: relative;
+  top: -14px;
+  left: 23px;
+}
+
+.switchWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 45px;
+  position: relative;
+  top: -50px;
 }

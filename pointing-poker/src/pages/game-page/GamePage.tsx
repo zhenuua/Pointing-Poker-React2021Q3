@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
 import { useDispatch } from 'react-redux';
-import authorTest from '../../assets/images/ImageUser.png';
-
-import style from './Game-page.module.scss';
 
 import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
 import Card from '../../components/card/Card';
@@ -12,35 +8,26 @@ import PersonalDataTabMini from '../../components/personal-data-tab-mini/Persona
 import LobbyTitle from '../../components/lobby-title/LobbyTitle';
 import ButtonWhite from '../../components/button-white/ButtonWhite';
 import IssueTab from '../../components/issue-tab/IssueTab';
-import NewIssue from '../../components/new-issue-tab/NewIssue';
 import ButtonMini from '../../components/button-blue-mini/ButtonMini';
 import TimerComponent from '../../components/timer/TimerComponent';
 import CardCoffee from '../../components/card-coffee/CardCoffee';
 
-import petter from '../../assets/images/user/Petter.jpg';
-import sendler from '../../assets/images/user/Sendler.jpg';
-import travolta from '../../assets/images/user/Travolta.jpg';
-import brad from '../../assets/images/user/Brad.jpg';
-
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
-import { IGameIssue, setCurIssue, setGameIssues } from '../../store/reducers/gameSlice';
-import {
-  fetchGameSettings,
-  fetchIssues,
-  IScore,
-  IUserInfo,
-} from '../../store/reducers/lobbySlice';
+import { setGameIssues } from '../../store/reducers/gameSlice';
+import { setChatIconVisible } from '../../store/reducers/controlSlice';
+
+import style from './Game-page.module.scss';
 
 const GamePage: React.FC = (): JSX.Element => {
   const { users, gameSettings, issues, players } = useTypedSelector(
     (state) => state.lobbySlice,
   );
-  const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
+  const { socketId, userRole } = useTypedSelector((state) => state.userSlice);
+  const [curScoreIndex, setCurScoreIndex] = useState<number>();
   const { roundOn } = useTypedSelector((state) => state.gameSlice);
   const { curIssue } = useTypedSelector((state) => state.lobbySlice);
   const dispatch = useDispatch();
-  const [curScoreIndex, setCurScoreIndex] = useState<number>();
 
   const { cardValues, shortScoreType } = gameSettings;
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
@@ -93,11 +80,12 @@ const GamePage: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     // if (!curIssue && players.length) dispatch(setCurIssue(issues[0]));
-
+    dispatch(setChatIconVisible(true));
     const index =
       players.length && issues.length && curIssue
         ? players[0].scores.findIndex((score) => score.issueTitle === curIssue.issueTitle)
         : null;
+    console.log(`${curScoreIndex} curScoreIndex`);
     console.log(`---------------index ------------${index}---------------`);
     if (index !== -1 && index !== null) setCurScoreIndex(index);
   }, [curIssue]);
@@ -112,7 +100,7 @@ const GamePage: React.FC = (): JSX.Element => {
             <PersonalDataTab
               userImage={admin?.avatarImg}
               userName={admin?.username || 'no data'}
-              userStaff={admin?.lastName || 'no data'}
+              userStaff={admin?.jobPosition || 'no data'}
               isCurrentUser={admin?.socketId === socketId}
               isRemove={false}
             />

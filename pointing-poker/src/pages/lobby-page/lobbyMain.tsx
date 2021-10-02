@@ -18,6 +18,7 @@ import {
   postSettingsIssues,
 } from '../../store/reducers/lobbySlice';
 import { EVENTS } from '../../store/types/sockeIOEvents';
+import { setChatIconVisible } from '../../store/reducers/controlSlice';
 
 const LobbyMain: React.FC = (): JSX.Element => {
   const { users } = useTypedSelector((state) => state.lobbySlice);
@@ -26,8 +27,11 @@ const LobbyMain: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
   const dispatch = useDispatch();
   const history = useHistory();
-
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
+
+  const cancelPlay = () => {
+    dispatch(setChatIconVisible(false));
+  };
 
   const startGame = () => {
     console.log('game is start');
@@ -136,6 +140,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
               text="Start Game"
             />
             <ButtonCancel
+              cancelPlay={() => cancelPlay()}
               onclickHandler={() => {
                 cancelGameHandler();
               }}
@@ -144,6 +149,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
           </>
         ) : (
           <ButtonCancel
+            cancelPlay={() => cancelPlay()}
             onclickHandler={() => {
               exitGame();
             }}
