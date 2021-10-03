@@ -61,7 +61,7 @@
 
 .statisticsWrapper {
   width: 316px;
-  margin-top: 10px;
+  margin-top: 30px;
 }
 
 .issuesText {
@@ -95,4 +95,12 @@
   display: flex;
   max-width: 742px;
   flex-wrap: wrap;
+}
+
+.btnRestart {
+  margin: 12px 6px;
+}
+
+.btnNextIssue {
+  margin: 0px 6px;
 }

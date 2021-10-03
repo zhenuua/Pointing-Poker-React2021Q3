@@ -4,7 +4,7 @@
 .wrapperLobbyPage{
   margin: 0 auto;
   max-width: 1400px;
-  height: 100vh;
+  min-height: 100vh;
 }
 .wrapperLobby{
   padding: 0 25px;
@@ -184,6 +184,7 @@
   }
 }
 .lobbyGameCards{
+  padding: 0 26px;
   &__faces{
     display: flex;
     flex-wrap: wrap;

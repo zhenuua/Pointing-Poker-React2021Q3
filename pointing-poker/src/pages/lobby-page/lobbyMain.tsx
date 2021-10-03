@@ -16,24 +16,42 @@ import {
   fetchGameSettings,
   fetchIssues,
   postSettingsIssues,
+  setCancelGame,
 } from '../../store/reducers/lobbySlice';
 import { EVENTS } from '../../store/types/sockeIOEvents';
 import { setChatIconVisible } from '../../store/reducers/controlSlice';
+import ErrorWindow from '../../components/error-window/ErrorWindow';
+import PopUp from '../../components/popup/PopUp';
 
 const LobbyMain: React.FC = (): JSX.Element => {
+  const [startGameFlag, setStartGameFlag] = useState<boolean>(false);
+
   const { users } = useTypedSelector((state) => state.lobbySlice);
   const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
-  const { gameSettings, issues } = useTypedSelector((state) => state.lobbySlice);
+  const {
+    gameSettings,
+    issues,
+    cancelGame: cancelGameStore,
+  } = useTypedSelector((state) => state.lobbySlice);
   const { socket } = useSocketsContext();
   const dispatch = useDispatch();
   const history = useHistory();
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
 
+  const endGame = (flag: boolean) => {
+    dispatch(setCancelGame(flag));
+  };
+
   const cancelPlay = () => {
     dispatch(setChatIconVisible(false));
+    setTimeout(() => dispatch(setCancelGame(false)), 2000);
   };
 
   const startGame = () => {
+    if (issues.length === 0) {
+      setStartGameFlag(true);
+      return;
+    }
     console.log('game is start');
     dispatch(
       postSettingsIssues({
@@ -142,7 +160,9 @@ const LobbyMain: React.FC = (): JSX.Element => {
             <ButtonCancel
               cancelPlay={() => cancelPlay()}
               onclickHandler={() => {
-                cancelGameHandler();
+                dispatch(setCancelGame(true));
+                socket.emit('GAME_IS_OVER', { isCancelGame: true, roomId });
+                setTimeout(() => cancelGameHandler(), 2000);
               }}
               text="Cancel game"
             />
@@ -157,6 +177,20 @@ const LobbyMain: React.FC = (): JSX.Element => {
           />
         )}
       </div>
+      {startGameFlag ? (
+        <PopUp active={startGameFlag} setActive={setStartGameFlag}>
+          <ErrorWindow text="You need to add an item to issues." />
+        </PopUp>
+      ) : (
+        ''
+      )}
+      {cancelGameStore ? (
+        <PopUp active={cancelGameStore} setActive={endGame}>
+          <ErrorWindow text="The game is over." />
+        </PopUp>
+      ) : (
+        ''
+      )}
     </section>
   );
 };

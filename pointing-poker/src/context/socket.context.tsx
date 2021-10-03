@@ -3,9 +3,16 @@ import { useDispatch } from 'react-redux';
 import io, { Socket } from 'socket.io-client';
 import { useActions } from '../hooks/useActions';
 import { useTypedSelector } from '../hooks/useTypedSelector';
-import { setCurCardValueInScorePlayer, setCurIssue } from '../store/reducers/lobbySlice';
+import {
+  setCancelGame,
+  setCurCardValueInScorePlayer,
+  setCurIssue,
+  setRestartRnd,
+  setResultsVoted,
+} from '../store/reducers/lobbySlice';
 import { EVENTS } from '../store/types/sockeIOEvents';
 import { setRoundOn } from '../store/reducers/gameSlice';
+import { setChatIconVisible } from '../store/reducers/controlSlice';
 
 interface Context {
   socket: Socket;
@@ -56,6 +63,24 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
         dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex }));
       },
     );
+
+    socket.on('GAME_IS_OVER_ALL', ({ isCancelGame }) => {
+      dispatch(setCancelGame(isCancelGame));
+      dispatch(setChatIconVisible(false));
+    });
+
+    socket.on(EVENTS.SERVER.END_ROUND, ({ roundOn }) => {
+      console.log(roundOn);
+      dispatch(setRoundOn(false));
+    });
+
+    socket.on(EVENTS.SERVER.RESTART_ROUND, ({ curScoreIndex, curIssue }) => {
+      dispatch(setRestartRnd({ curScoreIndex, curIssue }));
+    });
+
+    socket.on(EVENTS.SERVER.NEXT_ISSUE, ({ nextIssueValue }) => {
+      dispatch(setCurIssue(nextIssueValue.issueTitle));
+    });
   }, []);
 
   return (

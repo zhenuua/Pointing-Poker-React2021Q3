@@ -19,7 +19,10 @@ export const EVENTS = {
     GAME_STARTING: "GAME_STARTING",
     NEW_CURISSUE: "NEW_CURISSUE",
     START_ROUND: "START_ROUND",
+    END_ROUND: "END_ROUND",
     SCORE_VALUE_CURRENT_USER: "SCORE_VALUE_CURRENT_USER",
+    RESTART_ROUND: "RESTART_ROUND",
+    NEXT_ISSUE: "NEXT_ISSUE",
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -34,6 +37,9 @@ export const EVENTS = {
     SET_CURISSUE: "SET_CURISSUE",
     START_ROUND: "START_ROUND",
     SCORE_VALUE_CURRENT_USER: "SCORE_VALUE_CURRENT_USER",
+    END_ROUND: "END_ROUND",
+    RESTART_ROUND: "RESTART_ROUND",
+    NEXT_ISSUE: "NEXT_ISSUE",
   },
 };
 
@@ -100,6 +106,41 @@ const socketInit = ({ io }) => {
         });
       }
     );
+
+    // ------GameIsOver---------
+    socket.on("GAME_IS_OVER", ({ isCancelGame, roomId }) => {
+      console.log(isCancelGame);
+      socket.to(roomId).emit("GAME_IS_OVER_ALL", {
+        isCancelGame,
+      });
+    });
+
+    socket.on(EVENTS.CLIENT.END_ROUND, ({ roundOn, roomId }) => {
+      console.log(roundOn);
+      socket.to(roomId).emit(EVENTS.SERVER.END_ROUND, {
+        roundOn,
+      });
+    });
+
+    // ---------------RestartRound---------------------
+
+    socket.on(
+      EVENTS.CLIENT.RESTART_ROUND,
+      ({ roomId, curScoreIndex, curIssue }) => {
+        socket.to(roomId).emit(EVENTS.SERVER.RESTART_ROUND, {
+          curScoreIndex,
+          curIssue,
+        });
+      }
+    );
+
+    // ---------------NextIssue------------------------
+
+    socket.on(EVENTS.CLIENT.NEXT_ISSUE, ({ roomId, nextIssueValue }) => {
+      socket.to(roomId).emit(EVENTS.SERVER.NEXT_ISSUE, {
+        nextIssueValue,
+      });
+    });
 
     // ------------------------------------------------
 

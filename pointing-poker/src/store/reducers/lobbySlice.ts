@@ -85,6 +85,8 @@ interface IInitState {
   banCandidates: IBanCandidates[];
   players: IGamePlayer[];
   curIssue: IIssueDetail | null;
+  cancelGame: boolean;
+  resultsVoted: boolean;
   // curIssue: IGameIssue | null;
   // gameIssues: IGameIssue[];
 }
@@ -109,6 +111,8 @@ const initialState: IInitState = {
   banCandidates: [],
   players: [],
   curIssue: null,
+  cancelGame: false,
+  resultsVoted: false,
   // gameIssues: [],
 };
 
@@ -302,6 +306,12 @@ const lobbySlice = createSlice({
     setLobbyTitle(state, action) {
       state.lobbyTitle = action.payload;
     },
+    setCancelGame(state, action) {
+      state.cancelGame = action.payload;
+    },
+    setResultsVoted(state, action) {
+      state.resultsVoted = action.payload;
+    },
     addChatMessages(state, action) {
       state.chatMessages.push(action.payload);
     },
@@ -429,16 +439,31 @@ const lobbySlice = createSlice({
       state.gameSettings.cardChange = action.payload;
     },
     setCurCardValueInScorePlayer(state, action) {
-      let roundEnd = true;
       state.players.forEach((player) => {
         if (player.socketId === action.payload.socketId) {
           const { issueTitle } = player.scores[action.payload.curScoreIndex];
-          player.scores.splice(action.payload.curIndexIssue, 1, {
+          player.scores.splice(action.payload.curScoreIndex, 1, {
             issueTitle,
             score: action.payload.card,
           });
         }
-        if (player.scores[action.payload.curScoreIndex].score === null) roundEnd = false;
+        // if (player.scores[action.payload.curScoreIndex].score === null)
+      });
+    },
+    setRestartRnd(state, action) {
+      state.players.forEach((player) => {
+        player.scores.splice(action.payload.curScoreIndex, 1, {
+          issueTitle: action.payload.curIssue.issueTitle,
+          score: null,
+        });
+      });
+    },
+    setNextIssue(state, action) {
+      state.players.forEach((player) => {
+        player.scores.splice(action.payload.curScoreIndex, 1, {
+          issueTitle: action.payload.curIssue.issueTitle,
+          score: null,
+        });
       });
     },
     setScramMaster(state, action) {
@@ -604,6 +629,9 @@ export const {
   resetLobby,
   setCurIssue,
   setCurCardValueInScorePlayer,
+  setCancelGame,
+  setResultsVoted,
+  setRestartRnd,
 } = lobbySlice.actions;
 
 export default lobbySlice.reducer;
