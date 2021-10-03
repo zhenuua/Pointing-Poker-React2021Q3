@@ -61,16 +61,22 @@ export const createLobby = createAsyncThunk(
 export const checkLobby = createAsyncThunk(
   'lobby/createLobby',
   async ({ lobbyId }: { lobbyId: string }, { dispatch }) => {
+    let lobbyUrlOrRoomIdPath;
+    if (lobbyId.length > 10) {
+      lobbyUrlOrRoomIdPath = lobbyId.substr(lobbyId.lastIndexOf('/') + 1);
+    } else {
+      lobbyUrlOrRoomIdPath = lobbyId;
+    }
     try {
       const response = await axios({
         method: 'get',
-        url: `http://localhost:5000/lobby/check/${lobbyId}`,
+        url: `http://localhost:5000/lobby/check/${lobbyUrlOrRoomIdPath}`,
         timeout: 2000,
         params: {
-          lobbyId,
+          lobbyUrlOrRoomIdPath,
         },
       });
-      dispatch(setRoomId(lobbyId));
+      dispatch(setRoomId(lobbyUrlOrRoomIdPath));
       // redirectFu(true);
       // if (response.status === 200) {
       // } else {

@@ -49,13 +49,13 @@ const GamePage: React.FC = (): JSX.Element => {
 
   const roundStart = () => {
     dispatch(setRoundOn(true));
-    socket.emit('START_ROUND_CLIENT', { roomId, roundOn: true });
+    socket.emit(EVENTS.CLIENT.START_ROUND, { roomId, roundOn: true });
   };
 
   const setValueIssue = (card: number | string) => {
     if (!roundOn) return;
     dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex }));
-    socket.emit('SCORE_CURRENT_USER_VALUE_CLIENT', {
+    socket.emit(EVENTS.CLIENT.SCORE_VALUE_CURRENT_USER, {
       card,
       socketId,
       curScoreIndex,

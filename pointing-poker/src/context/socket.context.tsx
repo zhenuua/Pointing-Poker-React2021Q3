@@ -46,13 +46,16 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
       dispatch(setCurIssue(issueTitle));
     });
 
-    socket.on('START_ROUND_SERVER', ({ roundOn }) => {
+    socket.on(EVENTS.SERVER.START_ROUND, ({ roundOn }) => {
       dispatch(setRoundOn(roundOn));
     });
 
-    socket.on('SCORE_CURRENT_USER_VALUE_SERVER', ({ card, socketId, curScoreIndex }) => {
-      dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex }));
-    });
+    socket.on(
+      EVENTS.SERVER.SCORE_VALUE_CURRENT_USER,
+      ({ card, socketId, curScoreIndex }) => {
+        dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex }));
+      },
+    );
   }, []);
 
   return (

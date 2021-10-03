@@ -5,7 +5,7 @@ const controlSlice = createSlice({
   initialState: {
     loading: false,
     error: null,
-    isActiveChat: true,
+    isActiveChat: false,
     chatIconVisible: false,
   },
   reducers: {

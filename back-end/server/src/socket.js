@@ -18,6 +18,8 @@ export const EVENTS = {
     USER_LEAVE: "USER_LEAVE",
     GAME_STARTING: "GAME_STARTING",
     NEW_CURISSUE: "NEW_CURISSUE",
+    START_ROUND: "START_ROUND",
+    SCORE_VALUE_CURRENT_USER: "SCORE_VALUE_CURRENT_USER",
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -30,6 +32,8 @@ export const EVENTS = {
     GAME_CANCLED: "GAME_CANCLED",
     FETCH_GAME_DATA: "FETCH_GAME_DATA",
     SET_CURISSUE: "SET_CURISSUE",
+    START_ROUND: "START_ROUND",
+    SCORE_VALUE_CURRENT_USER: "SCORE_VALUE_CURRENT_USER",
   },
 };
 
@@ -78,18 +82,18 @@ const socketInit = ({ io }) => {
 
     // ------------------RoundOn-----------------------
 
-    socket.on("START_ROUND_CLIENT", ({ roomId, roundOn }) => {
+    socket.on(EVENTS.CLIENT.START_ROUND, ({ roomId, roundOn }) => {
       console.log(roomId, roundOn);
-      socket.to(roomId).emit("START_ROUND_SERVER", {
+      socket.to(roomId).emit(EVENTS.SERVER.START_ROUND, {
         roundOn,
       });
     });
 
     socket.on(
-      "SCORE_CURRENT_USER_VALUE_CLIENT",
+      EVENTS.CLIENT.SCORE_VALUE_CURRENT_USER,
       ({ card, socketId, curScoreIndex, roomId }) => {
         console.log(card, socketId, curScoreIndex);
-        socket.to(roomId).emit("SCORE_CURRENT_USER_VALUE_SERVER", {
+        socket.to(roomId).emit(EVENTS.SERVER.SCORE_VALUE_CURRENT_USER, {
           card,
           socketId,
           curScoreIndex,

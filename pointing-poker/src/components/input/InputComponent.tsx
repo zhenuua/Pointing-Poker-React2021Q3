@@ -26,7 +26,10 @@ const InputComponent: React.FC<InputProps> = ({ setLobbyLink }): JSX.Element => 
         type="text"
         id="input"
         defaultValue={lobbyParam}
-        onChange={(e) => setLobbyLink(e.target.value)}
+        onChange={(e) => {
+          const { value } = e.target;
+          setLobbyLink(value);
+        }}
         // onChange={connectLobby}
       />
     </label>
