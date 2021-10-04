@@ -49,7 +49,7 @@ export const checkLobby = async (req, res) => {
       return res.status(400).json({ message: `lobby with id: ${lobbyId} does not exist` });
     }
     const { gameOn, gameOver } = candidateLobby;
-    return res.status(200).json({ message: 'lobby found, wait for redirection...', gameOn, gameOver });
+    return res.status(200).json({ message: 'lobby found, wait for redirection...', gameOn, gameOver, lobbyId });
   } catch (err) {
     res.status(500).json({ message: 'server error' })
   }

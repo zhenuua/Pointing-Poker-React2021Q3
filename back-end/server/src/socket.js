@@ -18,6 +18,8 @@ export const EVENTS = {
     USER_LEAVE: 'USER_LEAVE',
     GAME_STARTING: 'GAME_STARTING',
     NEW_CURISSUE: 'NEW_CURISSUE',
+    PENDING_USER: 'PENDING_USER',
+    ACCESS_PENDING_USER: 'ACCESS_PENDING_USER',
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -30,6 +32,8 @@ export const EVENTS = {
     GAME_CANCLED: "GAME_CANCLED",
     FETCH_GAME_DATA: "FETCH_GAME_DATA",
     SET_CURISSUE: "SET_CURISSUE",
+    PENDING_USER_REQ: 'PENDING_USER_REQ',
+    PENDING_USER_RES: "PENDING_USER_RES",
   },
 };
 
@@ -170,7 +174,7 @@ const socketInit = ({ io }) => {
 
     socket.on(EVENTS.CLIENT.NEW_CURISSUE, ({ roomId, issueTitle }) => {
       socket.to(roomId).emit(EVENTS.SERVER.SET_CURISSUE, { issueTitle });
-    })
+    });
 
     socket.on(EVENTS.disconnect, () => {
       console.log(`----User DISCONNECTED mainSpace with id: ${socket.id} ----`);
@@ -201,6 +205,20 @@ const socketInit = ({ io }) => {
         });
       }
     );
+
+    // handling joining the game during gameOn
+    socket.on(EVENTS.CLIENT.PENDING_USER, ({ roomId, socketId, userRole, username, lastName }) => {
+      socket.to(roomId).emit(EVENTS.SERVER.PENDING_USER_REQ, {
+        socketId,
+        userRole,
+        username,
+        lastName,
+      });
+    });
+    socket.on(EVENTS.CLIENT.ACCESS_PENDING_USER, ({ socketId, access, roomId }) => {
+      io.to(socketId).emit(EVENTS.SERVER.PENDING_USER_RES, { access, roomId });
+    });
+    
   });
 
   // io.emit('server-kek', {message: 'keking from the server'});
