@@ -25,6 +25,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
   const { users } = useTypedSelector((state) => state.lobbySlice);
   const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
   const { gameSettings, issues } = useTypedSelector((state) => state.lobbySlice);
+  const { gameOn } = useTypedSelector((state) => state.gameSlice);
   const { socket } = useSocketsContext();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -89,6 +90,23 @@ const LobbyMain: React.FC = (): JSX.Element => {
       history.push(`/game-page/${roomId}`);
     });
   }, []);
+
+  // <----------------when you are connecting to already gameOn lobby --------------->
+  const awaitFetching = async () => {
+    await Promise.all([
+      dispatch(fetchGameSettings({ roomId })),
+      dispatch(fetchIssues({ roomId })),
+    ]);
+  };
+
+  useEffect(() => {
+    if (gameOn && users.length) {
+      awaitFetching();
+      history.push(`/game-page/${roomId}`);
+      // const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
+      // admin && socket.emit(EVENTS.CLIENT.CUR_GAMEDATA_ACCESS, {  });
+    }
+  }, [users]);
 
   return (
     <section className={style.lobbyMain}>

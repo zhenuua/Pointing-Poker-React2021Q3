@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import avatar from '../../assets/images/Avatar(Auto).png';
+import { useSocketsContext } from '../../context/socket.context';
 import { useActions } from '../../hooks/useActions';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import {
@@ -12,6 +13,7 @@ import {
   setUserAvatar,
 } from '../../store/reducers/userSlice';
 import { UserRoles } from '../../store/types/sliceTypes';
+import { EVENTS } from '../../store/types/sockeIOEvents';
 import { FormType } from '../../types/types';
 import { Switcher } from '../swither/Switcher';
 
@@ -28,8 +30,17 @@ const ConnectForm: React.FC<FormType> = ({
   const [isRoomId, setIsRoomId] = useState<boolean>(false);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { roomId, socketId, isObserver } = useTypedSelector((state) => state.userSlice);
+  const {
+    roomId,
+    socketId,
+    isObserver,
+    userRole,
+    username,
+    lastName: lastNamae,
+  } = useTypedSelector((state) => state.userSlice);
+  const { gameOn, gameOver } = useTypedSelector((state) => state.gameSlice);
   const [userImage, setUserImage] = useState<string>('');
+  const { socket } = useSocketsContext();
 
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -47,7 +58,7 @@ const ConnectForm: React.FC<FormType> = ({
     dispatch(setIsObserver());
   };
 
-  const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     // setUserRole(UserRoles.USER_ADMIN);
     // let id;
@@ -56,9 +67,11 @@ const ConnectForm: React.FC<FormType> = ({
     setJob(jobPosition);
     dispatch(setUserAvatar(userImage));
     if (isConnect) {
-      dispatch(checkLobby({ lobbyId: lobbyLink }));
-      setIsRoomId(true);
+      // await Promise.all([dispatch(checkLobby({ lobbyId: lobbyLink }))]);
+      // dispatch(checkLobby({ lobbyId: lobbyLink }));
       // socket.emit('lobby-connect', 'joining room lobby, dadada--------------');
+      await Promise.resolve(dispatch(checkLobby({ lobbyId: lobbyLink })));
+      setIsRoomId(true);
     } else {
       dispatch(
         createLobby({
@@ -73,10 +86,33 @@ const ConnectForm: React.FC<FormType> = ({
 
   // checking if roomId changed, and redirects to lobby
   useEffect(() => {
-    if (isRoomId) {
-      history.push(`/lobby-page/${roomId}`);
+    console.log('rerenders-------------');
+    if (isRoomId && roomId) {
+      // console.log(`gameOn: ---------${gameOn}`);
+      // console.log(`gameOver: ---------${gameOver}`);
+      // console.log(`roomId: ---------${roomId}`);
+      // console.log(`userRole: ---------${userRole}`);
+      if (gameOver) {
+        console.log('gameOver, redirecting to main page...');
+        history.push(`/`);
+        return;
+      }
+      if (gameOn) {
+        console.log('game has been runnning, wait for response...');
+        socket.emit(EVENTS.CLIENT.PENDING_USER, {
+          roomId,
+          socketId,
+          userRole,
+          username: firstName,
+          lastName,
+        });
+        alert('game is on, waiting for access...');
+      } else {
+        console.log('everything is ok, wait for redirecting...');
+        history.push(`/lobby-page/${roomId}`);
+      }
     }
-  }, [roomId]);
+  }, [isRoomId, roomId]);
 
   return (
     <form className={style.form} onSubmit={handleSubmit}>

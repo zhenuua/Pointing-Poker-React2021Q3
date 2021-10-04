@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { stat } from 'fs';
 import { Socket } from 'socket.io-client';
 import { configLobby } from '../../pages/lobby-page/config';
 import { UserRoles } from '../types/sliceTypes';
@@ -13,6 +14,7 @@ export interface IUserInfo {
   roomId: string;
   avatarImg?: string;
 }
+export type IPendingUser = Omit<IUserInfo, 'roomId'>;
 
 export interface IChatMessage extends IUserInfo {
   message: string;
@@ -45,6 +47,7 @@ export interface IGameSettings {
   scramMaster: boolean;
   cardChange: boolean;
   timerNeeded: boolean;
+  autoConnect: boolean;
   scoreType: ScoreTypes;
   shortScoreType: ShortScoreTypes;
   roundTime: number;
@@ -78,7 +81,7 @@ export interface IGamePlayer extends IUserInfo {
 interface IInitState {
   lobbyTitle: string;
   chatMessages: IChatMessage[];
-  pendingUsers: IUserInfo[];
+  pendingUsers: IPendingUser[];
   users: IUserInfo[];
   issues: IIssueDetail[];
   gameSettings: IGameSettings;
@@ -92,6 +95,7 @@ interface IInitState {
 const initialGameSettings: IGameSettings = {
   scramMaster: true,
   cardChange: false,
+  autoConnect: false,
   timerNeeded: true,
   scoreType: ScoreTypes.FIBBONACCI,
   shortScoreType: ShortScoreTypes.FIBBONACCI,
@@ -342,6 +346,9 @@ const lobbySlice = createSlice({
       );
       if (index !== -1) state.pendingUsers.splice(index, 1);
     },
+    clearPendingUsers(state) {
+      state.pendingUsers = [];
+    },
     addUser(state, action) {
       state.users.push(action.payload);
     },
@@ -462,6 +469,9 @@ const lobbySlice = createSlice({
     },
     setCardChange(state, action) {
       state.gameSettings.cardChange = action.payload;
+    },
+    setAutoConnect(state, action) {
+      state.gameSettings.autoConnect = action.payload;
     },
     setScramMaster(state, action) {
       state.gameSettings.scramMaster = action.payload;
@@ -608,6 +618,7 @@ export const {
   addChatMessages,
   addPendingUser,
   removePendingUser,
+  clearPendingUsers,
   addUser,
   removeUser,
   setUsers,
@@ -620,6 +631,7 @@ export const {
   addCardValue,
   setTimerNeeded,
   setCardChange,
+  setAutoConnect,
   setScramMaster,
   setRoundTime,
   addBanVote,

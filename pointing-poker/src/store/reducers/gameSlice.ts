@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { error } from 'console';
 import { Socket } from 'socket.io-client';
+import { checkLobby } from './userSlice';
 
 export interface IScore {
   socketId: string;
@@ -75,6 +76,11 @@ const gameSlice = createSlice({
     builder.addCase(updateGameStatus.fulfilled, (state, { payload }) => {
       const { msg } = payload;
       console.log(msg);
+    });
+    builder.addCase(checkLobby.fulfilled, (state, { payload }) => {
+      const { gameOn, gameOver } = payload;
+      state.gameOn = gameOn;
+      state.gameOver = gameOver;
     });
   },
 });

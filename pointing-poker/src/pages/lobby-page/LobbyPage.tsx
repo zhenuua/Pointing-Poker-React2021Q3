@@ -22,6 +22,7 @@ const LobbyPage: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();
   const { userRole, socketId, roomId, username, lastName, jobPosition, avatarImg } =
     useTypedSelector((state) => state.userSlice);
+  const { gameOn } = useTypedSelector((state) => state.gameSlice);
   const userData = {
     userRole,
     socketId,
@@ -95,6 +96,7 @@ const LobbyPage: React.FC = (): JSX.Element => {
     //   socket.removeAllListeners();
     // }
   }, []);
+
   return (
     <div className={style.wrapperLobbyPage}>
       <div className={style.wrapperLobby}>

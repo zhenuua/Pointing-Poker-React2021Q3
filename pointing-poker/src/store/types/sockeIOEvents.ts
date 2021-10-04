@@ -18,6 +18,9 @@ export const EVENTS = {
     USER_LEAVE: 'USER_LEAVE',
     GAME_STARTING: 'GAME_STARTING',
     NEW_CURISSUE: 'NEW_CURISSUE',
+    PENDING_USER: 'PENDING_USER',
+    ACCESS_PENDING_USER: 'ACCESS_PENDING_USER',
+    CUR_GAMEDATA_ACCESS: 'CUR_GAMEDATA_ACCESS',
   },
   SERVER: {
     LOBBIES: 'LOBBIES',
@@ -30,6 +33,8 @@ export const EVENTS = {
     GAME_CANCLED: 'GAME_CANCLED',
     FETCH_GAME_DATA: 'FETCH_GAME_DATA',
     SET_CURISSUE: 'SET_CURISSUE',
+    PENDING_USER_REQ: 'PENDING_USER_REQ',
+    PENDING_USER_RES: 'PENDING_USER_RES',
   },
 };
 
@@ -39,6 +44,7 @@ const mapOfEvnetsServer = {
   USER_BAN_VOTE: ['banPoPUp', ''],
   GAME_CANCLED: ['lobbyMain'],
   ADD_MESSAGE: ['lobbyChat'],
+  PENDING_USER_REQ: ['socketContex'],
 };
 
 const mapOfEvnetsClient = {
@@ -52,4 +58,6 @@ const mapOfEvnetsClient = {
   SEND_MESSAGE: ['lobbyChat'],
   GAME_STARTING: ['lobbyMain', ''],
   FETCH_GAME_DATA: ['lobbyMain', ''],
+  PENDING_USER: ['connectForm'],
+  ACCESS_PENDING_USER: ['gamepage'],
 };
