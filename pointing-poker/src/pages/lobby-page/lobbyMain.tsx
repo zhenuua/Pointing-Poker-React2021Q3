@@ -5,9 +5,9 @@ import { useHistory } from 'react-router-dom';
 import ButtonSubmit from '../../components/buttonSubmit/ButtonSubmit';
 import ButtonCancel from '../../components/buttonCancel/ButtonCancel';
 import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
-import pencil from '../../assets/icons/pencil.svg';
 import style from './Lobby-page.module.scss';
 import authorTest from '../../assets/images/ImageUser.png';
+import linkCopy from '../../assets/images/Check.png';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { useSocketsContext } from '../../context/socket.context';
@@ -22,11 +22,14 @@ import { EVENTS } from '../../store/types/sockeIOEvents';
 import { setChatIconVisible } from '../../store/reducers/controlSlice';
 import ErrorWindow from '../../components/error-window/ErrorWindow';
 import PopUp from '../../components/popup/PopUp';
+import LobbyTitle from '../../components/lobby-title/LobbyTitle';
+import CheckIcon from '../../components/check-icon/CheckIcon';
+import PopUpCheck from '../../components/popup-check/PopUpCheck';
 
 const LobbyMain: React.FC = (): JSX.Element => {
   const [startGameFlag, setStartGameFlag] = useState<boolean>(false);
-
-  const { users } = useTypedSelector((state) => state.lobbySlice);
+  const [isCheck, setCheck] = useState<boolean>(false);
+  const { users, isTitleLobby } = useTypedSelector((state) => state.lobbySlice);
   const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
   const {
     gameSettings,
@@ -48,7 +51,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
   };
 
   const startGame = () => {
-    if (issues.length === 0) {
+    if (issues.length === 0 || isTitleLobby.length === 0) {
       setStartGameFlag(true);
       return;
     }
@@ -104,14 +107,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
   return (
     <section className={style.lobbyMain}>
       <div className={style.lobbyMain__title}>
-        <h2 className={style.lobbyText}>
-          Spring 23 planning (issues 13, 533, 5623, 3252, 6623, ...)
-        </h2>
-        <img
-          className={style.lobbyMain__title__settings}
-          src={pencil}
-          alt="title settings"
-        />
+        <LobbyTitle isScrumMaster={userRole === 'ADMIN'} />
       </div>
       <div className={style.lobbyMain__master}>
         <h3 className={style.lobbyTitle__text__scrum}>Scram master:</h3>
@@ -130,7 +126,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
         <div className={style.lobbyMain__link}>
           <h3 className={style.lobbyTitle__text__link}>Link to lobby:</h3>
           <div className={style.lobbyMain__link__copy}>
-            <label htmlFor="link">
+            <label className={style.labelLink} htmlFor="link">
               <input
                 className={style.lobbyMain__link__input}
                 id="link"
@@ -141,9 +137,18 @@ const LobbyMain: React.FC = (): JSX.Element => {
             <ButtonSubmit
               onclickHandler={() => {
                 copyLink();
+                setCheck(true);
+                setTimeout(() => setCheck(false), 500);
               }}
               text="Copy"
             />
+            {isCheck ? (
+              <div className={style.copyLink}>
+                <img className={style.img} src={linkCopy} alt="check icon" />
+              </div>
+            ) : (
+              ''
+            )}
           </div>
         </div>
       ) : null}
@@ -179,7 +184,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
       </div>
       {startGameFlag ? (
         <PopUp active={startGameFlag} setActive={setStartGameFlag}>
-          <ErrorWindow text="You need to add an item to issues." />
+          <ErrorWindow text="You need to add an item to issues or add the name of the room." />
         </PopUp>
       ) : (
         ''

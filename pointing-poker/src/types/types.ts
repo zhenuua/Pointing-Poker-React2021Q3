@@ -39,6 +39,10 @@ export type PopUpType = {
   setActive: any,
 };
 
+export type PopUpCheckType = {
+  active: boolean,
+};
+
 export type ScoreTabType = {
   status: string,
 };

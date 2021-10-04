@@ -87,6 +87,7 @@ interface IInitState {
   curIssue: IIssueDetail | null;
   cancelGame: boolean;
   resultsVoted: boolean;
+  isTitleLobby: string;
   // curIssue: IGameIssue | null;
   // gameIssues: IGameIssue[];
 }
@@ -113,6 +114,7 @@ const initialState: IInitState = {
   curIssue: null,
   cancelGame: false,
   resultsVoted: false,
+  isTitleLobby: '',
   // gameIssues: [],
 };
 
@@ -311,6 +313,9 @@ const lobbySlice = createSlice({
     },
     setResultsVoted(state, action) {
       state.resultsVoted = action.payload;
+    },
+    setTitleLobby(state, action) {
+      state.isTitleLobby = action.payload;
     },
     addChatMessages(state, action) {
       state.chatMessages.push(action.payload);
@@ -632,6 +637,7 @@ export const {
   setCancelGame,
   setResultsVoted,
   setRestartRnd,
+  setTitleLobby,
 } = lobbySlice.actions;
 
 export default lobbySlice.reducer;

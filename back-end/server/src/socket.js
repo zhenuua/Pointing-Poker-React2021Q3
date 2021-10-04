@@ -23,6 +23,8 @@ export const EVENTS = {
     SCORE_VALUE_CURRENT_USER: "SCORE_VALUE_CURRENT_USER",
     RESTART_ROUND: "RESTART_ROUND",
     NEXT_ISSUE: "NEXT_ISSUE",
+    GAME_IS_OVER: "GAME_IS_OVER",
+    ADD_TITLE_LOBBY: "ADD_TITLE_LOBBY",
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -40,6 +42,8 @@ export const EVENTS = {
     END_ROUND: "END_ROUND",
     RESTART_ROUND: "RESTART_ROUND",
     NEXT_ISSUE: "NEXT_ISSUE",
+    GAME_IS_OVER: "GAME_IS_OVER",
+    ADD_TITLE_LOBBY: "ADD_TITLE_LOBBY",
   },
 };
 
@@ -108,6 +112,7 @@ const socketInit = ({ io }) => {
     );
 
     // ------GameIsOver---------
+
     socket.on("GAME_IS_OVER", ({ isCancelGame, roomId }) => {
       console.log(isCancelGame);
       socket.to(roomId).emit("GAME_IS_OVER_ALL", {
@@ -139,6 +144,12 @@ const socketInit = ({ io }) => {
     socket.on(EVENTS.CLIENT.NEXT_ISSUE, ({ roomId, nextIssueValue }) => {
       socket.to(roomId).emit(EVENTS.SERVER.NEXT_ISSUE, {
         nextIssueValue,
+      });
+    });
+
+    socket.on(EVENTS.CLIENT.ADD_TITLE_LOBBY, ({ isTitleLobby, roomId }) => {
+      socket.to(roomId).emit(EVENTS.SERVER.ADD_TITLE_LOBBY, {
+        isTitleLobby,
       });
     });
 

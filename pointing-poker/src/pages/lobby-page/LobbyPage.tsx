@@ -6,17 +6,19 @@ import LobbyMembers from './lobbyMembers';
 import LobbySettings from './lobbySettings';
 import LobbyIssues from './lobbyIssues';
 import LobbyCards from './lobbyCards';
+
 import { useSocketsContext } from '../../context/socket.context';
+
 import { EVENTS } from '../../store/types/sockeIOEvents';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { createAdmin } from '../../store/actionCreators/lobbyActionCreators';
 import { createPlayer } from '../../store/reducers/userSlice';
 import { deleteUser, fetchUser, removeUser } from '../../store/reducers/lobbySlice';
-import LobbyChat from '../../components/lobby-chat/lobbyChat';
+
+import { setChatIconVisible } from '../../store/reducers/controlSlice';
 
 import style from './Lobby-page.module.scss';
-import { setChatIconVisible } from '../../store/reducers/controlSlice';
 
 const LobbyPage: React.FC = (): JSX.Element => {
   const { socket } = useSocketsContext();

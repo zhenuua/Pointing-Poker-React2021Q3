@@ -169,7 +169,7 @@ const GamePage: React.FC = (): JSX.Element => {
   return (
     <div className={style.gamePageWrapper}>
       <div className={style.gameWrapperLeft}>
-        <LobbyTitle isScrumMaster />
+        <LobbyTitle isScrumMaster={userRole === 'ADMIN'} />
         <div className={style.scrumBlock}>
           <div className={style.scrumMasterWrapper}>
             <span className={style.scrumMasterText}>Scrum Master:</span>

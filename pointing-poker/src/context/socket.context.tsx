@@ -9,6 +9,7 @@ import {
   setCurIssue,
   setRestartRnd,
   setResultsVoted,
+  setTitleLobby,
 } from '../store/reducers/lobbySlice';
 import { EVENTS } from '../store/types/sockeIOEvents';
 import { setRoundOn } from '../store/reducers/gameSlice';
@@ -80,6 +81,10 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
 
     socket.on(EVENTS.SERVER.NEXT_ISSUE, ({ nextIssueValue }) => {
       dispatch(setCurIssue(nextIssueValue.issueTitle));
+    });
+
+    socket.on(EVENTS.SERVER.ADD_TITLE_LOBBY, ({ isTitleLobby }) => {
+      dispatch(setTitleLobby(isTitleLobby));
     });
   }, []);
 
