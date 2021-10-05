@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { stat } from 'fs';
 import { Socket } from 'socket.io-client';
 import { configLobby } from '../../pages/lobby-page/config';
 import { UserRoles } from '../types/sliceTypes';
@@ -13,6 +14,7 @@ export interface IUserInfo {
   roomId: string;
   avatarImg?: string;
 }
+export type IPendingUser = Omit<IUserInfo, 'roomId'>;
 
 export interface IChatMessage extends IUserInfo {
   message: string;
@@ -45,6 +47,7 @@ export interface IGameSettings {
   scramMaster: boolean;
   cardChange: boolean;
   timerNeeded: boolean;
+  autoConnect: boolean;
   scoreType: ScoreTypes;
   shortScoreType: ShortScoreTypes;
   roundTime: number;
@@ -78,7 +81,7 @@ export interface IGamePlayer extends IUserInfo {
 interface IInitState {
   lobbyTitle: string;
   chatMessages: IChatMessage[];
-  pendingUsers: IUserInfo[];
+  pendingUsers: IPendingUser[];
   users: IUserInfo[];
   issues: IIssueDetail[];
   gameSettings: IGameSettings;
@@ -95,6 +98,7 @@ interface IInitState {
 const initialGameSettings: IGameSettings = {
   scramMaster: true,
   cardChange: false,
+  autoConnect: false,
   timerNeeded: true,
   scoreType: ScoreTypes.FIBBONACCI,
   shortScoreType: ShortScoreTypes.FIBBONACCI,
@@ -202,15 +206,12 @@ interface IPostSettingsIssues {
   roomId: string;
   gameSettings: IGameSettings;
   issues: IIssueDetail[];
-  emitEvent: () => void;
+  // emitEvent: () => void;
 }
 
 export const postSettingsIssues = createAsyncThunk(
   'lobby/settingsIssues',
-  async (
-    { roomId, gameSettings, issues, emitEvent }: IPostSettingsIssues,
-    { rejectWithValue },
-  ) => {
+  async ({ roomId, gameSettings, issues }: IPostSettingsIssues, { rejectWithValue }) => {
     try {
       const responseSettings = await axios({
         method: 'post',
@@ -224,7 +225,7 @@ export const postSettingsIssues = createAsyncThunk(
         timeout: 2000,
         data: { roomId, issues },
       });
-      emitEvent();
+      // emitEvent();
       return {
         msg: `${responseSettings.data}  ${responseIssues.data}`,
       };
@@ -235,6 +236,37 @@ export const postSettingsIssues = createAsyncThunk(
     }
   },
 );
+
+// export const postSettingsIssues = createAsyncThunk(
+//   'lobby/settingsIssues',
+//   async (
+//     { roomId, gameSettings, issues, emitEvent }: IPostSettingsIssues,
+//     { rejectWithValue },
+//   ) => {
+//     try {
+//       const responseSettings = await axios({
+//         method: 'post',
+//         url: `http://localhost:5000/lobby/game-settings`,
+//         timeout: 2000,
+//         data: { roomId, gameSettings },
+//       });
+//       const responseIssues = await axios({
+//         method: 'post',
+//         url: `http://localhost:5000/lobby/issues`,
+//         timeout: 2000,
+//         data: { roomId, issues },
+//       });
+//       emitEvent();
+//       return {
+//         msg: `${responseSettings.data}  ${responseIssues.data}`,
+//       };
+//     } catch (err) {
+//       console.log(err);
+//       alert('unable to add setting or issues');
+//       return rejectWithValue('unable to add setting or issues');
+//     }
+//   },
+// );
 
 export const fetchGameSettings = createAsyncThunk(
   'lobby/fetchGameSettings',
@@ -329,6 +361,9 @@ const lobbySlice = createSlice({
       );
       if (index !== -1) state.pendingUsers.splice(index, 1);
     },
+    clearPendingUsers(state) {
+      state.pendingUsers = [];
+    },
     addUser(state, action) {
       state.users.push(action.payload);
     },
@@ -336,7 +371,14 @@ const lobbySlice = createSlice({
       const index = state.users.findIndex(
         (user) => user.socketId === action.payload.socketId,
       );
-      if (index !== -1) state.users.splice(index, 1);
+      if (index !== -1) {
+        const indexPlayer = state.players.findIndex(
+          (player) => player.socketId === action.payload.socketId,
+        );
+        if (indexPlayer !== -1) state.players.splice(indexPlayer, 1);
+
+        state.users.splice(index, 1);
+      }
     },
     setUsers(state, action) {
       state.users = action.payload;
@@ -470,6 +512,9 @@ const lobbySlice = createSlice({
           score: null,
         });
       });
+    },
+    setAutoConnect(state, action) {
+      state.gameSettings.autoConnect = action.payload;
     },
     setScramMaster(state, action) {
       state.gameSettings.scramMaster = action.payload;
@@ -616,6 +661,7 @@ export const {
   addChatMessages,
   addPendingUser,
   removePendingUser,
+  clearPendingUsers,
   addUser,
   removeUser,
   setUsers,
@@ -628,6 +674,7 @@ export const {
   addCardValue,
   setTimerNeeded,
   setCardChange,
+  setAutoConnect,
   setScramMaster,
   setRoundTime,
   addBanVote,

@@ -59,8 +59,18 @@ export const createLobby = createAsyncThunk(
 );
 
 export const checkLobby = createAsyncThunk(
-  'lobby/createLobby',
-  async ({ lobbyId }: { lobbyId: string }, { dispatch }) => {
+  // <<<<<<< HEAD
+  //   'lobby/createLobby',
+  //   async ({ lobbyId }: { lobbyId: string }, { dispatch }) => {
+  //     let lobbyUrlOrRoomIdPath;
+  //     if (lobbyId.length > 10) {
+  //       lobbyUrlOrRoomIdPath = lobbyId.substr(lobbyId.lastIndexOf('/') + 1);
+  //     } else {
+  //       lobbyUrlOrRoomIdPath = lobbyId;
+  //     }
+  // =======
+  'lobby/checkLobby',
+  async ({ lobbyId }: { lobbyId: string }, { dispatch, rejectWithValue }) => {
     let lobbyUrlOrRoomIdPath;
     if (lobbyId.length > 10) {
       lobbyUrlOrRoomIdPath = lobbyId.substr(lobbyId.lastIndexOf('/') + 1);
@@ -76,14 +86,19 @@ export const checkLobby = createAsyncThunk(
           lobbyUrlOrRoomIdPath,
         },
       });
-      dispatch(setRoomId(lobbyUrlOrRoomIdPath));
-      // redirectFu(true);
-      // if (response.status === 200) {
-      // } else {
-      // }
+      // <<<<<<< HEAD
+      //       dispatch(setRoomId(lobbyUrlOrRoomIdPath));
+      //       // redirectFu(true);
+      //       // if (response.status === 200) {
+      //       // } else {
+      //       // }
+      // =======
+      // dispatch(setRoomId(lobbyId));
+      return response.data;
     } catch (err) {
       console.error(err);
       dispatch(setLobbyIdMissing(true));
+      return rejectWithValue('lobby not found');
       // alert('lobby not found');
     }
   },
@@ -189,6 +204,14 @@ const userSlice = createSlice({
     builder.addCase(createPlayer.fulfilled, (state, { payload }) => {
       const { playerToken } = payload;
       state.token = playerToken;
+    });
+    builder.addCase(checkLobby.fulfilled, (state, { payload }) => {
+      const { message, gameOn, gameOver, lobbyId } = payload;
+      console.log(message);
+      state.roomId = lobbyId;
+      // stop here ned to figure out what to do with gameOn and
+      // gameOver cause they're ni deifferent slice, also disabled the ridirection in connect
+      // form
     });
   },
 });

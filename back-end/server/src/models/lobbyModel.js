@@ -6,6 +6,8 @@ const Lobby = new Schema({
   lobbyId: {type: String, required: true, unique: true},
   adminSecret: {type: String, required: true, unique: true},
   playerSecret: {type: String, required: true, unique: true},
+  gameOn: {type: Boolean, required: true},
+  gameOver: {type: Boolean, required: true},
 });
 
 const mongoModel = model('Lobby', Lobby);

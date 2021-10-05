@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -18,19 +19,23 @@ import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { setChatIconVisible } from '../../store/reducers/controlSlice';
 import {
+  clearPendingUsers,
   fetchGameSettings,
   fetchIssues,
   IScore,
   IUserInfo,
   setCurCardValueInScorePlayer,
+  removePendingUser,
   setCurIssue,
   setRestartRnd,
 } from '../../store/reducers/lobbySlice';
 import { useSocketsContext } from '../../context/socket.context';
 import { EVENTS } from '../../store/types/sockeIOEvents';
 
+import { PendingUsersPopup } from './pendingUsersPopup';
 import style from './Game-page.module.scss';
 import { setRoundOn } from '../../store/reducers/gameSlice';
+import PendingUserDataTab from '../../components/pending-user-tab/Pending-user-tab';
 
 const GamePage: React.FC = (): JSX.Element => {
   const [restartRound, setRestartRound] = useState<boolean>(false);
@@ -41,12 +46,13 @@ const GamePage: React.FC = (): JSX.Element => {
   );
   const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
   const { roundOn } = useTypedSelector((state) => state.gameSlice);
-  const { curIssue, resultsVoted } = useTypedSelector((state) => state.lobbySlice);
-
-  const { socket } = useSocketsContext();
+  const { curIssue, resultsVoted, pendingUsers } = useTypedSelector(
+    (state) => state.lobbySlice,
+  );
   const dispatch = useDispatch();
+  const { socket } = useSocketsContext();
 
-  const { cardValues, shortScoreType } = gameSettings;
+  const { cardValues, shortScoreType, autoConnect } = gameSettings;
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
 
   const roundStart = () => {
@@ -166,6 +172,42 @@ const GamePage: React.FC = (): JSX.Element => {
     }
   };
 
+  const handleDeleteUser = (id: string, role: UserRoles) => {
+    dispatch(removePendingUser({ socketId: id }));
+    socket.emit(EVENTS.CLIENT.ACCESS_PENDING_USER, {
+      socketId: id,
+      roomId,
+      access: false,
+    });
+  };
+
+  const handleAddUser = (id: string) => {
+    dispatch(removePendingUser({ socketId: id }));
+    socket.emit(EVENTS.CLIENT.ACCESS_PENDING_USER, {
+      socketId: id,
+      roomId,
+      access: true,
+    });
+  };
+
+  useEffect(() => {
+    if (pendingUsers.length && autoConnect && userRole === UserRoles.USER_ADMIN) {
+      pendingUsers.forEach((user) => {
+        socket.emit(EVENTS.CLIENT.ACCESS_PENDING_USER, {
+          socketId: user.socketId,
+          roomId,
+          access: true,
+        });
+      });
+      dispatch(clearPendingUsers());
+    }
+  }, [pendingUsers]);
+
+  // useEffect(() => {
+  //   if (roundOn) return;
+  //
+  // }, [roundOn, pendingUsers]);
+
   return (
     <div className={style.gamePageWrapper}>
       <div className={style.gameWrapperLeft}>
@@ -284,8 +326,33 @@ const GamePage: React.FC = (): JSX.Element => {
                 />
               ))}
           </div>
+          <span className={style.headerText}>Pending users:</span>
+          {userRole === UserRoles.USER_ADMIN && !roundOn && pendingUsers.length ? (
+            pendingUsers.map((user) => {
+              return (
+                <PendingUserDataTab
+                  userImage={user.avatarImg ? user.avatarImg : avatar}
+                  userName={user.username}
+                  lastName={user.lastName}
+                  userStaff={user.jobPosition}
+                  isRemove
+                  key={`${user.socketId}`}
+                  socketId={user.socketId}
+                  userRole={user.userRole}
+                  deleteUser={handleDeleteUser}
+                  addUser={handleAddUser}
+                  isCurrentUser={false}
+                />
+              );
+            })
+          ) : roundOn ? (
+            <div>pendingUsers are unavailabel during active round</div>
+          ) : null}
         </div>
       </div>
+      {/* {userRole === UserRoles.USER_ADMIN && !roundOn && pendingUsers.length ? (
+        <PendingUsersPopup />
+      ) : null} */}
     </div>
   );
 };

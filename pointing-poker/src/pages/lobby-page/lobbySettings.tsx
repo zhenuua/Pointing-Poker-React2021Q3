@@ -11,6 +11,7 @@ import {
   setCardChange,
   setScramMaster,
   setResultsVoted,
+  setAutoConnect,
 } from '../../store/reducers/lobbySlice';
 import style from './Lobby-page.module.scss';
 import { configLobby } from './config';
@@ -18,7 +19,7 @@ import { configLobby } from './config';
 const LobbySettings: React.FC = (): JSX.Element => {
   const dispatch = useDispatch();
   const { gameSettings, resultsVoted } = useTypedSelector((state) => state.lobbySlice);
-  const { cardChange, scoreType, shortScoreType, scramMaster, timerNeeded } =
+  const { cardChange, scoreType, shortScoreType, scramMaster, timerNeeded, autoConnect } =
     gameSettings;
 
   const changeScoreType = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -68,6 +69,16 @@ const LobbySettings: React.FC = (): JSX.Element => {
             id="resultsVoted"
             setStatus={(status: boolean) => {
               dispatch(setResultsVoted(status));
+            }}
+          />
+        </div>
+        <div className={style.lobbyGameSettings__item}>
+          <p className={style.lobbyGameSettings__item__title}>User auto connect:</p>
+          <Switcher
+            status={autoConnect}
+            id="autoConnect"
+            setStatus={(status: boolean) => {
+              dispatch(setAutoConnect(status));
             }}
           />
         </div>

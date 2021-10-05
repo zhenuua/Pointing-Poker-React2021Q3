@@ -10,7 +10,11 @@ import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { useSocketsContext } from '../../context/socket.context';
 import { EVENTS } from '../../store/types/sockeIOEvents';
-import { deleteUser } from '../../store/reducers/lobbySlice';
+import {
+  deleteUser,
+  fetchGameSettings,
+  fetchIssues,
+} from '../../store/reducers/lobbySlice';
 import { BanPopUpContainer } from './banPopUpContainer';
 
 const LobbyMain: React.FC = (): JSX.Element => {
@@ -84,7 +88,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
     if (index === -1) {
       socket.emit(EVENTS.CLIENT.BANNED_USER_LEAVE, { roomId });
       alert('you have been banned from lobby, mua-ha-ha');
-      history.goBack();
+      history.push('/');
     }
   }, [users]);
 

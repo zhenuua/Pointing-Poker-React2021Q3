@@ -25,6 +25,7 @@ import PopUp from '../../components/popup/PopUp';
 import LobbyTitle from '../../components/lobby-title/LobbyTitle';
 import CheckIcon from '../../components/check-icon/CheckIcon';
 import PopUpCheck from '../../components/popup-check/PopUpCheck';
+import { setGameOn, updateGameStatus } from '../../store/reducers/gameSlice';
 
 const LobbyMain: React.FC = (): JSX.Element => {
   const [startGameFlag, setStartGameFlag] = useState<boolean>(false);
@@ -36,6 +37,8 @@ const LobbyMain: React.FC = (): JSX.Element => {
     issues,
     cancelGame: cancelGameStore,
   } = useTypedSelector((state) => state.lobbySlice);
+  const { gameOn } = useTypedSelector((state) => state.gameSlice);
+
   const { socket } = useSocketsContext();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -50,34 +53,39 @@ const LobbyMain: React.FC = (): JSX.Element => {
     setTimeout(() => dispatch(setCancelGame(false)), 2000);
   };
 
-  const startGame = () => {
+  const startGame = async () => {
     if (issues.length === 0 || isTitleLobby.length === 0) {
       setStartGameFlag(true);
       return;
     }
     console.log('game is start');
-    dispatch(
-      postSettingsIssues({
-        roomId,
-        gameSettings,
-        issues,
-        emitEvent: () => {
-          // console.log('kek after posting settings and issues');
-          socket.emit(EVENTS.CLIENT.GAME_STARTING, { roomId });
-        },
-      }),
-    );
+    await Promise.all([
+      dispatch(setGameOn(true)),
+      dispatch(updateGameStatus({ roomId, gameOn: true, gameOver: false })),
+      dispatch(
+        postSettingsIssues({
+          roomId,
+          gameSettings,
+          issues,
+        }),
+      ),
+    ]);
+    socket.emit(EVENTS.CLIENT.GAME_STARTING, { roomId });
     history.push(`/game-page/${roomId}`);
+    // emitEvent: () => {
+    //   // console.log('kek after posting settings and issues');
+    //   socket.emit(EVENTS.CLIENT.GAME_STARTING, { roomId });
+    // },
   };
   const cancelGameHandler = () => {
     socket.emit(EVENTS.CLIENT.CANCEL_GAME, { roomId });
     dispatch(cancelGame({ roomId }));
-    history.goBack();
+    history.push('/');
   };
   const exitGame = () => {
     console.log('exiting lobby/game');
     socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled: false, userRole });
-    history.goBack();
+    history.push('/');
     console.log('going back in history');
   };
   const copyLink = () => {
@@ -85,6 +93,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
   };
   const dispatchChaining = async () => {
     await Promise.all([
+      dispatch(setGameOn(true)),
       dispatch(fetchGameSettings({ roomId })),
       dispatch(fetchIssues({ roomId })),
     ]);
@@ -93,7 +102,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
   useEffect(() => {
     socket.on(EVENTS.SERVER.GAME_CANCLED, ({ gameCanceled }) => {
       socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled });
-      history.goBack();
+      history.push('/');
     });
     socket.on(EVENTS.SERVER.FETCH_GAME_DATA, (msg) => {
       console.log(msg);
@@ -103,6 +112,23 @@ const LobbyMain: React.FC = (): JSX.Element => {
       history.push(`/game-page/${roomId}`);
     });
   }, []);
+
+  // <----------------when you are connecting to already gameOn lobby --------------->
+  const awaitFetching = async () => {
+    await Promise.all([
+      dispatch(fetchGameSettings({ roomId })),
+      dispatch(fetchIssues({ roomId })),
+    ]);
+  };
+
+  useEffect(() => {
+    if (gameOn && users.length) {
+      awaitFetching();
+      history.push(`/game-page/${roomId}`);
+      // const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
+      // admin && socket.emit(EVENTS.CLIENT.CUR_GAMEDATA_ACCESS, {  });
+    }
+  }, [users]);
 
   return (
     <section className={style.lobbyMain}>

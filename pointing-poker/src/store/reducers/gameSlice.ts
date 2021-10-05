@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { error } from 'console';
 import { Socket } from 'socket.io-client';
+import { checkLobby } from './userSlice';
 
 export interface IScore {
   socketId: string;
@@ -28,6 +30,28 @@ const initialState: IInitState = {
   roundOn: false,
 };
 
+export const updateGameStatus = createAsyncThunk(
+  'game/updateGameStatus',
+  async (
+    { roomId, gameOn, gameOver }: { roomId: string, gameOn: boolean, gameOver: boolean },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: `http://localhost:5000/lobby/update-status`,
+        timeout: 2000,
+        data: { roomId, gameOn, gameOver },
+      });
+      return response.data;
+    } catch (err) {
+      console.log(err);
+      alert('unable to update game status');
+      return rejectWithValue('unable to update game status');
+    }
+  },
+);
+
 const gameSlice = createSlice({
   name: 'game',
   initialState,
@@ -47,6 +71,17 @@ const gameSlice = createSlice({
     setRoundOn(state, action) {
       state.roundOn = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(updateGameStatus.fulfilled, (state, { payload }) => {
+      const { msg } = payload;
+      console.log(msg);
+    });
+    builder.addCase(checkLobby.fulfilled, (state, { payload }) => {
+      const { gameOn, gameOver } = payload;
+      state.gameOn = gameOn;
+      state.gameOver = gameOver;
+    });
   },
 });
 

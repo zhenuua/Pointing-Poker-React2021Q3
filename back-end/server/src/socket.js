@@ -25,6 +25,8 @@ export const EVENTS = {
     NEXT_ISSUE: "NEXT_ISSUE",
     GAME_IS_OVER: "GAME_IS_OVER",
     ADD_TITLE_LOBBY: "ADD_TITLE_LOBBY",
+    PENDING_USER: 'PENDING_USER',
+    ACCESS_PENDING_USER: 'ACCESS_PENDING_USER',
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -44,6 +46,8 @@ export const EVENTS = {
     NEXT_ISSUE: "NEXT_ISSUE",
     GAME_IS_OVER: "GAME_IS_OVER",
     ADD_TITLE_LOBBY: "ADD_TITLE_LOBBY",
+    PENDING_USER_REQ: 'PENDING_USER_REQ',
+    PENDING_USER_RES: "PENDING_USER_RES",
   },
 };
 
@@ -290,6 +294,20 @@ const socketInit = ({ io }) => {
         });
       }
     );
+
+    // handling joining the game during gameOn
+    socket.on(EVENTS.CLIENT.PENDING_USER, ({ roomId, socketId, userRole, username, lastName }) => {
+      socket.to(roomId).emit(EVENTS.SERVER.PENDING_USER_REQ, {
+        socketId,
+        userRole,
+        username,
+        lastName,
+      });
+    });
+    socket.on(EVENTS.CLIENT.ACCESS_PENDING_USER, ({ socketId, access, roomId }) => {
+      io.to(socketId).emit(EVENTS.SERVER.PENDING_USER_RES, { access, roomId });
+    });
+    
   });
 
   // io.emit('server-kek', {message: 'keking from the server'});

@@ -22,17 +22,20 @@ export type LobbyTitleType = {
   isScrumMaster: boolean,
 };
 
-export type PersonalDataTabType = {
-  userImage: string | undefined,
-  userName: string,
-  lastName?: string,
-  userStaff?: string,
-  isCurrentUser: boolean,
-  isRemove: boolean,
-  socketId?: string,
-  userRole?: UserRoles,
-  deleteUser?: (id: string, role: UserRoles) => void,
-};
+export interface PersonalDataTabType {
+  userImage: string | undefined;
+  userName: string;
+  lastName?: string;
+  userStaff?: string;
+  isCurrentUser: boolean;
+  isRemove: boolean;
+  socketId?: string;
+  userRole?: UserRoles;
+  deleteUser?: (id: string, role: UserRoles) => void;
+}
+export interface IPendingUserTab extends PersonalDataTabType {
+  addUser: (id: string) => void;
+}
 
 export type PopUpType = {
   active: boolean,
