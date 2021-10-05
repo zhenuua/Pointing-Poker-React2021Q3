@@ -6,6 +6,7 @@ import Player from "../models/playerModel.js";
 import Spectator from "../models/spectatorModel.js";
 import GameSettings from "../models/gameSettingsModel.js";
 import Issues from "../models/issuesModel.js";
+import GamePlayers from "../models/gamePlayers.js";
 import { generateAccessToken } from '../utils/jwt.js';
 
 export const createLobby = async (req, res) => {
@@ -174,3 +175,22 @@ export const getIssues = async (req, res) => {
     console.log(error);
   }
 };
+
+export const addPlayers = async (req, res) => {
+  const { roomId, players } = req.body;
+  try {
+    const candidateLobby = await Lobby.findOne({ lobbyId: roomId });
+    if (!candidateLobby) {
+      return res
+        .status(400)
+        .json({ message: `lobby with id: ${roomId} does not exist, can not add game palyers` });
+    }
+    const gamePlayers = new GamePlayers({ lobbyId: roomId, players });
+    
+    await gamePlayers.save();
+    res.json({ msg: 'game players added' });
+  } catch (error) {
+    res.status(500).json('unable to add game players');
+    console.log(error);
+  }
+} 
