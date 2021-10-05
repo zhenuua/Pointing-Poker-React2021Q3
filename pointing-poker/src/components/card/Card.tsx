@@ -2,18 +2,16 @@ import React, { useState } from 'react';
 
 import OutsideClickHandler from 'react-outside-click-handler';
 
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import editIcon from '../../assets/images/Edit-icon.svg';
-
 import { ShortScoreTypes } from '../../store/reducers/lobbySlice';
 import style from './Card.module.scss';
-import { useSocketsContext } from '../../context/socket.context';
-import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { RootState } from '../../store/store';
 
-type CardPoints = {
-  cardPoints: number,
-  shortScoreType: ShortScoreTypes,
+export type CardPoints = {
+  cardPoints: number | string,
+  shortScoreType?: ShortScoreTypes,
   gameOn?: boolean,
   setValueIssue?: any,
 };
@@ -24,10 +22,10 @@ const Card: React.FC<CardPoints> = ({
   gameOn = false,
   setValueIssue,
 }): JSX.Element => {
-  const [isNumberCard, setIsNumberCard] = useState<number>(cardPoints);
+  const [isNumberCard, setIsNumberCard] = useState<number | string>(cardPoints);
   const [inputClassName, setInputClassName] = useState<boolean>(false);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
-
+  const { roundOn } = useSelector((state: RootState) => state.gameSlice);
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setIsNumberCard(+value);
@@ -46,10 +44,8 @@ const Card: React.FC<CardPoints> = ({
 
   return (
     <div
-      className={style.cardWrapper}
-      onClick={() => {
-        setValueIssue(isNumberCard);
-      }}
+      className={roundOn ? style.cardWrapper : `${style.cardWrapper} ${style.border}`}
+      onClick={gameOn ? () => setValueIssue(isNumberCard) : undefined}
       aria-hidden="true"
     >
       {!gameOn ? (
@@ -86,19 +82,15 @@ const Card: React.FC<CardPoints> = ({
           <span className={styleSpan}>{isNumberCard}</span>
         </OutsideClickHandler>
       ) : (
-        <>
-          <h2 className={style.text}>{shortScoreType}</h2>
-          <span className={styleSpan}>{cardPoints}</span>
-        </>
+        <div className={style.card}>
+          <div className={!roundOn ? style.front : `${style.front} ${style.flip}`}>
+            <h2 className={style.text}>{shortScoreType}</h2>
+            <span className={styleSpan}>{cardPoints}</span>
+          </div>
+          <div className={!roundOn ? style.back : `${style.back} ${style.flipBack}`} />
+        </div>
       )}
-      {/* {gameOn && (
-        <>
-          <h2 className={style.text}>{shortScoreType}</h2>
-          <span className={styleSpan}>{cardPoints}</span>
-        </>
-      )} */}
     </div>
   );
 };
-
 export default Card;

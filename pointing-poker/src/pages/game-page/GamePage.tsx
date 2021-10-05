@@ -74,7 +74,6 @@ const GamePage: React.FC = (): JSX.Element => {
       curScoreIndex,
       curIssue,
     });
-    console.log('restart');
   };
 
   const nextIssue = () => {
@@ -82,22 +81,14 @@ const GamePage: React.FC = (): JSX.Element => {
     let lastIssueValue: any = null;
     issues.forEach((e, i, arr) => {
       if (e.issueTitle === curIssue?.issueTitle) {
-        console.log('Current value');
         nextIssueValue = arr[i + 1];
-        console.log(nextIssueValue);
         if (
           nextIssueValue !== undefined &&
           nextIssueValue.issueTitle === arr[arr.length - 1].issueTitle
         ) {
-          console.log('Одинаковые');
           lastIssueValue = arr[arr.length - 1];
-          console.log(lastIssueValue);
-          // const len = arr.length - 3;
-          // nextIssueValue = arr[len % i];
-          // console.log(len);
         }
         if (i + 1 === arr.length) {
-          console.log('Перебор');
           const len = arr.length - 1;
           nextIssueValue = arr[len % i];
         }
@@ -107,6 +98,14 @@ const GamePage: React.FC = (): JSX.Element => {
     if (nextIssueValue !== null) dispatch(setCurIssue(nextIssueValue.issueTitle));
     socket.emit('NEXT_ISSUE', { roomId, nextIssueValue });
   };
+
+  // const setValueIssue = (card: number | string) => {
+  //   if (!roundOn) return;
+  //   dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex, curIssue }));
+  //   socket.emit(EVENTS.CLIENT.SCORE_VALUE_CURRENT_USER, {
+  //     card,
+  //     socketId,
+  //     curScoreIndex,
 
   const setValueIssue = (card: number | string) => {
     if (!restartRound && !roundOn) return;
@@ -306,7 +305,7 @@ const GamePage: React.FC = (): JSX.Element => {
         {(userRole === UserRoles.USER_PLAYER ||
           (userRole === UserRoles.USER_ADMIN && gameSettings.scramMaster)) && (
           <div className={style.cardWrapper}>
-            <CardCoffee />
+            <CardCoffee cardPoints="unknown" gameOn setValueIssue={setValueIssue} />
             {cardValues.map((item) => {
               return (
                 <Card
@@ -386,7 +385,7 @@ const GamePage: React.FC = (): JSX.Element => {
               );
             })
           ) : roundOn ? (
-            <div>pendingUsers are unavailabel during active round</div>
+            <div>Pending users are unavailable during active round</div>
           ) : null}
         </div>
       </div>
@@ -410,38 +409,3 @@ const GamePage: React.FC = (): JSX.Element => {
 };
 
 export default GamePage;
-
-// below is obsolite!!!!!!!!!
-// useEffect(() => {
-//   let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
-//   if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
-//   setPlayers(playersArr);
-// }, [users, gameSettings]);
-
-// useEffect(() => {
-//   if (!players.length && players) {
-//     // let playersArr = users.filter((user) => user.userRole === UserRoles.USER_PLAYER);
-//     // if (gameSettings.scramMaster && admin) playersArr = [admin, ...playersArr];
-//     const arr = issues.map((issue) => {
-//       const item = {
-//         issueId: issue.issueTitle,
-//         scores: players.map((user) => ({ socketId: user.socketId, score: null })),
-//       };
-//       return item;
-//     });
-//     dispatch(setGameIssues(arr));
-//   }
-// }, [issues, players]);
-
-// useEffect(() => {
-//   players &&
-//     players.map((user) => {
-//       if (curIssue) {
-//         const check =
-//           curIssue.scores.find((score) => score.socketId === user.socketId);
-//         if (!check) {
-
-//         }
-//       }
-//     });
-// }, [players]);

@@ -13,8 +13,8 @@ import {
   setResultsVoted,
   setAutoConnect,
 } from '../../store/reducers/lobbySlice';
-import style from './Lobby-page.module.scss';
 import { configLobby } from './config';
+import style from './Lobby-page.module.scss';
 
 const LobbySettings: React.FC = (): JSX.Element => {
   const dispatch = useDispatch();

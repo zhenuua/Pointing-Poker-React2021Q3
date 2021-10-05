@@ -73,7 +73,11 @@ const LobbyTitle: React.FC<LobbyTitleType> = ({ isScrumMaster }): JSX.Element =>
             type="text"
             id="title"
             onKeyPress={(e) => pressEnter(e)}
-            placeholder={userRole === 'ADMIN' ? 'Enter the name of the room...' : ''}
+            placeholder={
+              userRole === 'ADMIN'
+                ? 'Enter the name of the room...'
+                : '                           Welcome to the lobby !'
+            }
             readOnly={isReadOnly}
             value={isTitleLobby}
             onChange={(e) => handleChange(e)}

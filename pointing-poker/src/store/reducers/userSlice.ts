@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { UserRoles } from '../types/sliceTypes';
 import { fetchUsers } from './lobbySlice';
+import { TLobbyChat } from '../../types/types';
 
 interface IInitState {
   username: string;

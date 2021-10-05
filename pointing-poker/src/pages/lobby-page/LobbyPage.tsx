@@ -17,6 +17,7 @@ import { createPlayer } from '../../store/reducers/userSlice';
 import { deleteUser, fetchUser, removeUser } from '../../store/reducers/lobbySlice';
 
 import { setChatIconVisible } from '../../store/reducers/controlSlice';
+import ellipsis from '../../assets/images/Ellipsis.svg';
 
 import style from './Lobby-page.module.scss';
 
@@ -101,6 +102,7 @@ const LobbyPage: React.FC = (): JSX.Element => {
 
   return (
     <div className={style.wrapperLobbyPage}>
+      <img className={style.ellipsisImg} src={ellipsis} alt="spinner" />
       <div className={style.wrapperLobby}>
         <LobbyMain />
         <LobbyMembers />

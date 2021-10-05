@@ -23,8 +23,6 @@ import { setChatIconVisible } from '../../store/reducers/controlSlice';
 import ErrorWindow from '../../components/error-window/ErrorWindow';
 import PopUp from '../../components/popup/PopUp';
 import LobbyTitle from '../../components/lobby-title/LobbyTitle';
-import CheckIcon from '../../components/check-icon/CheckIcon';
-import PopUpCheck from '../../components/popup-check/PopUpCheck';
 import { setGameOn, updateGameStatus } from '../../store/reducers/gameSlice';
 
 const LobbyMain: React.FC = (): JSX.Element => {
@@ -37,6 +35,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
     issues,
     cancelGame: cancelGameStore,
   } = useTypedSelector((state) => state.lobbySlice);
+
   const { gameOn } = useTypedSelector((state) => state.gameSlice);
 
   const { socket } = useSocketsContext();
@@ -185,6 +184,10 @@ const LobbyMain: React.FC = (): JSX.Element => {
             <ButtonSubmit
               onclickHandler={() => {
                 startGame();
+                socket.emit(EVENTS.CLIENT.ADD_TITLE_LOBBY, {
+                  isTitleLobby,
+                  roomId,
+                });
               }}
               text="Start Game"
             />
