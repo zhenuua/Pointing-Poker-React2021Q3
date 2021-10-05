@@ -52,7 +52,7 @@ const GamePage: React.FC = (): JSX.Element => {
   const dispatch = useDispatch();
   const { socket } = useSocketsContext();
 
-  const { cardValues, shortScoreType, autoConnect } = gameSettings;
+  const { cardValues, shortScoreType, autoConnect, cardChange } = gameSettings;
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
 
   const roundStart = () => {
@@ -102,14 +102,16 @@ const GamePage: React.FC = (): JSX.Element => {
   };
 
   const setValueIssue = (card: number | string) => {
-    if (!roundOn) return;
-    dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex, curIssue }));
-    socket.emit(EVENTS.CLIENT.SCORE_VALUE_CURRENT_USER, {
-      card,
-      socketId,
-      curScoreIndex,
-      roomId,
-    });
+    if (!restartRound && !roundOn) return;
+    if (roundOn || cardChange) {
+      dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex, curIssue }));
+      socket.emit(EVENTS.CLIENT.SCORE_VALUE_CURRENT_USER, {
+        card,
+        socketId,
+        curScoreIndex,
+        roomId,
+      });
+    }
   };
 
   useEffect(() => {
