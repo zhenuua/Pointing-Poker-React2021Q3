@@ -4,9 +4,12 @@ import { ButtonType } from '../../types/types';
 
 import style from './Button-white.module.scss';
 
-const ButtonWhite: React.FC<ButtonType> = ({ text }): JSX.Element => {
+const ButtonWhite: React.FC<ButtonType> = ({ text, onClick }): JSX.Element => {
+  const clickHandler = () => {
+    onClick && onClick();
+  };
   return (
-    <button type="button" className={style.button}>
+    <button type="button" className={style.button} onClick={clickHandler}>
       {text}
     </button>
   );

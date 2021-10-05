@@ -13,6 +13,8 @@ import {
   setTitleLobby,
   addPendingUser,
   IPendingUser,
+  addIssue,
+  IIssueDetail,
 } from '../store/reducers/lobbySlice';
 import { EVENTS } from '../store/types/sockeIOEvents';
 import { setRoundOn } from '../store/reducers/gameSlice';
@@ -106,6 +108,11 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
     // -gamePage - pending users
     socket.on(EVENTS.SERVER.PENDING_USER_REQ, (pendingUser: IPendingUser) => {
       dispatch(addPendingUser(pendingUser));
+    });
+
+    // gamPage - adding issues
+    socket.on(EVENTS.SERVER.GAME_ADD_ISSUE, ({ issue }: { issue: IIssueDetail }) => {
+      dispatch(addIssue(issue));
     });
   }, []);
 

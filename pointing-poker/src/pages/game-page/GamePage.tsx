@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import PersonalDataTab from '../../components/personal-data-tab/PersonalDataTab';
 import Card from '../../components/card/Card';
@@ -36,11 +37,17 @@ import { PendingUsersPopup } from './pendingUsersPopup';
 import style from './Game-page.module.scss';
 import { setRoundOn } from '../../store/reducers/gameSlice';
 import PendingUserDataTab from '../../components/pending-user-tab/Pending-user-tab';
+import plus from '../../assets/icons/plus.svg';
+import PopUp from '../../components/popup/PopUp';
+import FormCreateIssue from '../../components/form-create-issue/FormCreateIssue';
 
 const GamePage: React.FC = (): JSX.Element => {
   const [restartRound, setRestartRound] = useState<boolean>(false);
   const [openCards, setOpenCards] = useState<boolean>(false);
   const [curScoreIndex, setCurScoreIndex] = useState<number>();
+  const [popupCreateIssue, setPopupCreateIssue] = useState<boolean>(false);
+  const history = useHistory();
+
   const { users, gameSettings, issues, players } = useTypedSelector(
     (state) => state.lobbySlice,
   );
@@ -52,7 +59,7 @@ const GamePage: React.FC = (): JSX.Element => {
   const dispatch = useDispatch();
   const { socket } = useSocketsContext();
 
-  const { cardValues, shortScoreType, autoConnect } = gameSettings;
+  const { cardValues, shortScoreType, autoConnect, cardChange } = gameSettings;
   const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
 
   const roundStart = () => {
@@ -102,14 +109,16 @@ const GamePage: React.FC = (): JSX.Element => {
   };
 
   const setValueIssue = (card: number | string) => {
-    if (!roundOn) return;
-    dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex, curIssue }));
-    socket.emit(EVENTS.CLIENT.SCORE_VALUE_CURRENT_USER, {
-      card,
-      socketId,
-      curScoreIndex,
-      roomId,
-    });
+    if (!restartRound && !roundOn) return;
+    if (roundOn || cardChange) {
+      dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex, curIssue }));
+      socket.emit(EVENTS.CLIENT.SCORE_VALUE_CURRENT_USER, {
+        card,
+        socketId,
+        curScoreIndex,
+        roomId,
+      });
+    }
   };
 
   useEffect(() => {
@@ -207,6 +216,16 @@ const GamePage: React.FC = (): JSX.Element => {
   //   if (roundOn) return;
   //
   // }, [roundOn, pendingUsers]);
+  const exitGame = () => {
+    console.log('exiting lobby/game');
+    socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled: false, userRole });
+    history.push('/');
+    console.log('going back in history');
+  };
+
+  const stopGame = () => {
+    console.log('stop game');
+  };
 
   return (
     <div className={style.gamePageWrapper}>
@@ -223,7 +242,12 @@ const GamePage: React.FC = (): JSX.Element => {
               isRemove={false}
             />
           </div>
-          <ButtonWhite text="Stop Game" />
+          {userRole === UserRoles.USER_ADMIN && (
+            <ButtonWhite text="Stop Game" onClick={stopGame} />
+          )}
+          {userRole !== UserRoles.USER_ADMIN && (
+            <ButtonWhite text="Exit Game" onClick={exitGame} />
+          )}
         </div>
         <div className={style.issuesWrapper}>
           <div className={style.issuesText}>Issues:</div>
@@ -242,6 +266,22 @@ const GamePage: React.FC = (): JSX.Element => {
                   }
                 />
               ))}
+            {userRole === UserRoles.USER_ADMIN && (
+              <div
+                className={style.issueTabWrapper__item}
+                aria-hidden="true"
+                onClick={() => {
+                  setPopupCreateIssue(true);
+                }}
+              >
+                <p className={style.issueTabWrapper__item__title}>Create new Issue</p>
+                <img
+                  className={style.issueTabWrapper__item__img}
+                  src={plus}
+                  alt="Create new Issue"
+                />
+              </div>
+            )}
           </div>
           <div className={style.runRoundWrapper}>
             <TimerComponent isEditMode={false} isStartTimer={roundOn} />
@@ -353,6 +393,18 @@ const GamePage: React.FC = (): JSX.Element => {
       {/* {userRole === UserRoles.USER_ADMIN && !roundOn && pendingUsers.length ? (
         <PendingUsersPopup />
       ) : null} */}
+      {userRole === UserRoles.USER_ADMIN && (
+        <PopUp active={popupCreateIssue} setActive={setPopupCreateIssue}>
+          <FormCreateIssue
+            onSubmitHandler={() => {
+              setPopupCreateIssue(false);
+            }}
+            onCancelHandler={() => {
+              setPopupCreateIssue(false);
+            }}
+          />
+        </PopUp>
+      )}
     </div>
   );
 };

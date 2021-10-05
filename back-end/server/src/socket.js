@@ -27,6 +27,7 @@ export const EVENTS = {
     ADD_TITLE_LOBBY: "ADD_TITLE_LOBBY",
     PENDING_USER: 'PENDING_USER',
     ACCESS_PENDING_USER: 'ACCESS_PENDING_USER',
+    GAME_ADD_ISSUE: 'GAME_ADD_ISSUE',
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -48,6 +49,7 @@ export const EVENTS = {
     ADD_TITLE_LOBBY: "ADD_TITLE_LOBBY",
     PENDING_USER_REQ: 'PENDING_USER_REQ',
     PENDING_USER_RES: "PENDING_USER_RES",
+    GAME_ADD_ISSUE: 'GAME_ADD_ISSUE',
   },
 };
 
@@ -306,6 +308,14 @@ const socketInit = ({ io }) => {
     });
     socket.on(EVENTS.CLIENT.ACCESS_PENDING_USER, ({ socketId, access, roomId }) => {
       io.to(socketId).emit(EVENTS.SERVER.PENDING_USER_RES, { access, roomId });
+    });
+
+    // adding issues during gameOn
+    socket.on(EVENTS.CLIENT.GAME_ADD_ISSUE, ({
+      roomId,
+      issue, 
+    }) => {
+      socket.to(roomId).emit(EVENTS.SERVER.GAME_ADD_ISSUE, { issue });
     });
     
   });

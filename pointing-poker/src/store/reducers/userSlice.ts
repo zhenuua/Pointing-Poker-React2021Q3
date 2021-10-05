@@ -59,16 +59,6 @@ export const createLobby = createAsyncThunk(
 );
 
 export const checkLobby = createAsyncThunk(
-  // <<<<<<< HEAD
-  //   'lobby/createLobby',
-  //   async ({ lobbyId }: { lobbyId: string }, { dispatch }) => {
-  //     let lobbyUrlOrRoomIdPath;
-  //     if (lobbyId.length > 10) {
-  //       lobbyUrlOrRoomIdPath = lobbyId.substr(lobbyId.lastIndexOf('/') + 1);
-  //     } else {
-  //       lobbyUrlOrRoomIdPath = lobbyId;
-  //     }
-  // =======
   'lobby/checkLobby',
   async ({ lobbyId }: { lobbyId: string }, { dispatch, rejectWithValue }) => {
     let lobbyUrlOrRoomIdPath;
@@ -86,14 +76,6 @@ export const checkLobby = createAsyncThunk(
           lobbyUrlOrRoomIdPath,
         },
       });
-      // <<<<<<< HEAD
-      //       dispatch(setRoomId(lobbyUrlOrRoomIdPath));
-      //       // redirectFu(true);
-      //       // if (response.status === 200) {
-      //       // } else {
-      //       // }
-      // =======
-      // dispatch(setRoomId(lobbyId));
       return response.data;
     } catch (err) {
       console.error(err);
