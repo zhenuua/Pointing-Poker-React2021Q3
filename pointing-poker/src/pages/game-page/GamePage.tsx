@@ -24,6 +24,7 @@ import {
   IUserInfo,
   setCurCardValueInScorePlayer,
   setCurIssue,
+  setRestartRnd,
 } from '../../store/reducers/lobbySlice';
 import { useSocketsContext } from '../../context/socket.context';
 import { EVENTS } from '../../store/types/sockeIOEvents';
@@ -33,13 +34,14 @@ import { setRoundOn } from '../../store/reducers/gameSlice';
 
 const GamePage: React.FC = (): JSX.Element => {
   const [restartRound, setRestartRound] = useState<boolean>(false);
+  const [openCards, setOpenCards] = useState<boolean>(false);
   const [curScoreIndex, setCurScoreIndex] = useState<number>();
   const { users, gameSettings, issues, players } = useTypedSelector(
     (state) => state.lobbySlice,
   );
   const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
   const { roundOn } = useTypedSelector((state) => state.gameSlice);
-  const { curIssue } = useTypedSelector((state) => state.lobbySlice);
+  const { curIssue, resultsVoted } = useTypedSelector((state) => state.lobbySlice);
 
   const { socket } = useSocketsContext();
   const dispatch = useDispatch();
@@ -52,9 +54,50 @@ const GamePage: React.FC = (): JSX.Element => {
     socket.emit(EVENTS.CLIENT.START_ROUND, { roomId, roundOn: true });
   };
 
+  const roundRestart = () => {
+    dispatch(setRestartRnd({ curScoreIndex, curIssue }));
+    socket.emit(EVENTS.CLIENT.RESTART_ROUND, {
+      roomId,
+      curScoreIndex,
+      curIssue,
+    });
+    console.log('restart');
+  };
+
+  const nextIssue = () => {
+    let nextIssueValue: any = null;
+    let lastIssueValue: any = null;
+    issues.forEach((e, i, arr) => {
+      if (e.issueTitle === curIssue?.issueTitle) {
+        console.log('Current value');
+        nextIssueValue = arr[i + 1];
+        console.log(nextIssueValue);
+        if (
+          nextIssueValue !== undefined &&
+          nextIssueValue.issueTitle === arr[arr.length - 1].issueTitle
+        ) {
+          console.log('Одинаковые');
+          lastIssueValue = arr[arr.length - 1];
+          console.log(lastIssueValue);
+          // const len = arr.length - 3;
+          // nextIssueValue = arr[len % i];
+          // console.log(len);
+        }
+        if (i + 1 === arr.length) {
+          console.log('Перебор');
+          const len = arr.length - 1;
+          nextIssueValue = arr[len % i];
+        }
+      }
+    });
+
+    if (nextIssueValue !== null) dispatch(setCurIssue(nextIssueValue.issueTitle));
+    socket.emit('NEXT_ISSUE', { roomId, nextIssueValue });
+  };
+
   const setValueIssue = (card: number | string) => {
     if (!roundOn) return;
-    dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex }));
+    dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex, curIssue }));
     socket.emit(EVENTS.CLIENT.SCORE_VALUE_CURRENT_USER, {
       card,
       socketId,
@@ -69,8 +112,21 @@ const GamePage: React.FC = (): JSX.Element => {
         ? players.findIndex((player) => player.scores[curScoreIndex].score !== null)
         : null;
     index !== -1 && index !== null ? setRestartRound(true) : setRestartRound(false);
-    console.log(`${index} index`);
-    console.log(`${curScoreIndex} curScoreIndex`);
+    // console.log(`${index} index`);
+    // console.log(`${curScoreIndex} curScoreIndex`);
+
+    const allVoted =
+      players.length && curScoreIndex !== undefined
+        ? players.filter((player) => player.scores[curScoreIndex].score === null)
+        : '';
+    if (allVoted.length === 0) {
+      if (resultsVoted) {
+        //   console.log('View all Cards');
+        dispatch(setRoundOn(false));
+        // setOpenCards(true);
+        socket.emit(EVENTS.CLIENT.END_ROUND, { roundOn, roomId });
+      }
+    }
   }, [curScoreIndex, players]);
 
   // const dispatchChaining = async () => {
@@ -113,7 +169,7 @@ const GamePage: React.FC = (): JSX.Element => {
   return (
     <div className={style.gamePageWrapper}>
       <div className={style.gameWrapperLeft}>
-        <LobbyTitle isScrumMaster />
+        <LobbyTitle isScrumMaster={userRole === 'ADMIN'} />
         <div className={style.scrumBlock}>
           <div className={style.scrumMasterWrapper}>
             <span className={style.scrumMasterText}>Scrum Master:</span>
@@ -144,28 +200,21 @@ const GamePage: React.FC = (): JSX.Element => {
                   }
                 />
               ))}
-            {/* <IssueTab status="Issue 13" isCurrent priority="Low Priority" />
-            <IssueTab status="Issue 542" isCurrent={false} priority="Low Priority" />
-            <IssueTab status="Issue 6421" isCurrent={false} priority="High Priority" />
-            <IssueTab status="Issue 13" isCurrent={false} priority="Low Priority" />
-            <NewIssue /> */}
           </div>
           <div className={style.runRoundWrapper}>
             <TimerComponent isEditMode={false} isStartTimer={roundOn} />
             {userRole === UserRoles.USER_ADMIN && !roundOn && (
-              <ButtonMini
-                text={restartRound ? 'Restart' : 'Run Round'}
-                onClick={() =>
-                  !restartRound
-                    ? roundStart()
-                    : () => {
-                        console.log('Empty');
-                      }
-                }
-              />
+              <div className={style.btnRestart}>
+                <ButtonMini
+                  text={restartRound ? 'Restart' : 'Run Round'}
+                  onClick={() => (!restartRound ? roundStart() : roundRestart())}
+                />
+              </div>
             )}
             {userRole === UserRoles.USER_ADMIN && !roundOn && restartRound && (
-              <ButtonMini text="Next Issue" />
+              <div className={style.btnNextIssue}>
+                <ButtonMini text="Next Issue" onClick={() => nextIssue()} />
+              </div>
             )}
           </div>
         </div>
@@ -214,11 +263,6 @@ const GamePage: React.FC = (): JSX.Element => {
                 />
               ),
             )}
-          {/* <ScoreTab status="In Progress" />
-          <ScoreTab status="In Progress" />
-          <ScoreTab status="In Progress" />
-          <ScoreTab status="In Progress" />
-          <ScoreTab status="In Progress" /> */}
         </div>
         <div className={style.playersColumn}>
           <span className={style.headerText}>Players:</span>

@@ -47,7 +47,9 @@ const Card: React.FC<CardPoints> = ({
   return (
     <div
       className={style.cardWrapper}
-      onClick={() => setValueIssue(isNumberCard)}
+      onClick={() => {
+        setValueIssue(isNumberCard);
+      }}
       aria-hidden="true"
     >
       {!gameOn ? (

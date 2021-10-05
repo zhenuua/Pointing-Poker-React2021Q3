@@ -10,13 +10,14 @@ import {
   setTimerNeeded,
   setCardChange,
   setScramMaster,
+  setResultsVoted,
 } from '../../store/reducers/lobbySlice';
 import style from './Lobby-page.module.scss';
 import { configLobby } from './config';
 
 const LobbySettings: React.FC = (): JSX.Element => {
   const dispatch = useDispatch();
-  const { gameSettings } = useTypedSelector((state) => state.lobbySlice);
+  const { gameSettings, resultsVoted } = useTypedSelector((state) => state.lobbySlice);
   const { cardChange, scoreType, shortScoreType, scramMaster, timerNeeded } =
     gameSettings;
 
@@ -55,6 +56,18 @@ const LobbySettings: React.FC = (): JSX.Element => {
             id="cardChange"
             setStatus={(status: boolean) => {
               dispatch(setCardChange(status));
+            }}
+          />
+        </div>
+        <div className={style.lobbyGameSettings__item}>
+          <p className={style.lobbyGameSettings__item__title}>
+            Show results if everyone voted:
+          </p>
+          <Switcher
+            status={resultsVoted}
+            id="resultsVoted"
+            setStatus={(status: boolean) => {
+              dispatch(setResultsVoted(status));
             }}
           />
         </div>
