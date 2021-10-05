@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import io, { Socket } from 'socket.io-client';
 import { useActions } from '../hooks/useActions';
 import { useTypedSelector } from '../hooks/useTypedSelector';
@@ -14,6 +14,7 @@ import {
 import { EVENTS } from '../store/types/sockeIOEvents';
 import { setRoundOn } from '../store/reducers/gameSlice';
 import { setChatIconVisible } from '../store/reducers/controlSlice';
+import { RootState } from '../store/store';
 
 interface Context {
   socket: Socket;
@@ -38,7 +39,7 @@ const SocketsContext = createContext<Context>({
 
 const SocketsProvider = ({ children }: { children: ReactNode }) => {
   const { issues } = useTypedSelector((state) => state.lobbySlice);
-
+  const { users } = useSelector((state: RootState) => state.lobbySlice);
   const { setSocketId } = useActions();
   const dispatch = useDispatch();
   socket.on(EVENTS.connect, () => {

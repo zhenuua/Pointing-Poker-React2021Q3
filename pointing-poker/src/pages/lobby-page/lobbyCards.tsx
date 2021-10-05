@@ -83,7 +83,13 @@ const LobbyCards: React.FC = (): JSX.Element => {
         Add card values:
       </h3>
       <div className={style.lobbyGameCards__faces}>
-        <CardCoffee />
+        <CardCoffee
+          cardPoints="unknown"
+          gameOn={false}
+          setValueIssue={() => {
+            console.log('Hi from lobby');
+          }}
+        />
         {cardValues.map((item) => {
           return <Card key={item} cardPoints={item} shortScoreType={shortScoreType} />;
         })}

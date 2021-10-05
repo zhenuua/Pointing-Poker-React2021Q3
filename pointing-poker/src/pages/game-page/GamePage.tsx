@@ -224,7 +224,7 @@ const GamePage: React.FC = (): JSX.Element => {
         {(userRole === UserRoles.USER_PLAYER ||
           (userRole === UserRoles.USER_ADMIN && gameSettings.scramMaster)) && (
           <div className={style.cardWrapper}>
-            <CardCoffee />
+            <CardCoffee cardPoints="unknown" gameOn setValueIssue={setValueIssue} />
             {cardValues.map((item) => {
               return (
                 <Card

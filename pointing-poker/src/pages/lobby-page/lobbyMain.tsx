@@ -23,8 +23,6 @@ import { setChatIconVisible } from '../../store/reducers/controlSlice';
 import ErrorWindow from '../../components/error-window/ErrorWindow';
 import PopUp from '../../components/popup/PopUp';
 import LobbyTitle from '../../components/lobby-title/LobbyTitle';
-import CheckIcon from '../../components/check-icon/CheckIcon';
-import PopUpCheck from '../../components/popup-check/PopUpCheck';
 
 const LobbyMain: React.FC = (): JSX.Element => {
   const [startGameFlag, setStartGameFlag] = useState<boolean>(false);
@@ -159,6 +157,10 @@ const LobbyMain: React.FC = (): JSX.Element => {
             <ButtonSubmit
               onclickHandler={() => {
                 startGame();
+                socket.emit(EVENTS.CLIENT.ADD_TITLE_LOBBY, {
+                  isTitleLobby,
+                  roomId,
+                });
               }}
               text="Start Game"
             />

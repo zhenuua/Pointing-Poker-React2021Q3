@@ -41,10 +41,6 @@ const LobbyTitle: React.FC<LobbyTitleType> = ({ isScrumMaster }): JSX.Element =>
 
       setTimeout(() => setCheck(false), 500);
       setIsReadOnly(true);
-      socket.emit(EVENTS.CLIENT.ADD_TITLE_LOBBY, {
-        isTitleLobby,
-        roomId,
-      });
     }
   };
 
@@ -73,7 +69,11 @@ const LobbyTitle: React.FC<LobbyTitleType> = ({ isScrumMaster }): JSX.Element =>
             type="text"
             id="title"
             onKeyPress={(e) => pressEnter(e)}
-            placeholder={userRole === 'ADMIN' ? 'Enter the name of the room...' : ''}
+            placeholder={
+              userRole === 'ADMIN'
+                ? 'Enter the name of the room...'
+                : '                           Welcome to the lobby !'
+            }
             readOnly={isReadOnly}
             value={isTitleLobby}
             onChange={(e) => handleChange(e)}
