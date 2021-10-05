@@ -9,6 +9,7 @@ router.get('/game-settings/:lobbyId', lobbyController.getGameSettings);
 router.post('/game-settings', lobbyController.addGameSettings);
 router.get('/issues/:lobbyId', lobbyController.getIssues);
 router.post('/issues', lobbyController.addIssues);
+router.post('/issues/add', lobbyController.addIssue);
 router.get('/check/:lobbyId', lobbyController.checkLobby);
 router.delete('/delete/', lobbyController.deleteLobby);
 

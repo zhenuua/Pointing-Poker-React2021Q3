@@ -1,11 +1,19 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import { useDispatch } from 'react-redux';
-import { IssuesPriority, addIssue, removeIssue } from '../../store/reducers/lobbySlice';
+import {
+  IssuesPriority,
+  addIssue,
+  removeIssue,
+  postIssue,
+} from '../../store/reducers/lobbySlice';
 import ButtonSubmit from '../buttonSubmit/ButtonSubmit';
 import ButtonCancel from '../buttonCancel/ButtonCancel';
 import style from './FormCreateIssue.module.scss';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { UserRoles } from '../../store/types/sliceTypes';
+import { useSocketsContext } from '../../context/socket.context';
+import { EVENTS } from '../../store/types/sockeIOEvents';
 
 type PopUpType = {
   onSubmitHandler: () => void,
@@ -19,6 +27,9 @@ export const FormCreateIssue: React.FC<PopUpType> = ({
   const [titleIssueСurrent, setTitleIssueСurrent] = useState<string>('');
   const [priorityСurrent, setPriorityСurrent] = useState<string>(IssuesPriority.LOW);
   const [errorTitle, setErrorTitle] = useState<string>('');
+  const { userRole, roomId } = useTypedSelector((state) => state.userSlice);
+  const { gameOn } = useTypedSelector((state) => state.gameSlice);
+  const { socket } = useSocketsContext();
 
   const dispatch = useDispatch();
   const { issues } = useTypedSelector((state) => state.lobbySlice);
@@ -26,7 +37,7 @@ export const FormCreateIssue: React.FC<PopUpType> = ({
     setTitleIssueСurrent(titleIssueСurrent);
   }, [titleIssueСurrent]);
 
-  const createIssue = () => {
+  const createIssue = async () => {
     dispatch(
       addIssue({
         issueTitle: titleIssueСurrent,
@@ -34,6 +45,31 @@ export const FormCreateIssue: React.FC<PopUpType> = ({
         issueId: titleIssueСurrent,
       }),
     );
+    if (userRole === UserRoles.USER_ADMIN && gameOn) {
+      console.log('emitting evetn when admin added issue');
+      // const priority = priorityСurrent as IssuesPriority;
+      await Promise.resolve(
+        dispatch(
+          postIssue({
+            roomId,
+            issue: {
+              issueTitle: titleIssueСurrent,
+              priority: priorityСurrent,
+              issueId: titleIssueСurrent,
+            },
+          }),
+        ),
+      );
+      socket.emit(EVENTS.CLIENT.GAME_ADD_ISSUE, {
+        roomId,
+        issue: {
+          issueTitle: titleIssueСurrent,
+          priority: priorityСurrent,
+          issueId: titleIssueСurrent,
+        },
+      });
+    }
+
     setTitleIssueСurrent('');
     setPriorityСurrent(IssuesPriority.LOW);
     setErrorTitle('');

@@ -304,6 +304,25 @@ export const fetchIssues = createAsyncThunk(
   },
 );
 
+export const postIssue = createAsyncThunk(
+  'lobby/postIssue',
+  async ({ roomId, issue }: { roomId: string, issue: any }, { rejectWithValue }) => {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: `http://localhost:5000/lobby/issues/add`,
+        timeout: 5000,
+        data: { roomId, issue },
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to post new issue');
+      return rejectWithValue([]);
+    }
+  },
+);
+
 const checkScramMaster = (state: IInitState, scramMaster: any) => {
   if (scramMaster) {
     const adminIndex = state.players.findIndex(

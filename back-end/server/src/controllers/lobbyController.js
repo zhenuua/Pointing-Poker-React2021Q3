@@ -120,6 +120,31 @@ export const addIssues = async (req, res) => {
   }
 }
 
+export const addIssue = async (req, res) => {
+  const { roomId, issue } = req.body;
+  try {
+    const candidateIssues = await Issues.findOne({ lobbyId: roomId });
+    if (!candidateIssues) {
+      return res
+        .status(400)
+        .json({ message: `unable to find issues, cannot add new issue` });
+    }
+    const newIssues = [...candidateIssues.issues, issue];
+    const candidateIssues2 = await Issues.updateOne(
+      { lobbyId: roomId },
+      { issues: newIssues }
+      );
+
+    if(!candidateIssues2) {
+      return res.status(400).json({ message: ` cannot update issues with id: ${roomId}` });
+    }
+    res.json({ msg: 'issue has been added' });
+  } catch (error) {
+    res.status(500).json('unable to add issue');
+    console.log(error);
+  }
+}
+
 export const getGameSettings = async (req, res) => {
   try {
     const { lobbyId } = req.params;

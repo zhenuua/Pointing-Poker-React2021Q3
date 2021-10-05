@@ -36,11 +36,16 @@ import { PendingUsersPopup } from './pendingUsersPopup';
 import style from './Game-page.module.scss';
 import { setRoundOn } from '../../store/reducers/gameSlice';
 import PendingUserDataTab from '../../components/pending-user-tab/Pending-user-tab';
+import plus from '../../assets/icons/plus.svg';
+import PopUp from '../../components/popup/PopUp';
+import FormCreateIssue from '../../components/form-create-issue/FormCreateIssue';
 
 const GamePage: React.FC = (): JSX.Element => {
   const [restartRound, setRestartRound] = useState<boolean>(false);
   const [openCards, setOpenCards] = useState<boolean>(false);
   const [curScoreIndex, setCurScoreIndex] = useState<number>();
+  const [popupCreateIssue, setPopupCreateIssue] = useState<boolean>(false);
+
   const { users, gameSettings, issues, players } = useTypedSelector(
     (state) => state.lobbySlice,
   );
@@ -244,6 +249,22 @@ const GamePage: React.FC = (): JSX.Element => {
                   }
                 />
               ))}
+            {userRole === UserRoles.USER_ADMIN && (
+              <div
+                className={style.issueTabWrapper__item}
+                aria-hidden="true"
+                onClick={() => {
+                  setPopupCreateIssue(true);
+                }}
+              >
+                <p className={style.issueTabWrapper__item__title}>Create new Issue</p>
+                <img
+                  className={style.issueTabWrapper__item__img}
+                  src={plus}
+                  alt="Create new Issue"
+                />
+              </div>
+            )}
           </div>
           <div className={style.runRoundWrapper}>
             <TimerComponent isEditMode={false} isStartTimer={roundOn} />
@@ -355,6 +376,18 @@ const GamePage: React.FC = (): JSX.Element => {
       {/* {userRole === UserRoles.USER_ADMIN && !roundOn && pendingUsers.length ? (
         <PendingUsersPopup />
       ) : null} */}
+      {userRole === UserRoles.USER_ADMIN && (
+        <PopUp active={popupCreateIssue} setActive={setPopupCreateIssue}>
+          <FormCreateIssue
+            onSubmitHandler={() => {
+              setPopupCreateIssue(false);
+            }}
+            onCancelHandler={() => {
+              setPopupCreateIssue(false);
+            }}
+          />
+        </PopUp>
+      )}
     </div>
   );
 };
