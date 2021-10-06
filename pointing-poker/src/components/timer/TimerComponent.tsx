@@ -32,7 +32,7 @@ const TimerComponent: React.FC<TimerType> = ({
   useEffect(() => {
     if (isStartTimer) {
       if (currentRoundTime === 0) {
-        console.log('time is over');
+        console.log('time is up');
         dispatch(setRoundOn(false));
         setCurrentRoundTime(roundTime);
       } else {
