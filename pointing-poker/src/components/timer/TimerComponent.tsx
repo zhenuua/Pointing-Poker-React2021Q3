@@ -20,17 +20,25 @@ const TimerComponent: React.FC<TimerType> = ({
   const [currentRoundTime, setCurrentRoundTime] = useState<number>(roundTime);
   const [seconds, setSeconds] = useState<number>(Math.floor(currentRoundTime % 60));
   const [minutes, setMinutes] = useState<number>(Math.floor(currentRoundTime / 60));
+
   useEffect(() => {
-    if (!isStartTimer) {
-      setCurrentRoundTime(roundTime);
-      dispatch(setRoundTime(minutes * 60 + seconds));
-    } else if (currentRoundTime === 0) {
-      console.log('time is over');
-      dispatch(setRoundOn(false));
-    } else {
-      setTimeout(() => setCurrentRoundTime(currentRoundTime - 1), 1000);
+    setCurrentRoundTime(roundTime);
+  }, [roundTime]);
+
+  useEffect(() => {
+    if (isEditMode) dispatch(setRoundTime(minutes * 60 + seconds));
+  }, [minutes, seconds]);
+
+  useEffect(() => {
+    if (isStartTimer) {
+      if (currentRoundTime === 0) {
+        console.log('time is over');
+        dispatch(setRoundOn(false));
+      } else {
+        setTimeout(() => setCurrentRoundTime(currentRoundTime - 1), 1000);
+      }
     }
-  }, [roundTime, currentRoundTime, minutes, seconds, isStartTimer]);
+  }, [currentRoundTime, isStartTimer]);
 
   const getMinutesTimer = (secondsMatch: number) => {
     const minutesTimer = Math.floor(secondsMatch / 60);
