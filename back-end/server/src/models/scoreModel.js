@@ -8,6 +8,6 @@ export const ScoreSchema = new Schema({
   
 });
 
-const mongoModel = model('ScoreModel', ScoreSchema);
+const mongoModel = model('Score', ScoreSchema);
 
-export default mongoModel;
+// export default mongoModel;

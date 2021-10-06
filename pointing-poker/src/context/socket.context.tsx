@@ -15,6 +15,8 @@ import {
   IPendingUser,
   addIssue,
   IIssueDetail,
+  setPlayers,
+  removePendingUser,
 } from '../store/reducers/lobbySlice';
 import { EVENTS } from '../store/types/sockeIOEvents';
 import { setRoundOn } from '../store/reducers/gameSlice';
@@ -58,12 +60,14 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // ------------- MAIN PAGE --------------
-    socket.on(EVENTS.SERVER.PENDING_USER_RES, ({ access, roomId }) => {
+    socket.on(EVENTS.SERVER.PENDING_USER_RES, ({ access, roomId, players, curIssue }) => {
       console.log(`your access status is !${access}! for game in room ${roomId}`);
       if (!access) {
         alert('access to lobby have been denyed');
         history.push('/');
       } else {
+        dispatch(setPlayers(players));
+        // dispatch(setCurIssue(curIssue.issueTitle));
         history.push(`/lobby-page/${roomId}`);
       }
     });
@@ -133,3 +137,15 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
 
 export const useSocketsContext = () => useContext(SocketsContext);
 export default SocketsProvider;
+
+// socket.on(EVENTS.SERVER.UPDATE_PLAYER, ({ players, id }) => {
+//   console.log('RECEIVING UPDATE_PLAYER EVENT');
+//   players.forEach((player: any) => {
+//     console.log(player);
+//     // dispatch(setCurCardValueInScorePlayer({}));
+//   });
+//   console.log(id);
+
+//   // dispatch(removePendingUser({ socketId: id }));
+//   dispatch(setPlayers(players));
+// });

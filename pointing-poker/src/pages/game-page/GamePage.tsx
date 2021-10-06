@@ -155,7 +155,7 @@ const GamePage: React.FC = (): JSX.Element => {
   // }, []);
 
   useEffect(() => {
-    dispatch(setChatIconVisible(true));
+    dispatch(setChatIconVisible(false));
     const index =
       players.length && issues.length && curIssue
         ? players[0].scores.findIndex((score) => score.issueTitle === curIssue.issueTitle)
@@ -180,41 +180,50 @@ const GamePage: React.FC = (): JSX.Element => {
     }
   };
 
-  const handleDeleteUser = (id: string, role: UserRoles) => {
+  // <----------------reject/admit pending user----START------>
+  const handleDeletePendingUser = (id: string, role: UserRoles) => {
     dispatch(removePendingUser({ socketId: id }));
     socket.emit(EVENTS.CLIENT.ACCESS_PENDING_USER, {
       socketId: id,
       roomId,
       access: false,
+      players: null,
+      curIssue: null,
     });
   };
 
-  const handleAddUser = (id: string) => {
+  const handleAddPendingUser = (id: string) => {
     dispatch(removePendingUser({ socketId: id }));
     socket.emit(EVENTS.CLIENT.ACCESS_PENDING_USER, {
       socketId: id,
       roomId,
       access: true,
+      players,
+      curIssue,
     });
   };
 
   useEffect(() => {
-    if (pendingUsers.length && autoConnect && userRole === UserRoles.USER_ADMIN) {
+    if (
+      userRole === UserRoles.USER_ADMIN &&
+      autoConnect &&
+      !roundOn &&
+      pendingUsers.length
+    ) {
       pendingUsers.forEach((user) => {
         socket.emit(EVENTS.CLIENT.ACCESS_PENDING_USER, {
           socketId: user.socketId,
           roomId,
           access: true,
+          players,
+          curIssue,
         });
       });
       dispatch(clearPendingUsers());
     }
-  }, [pendingUsers]);
+  }, [pendingUsers, roundOn]);
+  // <-----reject/admit pending user----END------>>
 
-  // useEffect(() => {
-  //   if (roundOn) return;
-  //
-  // }, [roundOn, pendingUsers]);
   const exitGame = () => {
     console.log('exiting lobby/game');
     socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled: false, userRole });
@@ -378,13 +387,13 @@ const GamePage: React.FC = (): JSX.Element => {
                   key={`${user.socketId}`}
                   socketId={user.socketId}
                   userRole={user.userRole}
-                  deleteUser={handleDeleteUser}
-                  addUser={handleAddUser}
+                  deleteUser={handleDeletePendingUser}
+                  addUser={handleAddPendingUser}
                   isCurrentUser={false}
                 />
               );
             })
-          ) : roundOn ? (
+          ) : roundOn && pendingUsers.length ? (
             <div>Pending users are unavailable during active round</div>
           ) : null}
         </div>

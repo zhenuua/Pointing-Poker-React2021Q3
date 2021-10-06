@@ -14,6 +14,6 @@ export const GamePlayerSchema = new Schema({
   scores: [ScoreSchema],
 });
 
-const mongoModel = model('GamePlayerModel', GamePlayerSchema);
+const mongoModel = model('GamePlayer', GamePlayerSchema);
 
-export default mongoModel;
+// export default mongoModel;

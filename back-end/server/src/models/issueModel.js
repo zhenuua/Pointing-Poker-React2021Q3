@@ -10,4 +10,4 @@ export const IssueSchema = new Schema({
 
 const mongoModel = model('Issue', IssueSchema);
 
-export default mongoModel;
+// export default mongoModel;

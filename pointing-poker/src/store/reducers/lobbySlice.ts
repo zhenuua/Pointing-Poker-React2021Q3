@@ -383,6 +383,10 @@ const lobbySlice = createSlice({
     clearPendingUsers(state) {
       state.pendingUsers = [];
     },
+    setPlayers(state, { payload }) {
+      console.log('SETTING PLAYERS AFTER SOCKET RECEIVED SOCKET');
+      state.players = payload;
+    },
     addUser(state, action) {
       state.users.push(action.payload);
     },
@@ -599,23 +603,37 @@ const lobbySlice = createSlice({
       const { admin, players, spectators } = payload;
       const fetchedUsers = [admin, ...players, ...spectators];
       state.users = fetchedUsers;
-      const scores = state.issues.map((issue) => ({
-        issueTitle: issue.issueTitle,
-        // !!!!!!!!!!below coub be a bug cause it forces nulls!!!!!!!!!!!!!!!!
-        score: null,
-      }));
-      state.players = state.gameSettings.scramMaster
-        ? [
-            { ...admin, scores },
-            ...players.map((user: IUserInfo) => ({
+      // if (state.players && state.players.length) return;
+      // stoping if you already been sent palyers arr by admin in game page
+      if (state.players.length) {
+        state.users.forEach((user, index) => {
+          if (state.players.length >= index + 1) return;
+          const scores = state.issues.map((issue) => ({
+            issueTitle: issue.issueTitle,
+            // !!!!!!!!!!below coub be a bug cause it forces nulls!!!!!!!!!!!!!!!!
+            score: null,
+          }));
+          state.players.push({ ...user, scores });
+        });
+      } else {
+        const scores = state.issues.map((issue) => ({
+          issueTitle: issue.issueTitle,
+          // !!!!!!!!!!below coub be a bug cause it forces nulls!!!!!!!!!!!!!!!!
+          score: null,
+        }));
+        state.players = state.gameSettings.scramMaster
+          ? [
+              { ...admin, scores },
+              ...players.map((user: IUserInfo) => ({
+                ...user,
+                scores,
+              })),
+            ]
+          : players.map((user: IUserInfo) => ({
               ...user,
               scores,
-            })),
-          ]
-        : players.map((user: IUserInfo) => ({
-            ...user,
-            scores,
-          }));
+            }));
+      }
     });
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
       const { userRole } = payload;
@@ -658,19 +676,20 @@ const lobbySlice = createSlice({
       checkScramMaster(state, payload.scramMaster);
     });
     builder.addCase(fetchIssues.fulfilled, (state, { payload }) => {
-      // console.log(payload);
       state.issues = payload;
+      state.curIssue = payload.length ? payload[0] : null;
       state.players.length &&
-        state.players.forEach((user) => {
-          payload.map((issue: any) => {
+        state.players.forEach((player) => {
+          // below line is meant to prevent null-ing scores when user joins during active game
+          if (player.scores.length) return;
+          payload.forEach((issue: any, index: number) => {
             const newScore = {
               issueTitle: issue.issueTitle,
               score: null,
             };
-            user.scores.push(newScore);
+            player.scores.push(newScore);
           });
         });
-      state.curIssue = payload.length ? payload[0] : null;
     });
   },
 });
@@ -681,6 +700,7 @@ export const {
   addPendingUser,
   removePendingUser,
   clearPendingUsers,
+  setPlayers,
   addUser,
   removeUser,
   setUsers,
