@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
-import { fetchGamePlayers } from '../../store/reducers/lobbySlice';
+import { fetchGamePlayers, IGamePlayer } from '../../store/reducers/lobbySlice';
 import { checkLobby } from '../../store/reducers/userSlice';
 
 interface ParamsQueries {
@@ -29,11 +29,26 @@ export const GameResult: React.FC = () => {
 
   // useEffect(() => {
   // }, []);
+  const downloadTxt = () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(
+      new Blob([JSON.stringify(players, null, 2)], {
+        type: 'text/plain',
+      }),
+    );
+    a.setAttribute('download', `game-result-${roomId}.txt`);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
 
   return (
     <div>
       <h1> game result page</h1>
       <div>get ready to make it</div>
+      <button type="button" onClick={downloadTxt}>
+        Download Game Results
+      </button>
       {players.length &&
         players[0].scores.map((score) => (
           <div>
