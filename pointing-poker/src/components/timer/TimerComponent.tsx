@@ -34,6 +34,7 @@ const TimerComponent: React.FC<TimerType> = ({
       if (currentRoundTime === 0) {
         console.log('time is over');
         dispatch(setRoundOn(false));
+        setCurrentRoundTime(roundTime);
       } else {
         setTimeout(() => setCurrentRoundTime(currentRoundTime - 1), 1000);
       }
