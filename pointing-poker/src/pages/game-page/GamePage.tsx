@@ -155,7 +155,7 @@ const GamePage: React.FC = (): JSX.Element => {
   // }, []);
 
   useEffect(() => {
-    dispatch(setChatIconVisible(true));
+    dispatch(setChatIconVisible(false));
     const index =
       players.length && issues.length && curIssue
         ? players[0].scores.findIndex((score) => score.issueTitle === curIssue.issueTitle)
@@ -179,65 +179,51 @@ const GamePage: React.FC = (): JSX.Element => {
       alert('no match for curIssue found in issues ');
     }
   };
-  // <----------------reject/admit pending user---------->
+
+  // <----------------reject/admit pending user----START------>
   const handleDeletePendingUser = (id: string, role: UserRoles) => {
     dispatch(removePendingUser({ socketId: id }));
     socket.emit(EVENTS.CLIENT.ACCESS_PENDING_USER, {
       socketId: id,
       roomId,
       access: false,
+      players: null,
+      curIssue: null,
     });
   };
 
   const handleAddPendingUser = (id: string) => {
-    // dispatch(removePendingUser({ socketId: id }));
+    dispatch(removePendingUser({ socketId: id }));
     socket.emit(EVENTS.CLIENT.ACCESS_PENDING_USER, {
       socketId: id,
       roomId,
       access: true,
+      players,
+      curIssue,
     });
   };
 
   useEffect(() => {
-    if (userRole === UserRoles.USER_ADMIN && pendingUsers.length && users.length) {
-      console.log('users length has changed!!!!!!!');
-      users.forEach((user) => {
-        const pendingUser = pendingUsers.find(
-          (penUser) => penUser.socketId === user.socketId,
-        );
-        if (pendingUser) {
-          console.log('EMITTING UPDATE_PLAYER EVENT');
-          // console.log(`${players}`);
-          players.forEach((player: any) => console.log(player));
-          // sdfasdfsadfsdfsdf
-          socket.emit(EVENTS.CLIENT.UPDATE_PLAYER, {
-            players,
-            socketId: pendingUser.socketId,
-          });
-          dispatch(removePendingUser({ socketId: pendingUser.socketId }));
-        }
+    if (
+      userRole === UserRoles.USER_ADMIN &&
+      autoConnect &&
+      !roundOn &&
+      pendingUsers.length
+    ) {
+      pendingUsers.forEach((user) => {
+        socket.emit(EVENTS.CLIENT.ACCESS_PENDING_USER, {
+          socketId: user.socketId,
+          roomId,
+          access: true,
+          players,
+          curIssue,
+        });
       });
+      dispatch(clearPendingUsers());
     }
-  }, [users, pendingUsers]);
+  }, [pendingUsers, roundOn]);
+  // <-----reject/admit pending user----END------>>
 
-  // useEffect(() => {
-  //   if (pendingUsers.length && autoConnect && userRole === UserRoles.USER_ADMIN) {
-  //     pendingUsers.forEach((user) => {
-  //       socket.emit(EVENTS.CLIENT.ACCESS_PENDING_USER, {
-  //         socketId: user.socketId,
-  //         roomId,
-  //         access: true,
-  //       });
-  //     });
-  //     // dispatch(clearPendingUsers());
-  //   }
-  // }, [pendingUsers]);
-  // <--------------------------------->
-
-  // useEffect(() => {
-  //   if (roundOn) return;
-  //
-  // }, [roundOn, pendingUsers]);
   const exitGame = () => {
     console.log('exiting lobby/game');
     socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled: false, userRole });

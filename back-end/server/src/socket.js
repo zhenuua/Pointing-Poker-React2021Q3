@@ -25,10 +25,10 @@ export const EVENTS = {
     NEXT_ISSUE: "NEXT_ISSUE",
     GAME_IS_OVER: "GAME_IS_OVER",
     ADD_TITLE_LOBBY: "ADD_TITLE_LOBBY",
-    PENDING_USER: 'PENDING_USER',
-    ACCESS_PENDING_USER: 'ACCESS_PENDING_USER',
-    GAME_ADD_ISSUE: 'GAME_ADD_ISSUE',
-    UPDATE_PLAYER: 'UPDATE_PLAYER',
+    PENDING_USER: "PENDING_USER",
+    ACCESS_PENDING_USER: "ACCESS_PENDING_USER",
+    GAME_ADD_ISSUE: "GAME_ADD_ISSUE",
+    // UPDATE_PLAYER: 'UPDATE_PLAYER', - experimental
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -48,10 +48,10 @@ export const EVENTS = {
     NEXT_ISSUE: "NEXT_ISSUE",
     GAME_IS_OVER: "GAME_IS_OVER",
     ADD_TITLE_LOBBY: "ADD_TITLE_LOBBY",
-    PENDING_USER_REQ: 'PENDING_USER_REQ',
+    PENDING_USER_REQ: "PENDING_USER_REQ",
     PENDING_USER_RES: "PENDING_USER_RES",
-    GAME_ADD_ISSUE: 'GAME_ADD_ISSUE',
-    UPDATE_PLAYERR: 'UPDATE_PLAYERR',
+    GAME_ADD_ISSUE: "GAME_ADD_ISSUE",
+    // UPDATE_PLAYER: 'UPDATE_PLAYER', - experimental
   },
 };
 
@@ -75,18 +75,6 @@ const socketInit = ({ io }) => {
     console.log(
       `//-----token provided from client ${socket.handshake.auth.token}----//`
     );
-
-    // socket.on(EVENTS.CLIENT.AUTH_ADMIN, (userData) => {
-    //   // const { token, roomId, userRole, username, lastName, jobPosition } = userData;
-    //   // console.log(userData);
-    //   // console.log('-------------');
-    //   // console.log(lobbiesData);
-    //   // console.log('-------------');
-    //   createUser(userData, lobbiesData);
-    //   // console.log('-------------');
-    //   // console.log(lobbiesData);
-    //   // console.log('-------------');
-    // })
 
     socket.on(EVENTS.disconnect, () => {
       console.log(
@@ -300,32 +288,40 @@ const socketInit = ({ io }) => {
     );
 
     // handling joining the game during gameOn
-    socket.on(EVENTS.CLIENT.PENDING_USER, ({ roomId, socketId, userRole, username, lastName }) => {
-      socket.to(roomId).emit(EVENTS.SERVER.PENDING_USER_REQ, {
-        socketId,
-        userRole,
-        username,
-        lastName,
-      });
-    });
-    socket.on(EVENTS.CLIENT.ACCESS_PENDING_USER, ({ socketId, access, roomId }) => {
-      io.to(socketId).emit(EVENTS.SERVER.PENDING_USER_RES, { access, roomId });
-    });
-    socket.on(EVENTS.CLIENT.UPDATE_PLAYER, ({ players, socketId }) => {
-      players.forEach((player, index) => console.log(`player are --- ${player}`));
-      console.log(socketId);
-      io.to(socketId).emit(EVENTS.SERVER.UPDATE_PLAYERR, { players, id: socketId });
-    });
+    socket.on(
+      EVENTS.CLIENT.PENDING_USER,
+      ({ roomId, socketId, userRole, username, lastName }) => {
+        socket.to(roomId).emit(EVENTS.SERVER.PENDING_USER_REQ, {
+          socketId,
+          userRole,
+          username,
+          lastName,
+        });
+      }
+    );
+    socket.on(
+      EVENTS.CLIENT.ACCESS_PENDING_USER,
+      ({ socketId, access, roomId, players, curIssue }) => {
+        io.to(socketId).emit(EVENTS.SERVER.PENDING_USER_RES, {
+          access,
+          roomId,
+          players,
+          curIssue,
+        });
+      }
+    );
 
     // adding issues during gameOn
-    socket.on(EVENTS.CLIENT.GAME_ADD_ISSUE, ({
-      roomId,
-      issue, 
-    }) => {
+    socket.on(EVENTS.CLIENT.GAME_ADD_ISSUE, ({ roomId, issue }) => {
       socket.to(roomId).emit(EVENTS.SERVER.GAME_ADD_ISSUE, { issue });
     });
-    
   });
+
+  // socket.on(EVENTS.CLIENT.UPDATE_PLAYER, ({ players, socketId }) => {
+  //   players.forEach((player, index) => console.log(`player are --- ${player}`));
+  //   console.log(socketId);
+  //   io.to(socketId).emit(EVENTS.SERVER.UPDATE_PLAYERR, { players, id: socketId });
+  // });
 
   // io.emit('server-kek', {message: 'keking from the server'});
 
