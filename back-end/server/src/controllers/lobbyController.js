@@ -188,9 +188,25 @@ export const addPlayers = async (req, res) => {
     const gamePlayers = new GamePlayers({ lobbyId: roomId, players });
     
     await gamePlayers.save();
+    console.log({ msg: 'game players added' });
     res.json({ msg: 'game players added' });
   } catch (error) {
     res.status(500).json('unable to add game players');
     console.log(error);
   }
-} 
+}
+
+export const getPlayers = async (req, res) => {
+  try {
+    const { lobbyId } = req.params;
+    const candidatePlayers = await GamePlayers.findOne({ lobbyId });
+    if (!candidatePlayers) {
+      return res
+        .status(400)
+        .json({ message: `can not find game players` });
+    }
+    res.json(candidatePlayers);
+  } catch (error) {
+    console.log(error);
+  }
+};

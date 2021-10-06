@@ -29,13 +29,19 @@ import {
   removePendingUser,
   setCurIssue,
   setRestartRnd,
+  postGamePlayers,
 } from '../../store/reducers/lobbySlice';
 import { useSocketsContext } from '../../context/socket.context';
 import { EVENTS } from '../../store/types/sockeIOEvents';
 
 import { PendingUsersPopup } from './pendingUsersPopup';
 import style from './Game-page.module.scss';
-import { setRoundOn } from '../../store/reducers/gameSlice';
+import {
+  setGameOn,
+  setGameOver,
+  setRoundOn,
+  updateGameStatus,
+} from '../../store/reducers/gameSlice';
 import PendingUserDataTab from '../../components/pending-user-tab/Pending-user-tab';
 import plus from '../../assets/icons/plus.svg';
 import PopUp from '../../components/popup/PopUp';
@@ -107,7 +113,7 @@ const GamePage: React.FC = (): JSX.Element => {
   //     socketId,
   //     curScoreIndex,
 
-  const setValueIssue = (card: number | string) => {
+  const setValueIssue = (card: number) => {
     if (!restartRound && !roundOn) return;
     if (roundOn || cardChange) {
       dispatch(setCurCardValueInScorePlayer({ card, socketId, curScoreIndex, curIssue }));
@@ -155,7 +161,7 @@ const GamePage: React.FC = (): JSX.Element => {
   // }, []);
 
   useEffect(() => {
-    dispatch(setChatIconVisible(false));
+    dispatch(setChatIconVisible(true));
     const index =
       players.length && issues.length && curIssue
         ? players[0].scores.findIndex((score) => score.issueTitle === curIssue.issueTitle)
@@ -226,13 +232,32 @@ const GamePage: React.FC = (): JSX.Element => {
 
   const exitGame = () => {
     console.log('exiting lobby/game');
-    socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled: false, userRole });
+    socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled: true, userRole });
     history.push('/');
     console.log('going back in history');
   };
 
-  const stopGame = () => {
+  const stopGame = async () => {
+    let needVote = false;
+    players.forEach((player) => {
+      player.scores.forEach((score) => {
+        if (score.score === null) needVote = true;
+      });
+    });
+    if (needVote) {
+      alert('every player must vote for every issue');
+      return;
+    }
     console.log('stop game');
+    await Promise.all([
+      dispatch(postGamePlayers({ roomId, players })),
+      dispatch(updateGameStatus({ roomId, gameOn: false, gameOver: true })),
+    ]);
+    dispatch(setGameOver(true));
+    dispatch(setGameOn(false));
+    socket.emit(EVENTS.CLIENT.GAME_ENDED, { roomId });
+    socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled: false });
+    history.push(`/game-result/${roomId}`);
   };
 
   return (
@@ -347,7 +372,9 @@ const GamePage: React.FC = (): JSX.Element => {
                   status={
                     player.scores[curScoreIndex].score === null
                       ? 'waiting to vote'
-                      : `${player.scores[curScoreIndex].score} points`
+                      : player.scores[curScoreIndex].score
+                      ? `${player.scores[curScoreIndex].score} points`
+                      : 'unknown'
                   }
                   key={`${player.socketId}`}
                 />

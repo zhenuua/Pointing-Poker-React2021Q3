@@ -94,11 +94,12 @@ const ConnectForm: React.FC<FormType> = ({
       // console.log(`userRole: ---------${userRole}`);
       if (gameOver) {
         console.log('gameOver, redirecting to main page...');
-        history.push(`/`);
+        alert('GAME ENDED, REDIRECTING TO GAME RESULTS...');
+        history.push(`/game-result/${roomId}`);
         return;
       }
       if (gameOn) {
-        console.log('game has been runnning, wait for response...');
+        console.log('game is on, wait for admin letting you in or round end...');
         socket.emit(EVENTS.CLIENT.PENDING_USER, {
           roomId,
           socketId,

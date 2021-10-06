@@ -29,6 +29,7 @@ export const EVENTS = {
     ACCESS_PENDING_USER: "ACCESS_PENDING_USER",
     GAME_ADD_ISSUE: "GAME_ADD_ISSUE",
     // UPDATE_PLAYER: 'UPDATE_PLAYER', - experimental
+    GAME_ENDED: "GAME_ENDED",
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -52,6 +53,7 @@ export const EVENTS = {
     PENDING_USER_RES: "PENDING_USER_RES",
     GAME_ADD_ISSUE: "GAME_ADD_ISSUE",
     // UPDATE_PLAYER: 'UPDATE_PLAYER', - experimental
+    GAME_ENDED: "GAME_ENDED",
   },
 };
 
@@ -315,6 +317,12 @@ const socketInit = ({ io }) => {
     socket.on(EVENTS.CLIENT.GAME_ADD_ISSUE, ({ roomId, issue }) => {
       socket.to(roomId).emit(EVENTS.SERVER.GAME_ADD_ISSUE, { issue });
     });
+
+    // GAME END
+    socket.on(EVENTS.CLIENT.GAME_ENDED, ({ roomId }) => {
+      socket.to(roomId).emit(EVENTS.SERVER.GAME_ENDED, { msg: 'game ended', roomId });
+    });
+
   });
 
   // socket.on(EVENTS.CLIENT.UPDATE_PLAYER, ({ players, socketId }) => {

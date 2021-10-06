@@ -117,7 +117,7 @@ const initialState: IInitState = {
   players: [],
   curIssue: null,
   cancelGame: false,
-  resultsVoted: false,
+  resultsVoted: true,
   isTitleLobby: '',
   // gameIssues: [],
 };
@@ -177,7 +177,7 @@ export const deleteUser = createAsyncThunk(
       return response.data;
     } catch (err) {
       console.error(err);
-      alert('server issue, delte  user');
+      alert('server issue, unable to delete user');
       return rejectWithValue([]);
     }
   },
@@ -197,6 +197,25 @@ export const cancelGame = createAsyncThunk(
     } catch (err) {
       console.error(err);
       alert('server issue, unable to delte lobby');
+      return rejectWithValue([]);
+    }
+  },
+);
+
+export const endGame = createAsyncThunk(
+  'lobby/cancelGame',
+  async ({ roomId }: { roomId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios({
+        method: 'delete',
+        url: `http://localhost:5000/lobby/end-game`,
+        timeout: 2000,
+        data: { roomId },
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to clean data during game end');
       return rejectWithValue([]);
     }
   },
@@ -351,6 +370,46 @@ const checkScramMaster = (state: IInitState, scramMaster: any) => {
     }
   }
 };
+
+export const postGamePlayers = createAsyncThunk(
+  'lobby/postGamePlayers',
+  async (
+    { roomId, players }: { roomId: string, players: IGamePlayer[] },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: `http://localhost:5000/lobby/add-game-players`,
+        timeout: 5000,
+        data: { roomId, players },
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to post game-players');
+      return rejectWithValue([]);
+    }
+  },
+);
+
+export const fetchGamePlayers = createAsyncThunk(
+  'lobby/fetchGamePlayers',
+  async ({ roomId }: { roomId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `http://localhost:5000/lobby/game-players/${roomId}`,
+        timeout: 5000,
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable to fetch issues');
+      return rejectWithValue([]);
+    }
+  },
+);
 
 const lobbySlice = createSlice({
   name: 'lobby',
@@ -690,6 +749,10 @@ const lobbySlice = createSlice({
             player.scores.push(newScore);
           });
         });
+    });
+    builder.addCase(fetchGamePlayers.fulfilled, (state, { payload }) => {
+      console.log(payload);
+      state.players = payload.players;
     });
   },
 });

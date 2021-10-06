@@ -5,7 +5,7 @@ const { Schema, model } = mongoose;
 
 const ScoreSchema = new Schema({
   issueTitle: {type: String, required: true},
-  score: {type: Number || null, required: true},
+  score: Number,
   
 });
 

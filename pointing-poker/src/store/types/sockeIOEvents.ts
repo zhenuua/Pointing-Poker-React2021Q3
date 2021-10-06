@@ -29,6 +29,7 @@ export const EVENTS = {
     GAME_ADD_ISSUE: 'GAME_ADD_ISSUE',
     // UPDATE_PLAYER: 'UPDATE_PLAYER', - experimental
     // CUR_GAMEDATA_ACCESS: 'CUR_GAMEDATA_ACCESS',
+    GAME_ENDED: 'GAME_ENDED',
   },
   SERVER: {
     LOBBIES: 'LOBBIES',
@@ -52,6 +53,7 @@ export const EVENTS = {
     GAME_ADD_ISSUE: 'GAME_ADD_ISSUE',
     SEND_MESSAGE: 'SEND_MESSAGE',
     // UPDATE_PLAYER: 'UPDATE_PLAYER', - experimental
+    GAME_ENDED: 'GAME_ENDED',
   },
 };
 
