@@ -19,7 +19,7 @@ import {
   removePendingUser,
 } from '../store/reducers/lobbySlice';
 import { EVENTS } from '../store/types/sockeIOEvents';
-import { setRoundOn } from '../store/reducers/gameSlice';
+import { setGameOn, setGameOver, setRoundOn } from '../store/reducers/gameSlice';
 import { setChatIconVisible } from '../store/reducers/controlSlice';
 import { RootState } from '../store/store';
 
@@ -118,6 +118,15 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
     // gamPage - adding issues
     socket.on(EVENTS.SERVER.GAME_ADD_ISSUE, ({ issue }: { issue: IIssueDetail }) => {
       dispatch(addIssue(issue));
+    });
+
+    // gamePage - game GAME_ENDED
+    socket.on(EVENTS.SERVER.GAME_ENDED, ({ msg, roomId }) => {
+      console.log(msg);
+      dispatch(setGameOver(true));
+      dispatch(setGameOn(false));
+      socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled: true });
+      history.push(`/game-result/${roomId}`);
     });
   }, []);
 

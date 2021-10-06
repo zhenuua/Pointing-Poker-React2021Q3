@@ -220,7 +220,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
       )}
       {cancelGameStore ? (
         <PopUp active={cancelGameStore} setActive={endGame}>
-          <ErrorWindow text="The game is over." />
+          <ErrorWindow text="The game canceled." />
         </PopUp>
       ) : (
         ''

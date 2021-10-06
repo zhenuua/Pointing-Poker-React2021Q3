@@ -15,6 +15,7 @@ import cssTransition from './cssTransition.module.scss';
 import { useSocketsContext } from './context/socket.context';
 import { useActions } from './hooks/useActions';
 import { useTypedSelector } from './hooks/useTypedSelector';
+import { GameResult } from './pages/game-result/GameResult';
 // import { state } from './pages/main/main-config';
 
 const App: React.FC = (): JSX.Element => {
@@ -37,6 +38,9 @@ const App: React.FC = (): JSX.Element => {
             </Route> */}
             <Route exact path="/game-page/:gameId">
               <GamePage />
+            </Route>
+            <Route exact path="/game-result/:lobbyId">
+              <GameResult />
             </Route>
             <Route path="*">
               <NotFoundPage />

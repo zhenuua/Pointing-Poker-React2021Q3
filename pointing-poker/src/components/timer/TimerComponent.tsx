@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { setRoundOn } from '../../store/reducers/gameSlice';
 import { setRoundTime } from '../../store/reducers/lobbySlice';
 import style from './Timer.module.scss';
 
@@ -14,6 +15,7 @@ const TimerComponent: React.FC<TimerType> = ({
 }): JSX.Element => {
   const dispatch = useDispatch();
   const { gameSettings } = useTypedSelector((state) => state.lobbySlice);
+  // const { roundOn } = useTypedSelector((state) => state.gameSlice);
   const { roundTime } = gameSettings;
   const [currentRoundTime, setCurrentRoundTime] = useState<number>(roundTime);
   const [seconds, setSeconds] = useState<number>(Math.floor(currentRoundTime % 60));
@@ -24,6 +26,7 @@ const TimerComponent: React.FC<TimerType> = ({
       dispatch(setRoundTime(minutes * 60 + seconds));
     } else if (currentRoundTime === 0) {
       console.log('time is over');
+      dispatch(setRoundOn(false));
     } else {
       setTimeout(() => setCurrentRoundTime(currentRoundTime - 1), 1000);
     }

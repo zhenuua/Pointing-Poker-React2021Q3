@@ -13,6 +13,7 @@ router.post('/issues/add', lobbyController.addIssue);
 router.get('/check/:lobbyId', lobbyController.checkLobby);
 router.delete('/delete/', lobbyController.deleteLobby);
 router.post('/add-game-players', lobbyController.addPlayers);
+router.get('/game-players/:lobbyId', lobbyController.getPlayers);
 
 
 export default router;

@@ -22,7 +22,7 @@ const CardCoffee: React.FC<TCardCoffee> = ({
     <div
       className={style.wrapper}
       aria-hidden="true"
-      onClick={gameOn ? () => setValueIssue('null') : undefined}
+      onClick={gameOn ? () => setValueIssue(0) : undefined}
     >
       {!gameOn ? (
         <div className={style.card}>
