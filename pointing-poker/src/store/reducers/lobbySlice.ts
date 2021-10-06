@@ -102,7 +102,7 @@ const initialGameSettings: IGameSettings = {
   timerNeeded: true,
   scoreType: ScoreTypes.FIBBONACCI,
   shortScoreType: ShortScoreTypes.FIBBONACCI,
-  roundTime: 120,
+  roundTime: 30,
   cardValues: configLobby.cardCollections.FIBBONACCI,
 };
 
