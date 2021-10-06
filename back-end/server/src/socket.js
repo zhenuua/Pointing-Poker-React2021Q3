@@ -28,6 +28,7 @@ export const EVENTS = {
     PENDING_USER: 'PENDING_USER',
     ACCESS_PENDING_USER: 'ACCESS_PENDING_USER',
     GAME_ADD_ISSUE: 'GAME_ADD_ISSUE',
+    UPDATE_PLAYER: 'UPDATE_PLAYER',
   },
   SERVER: {
     LOBBIES: "LOBBIES",
@@ -50,6 +51,7 @@ export const EVENTS = {
     PENDING_USER_REQ: 'PENDING_USER_REQ',
     PENDING_USER_RES: "PENDING_USER_RES",
     GAME_ADD_ISSUE: 'GAME_ADD_ISSUE',
+    UPDATE_PLAYERR: 'UPDATE_PLAYERR',
   },
 };
 
@@ -308,6 +310,11 @@ const socketInit = ({ io }) => {
     });
     socket.on(EVENTS.CLIENT.ACCESS_PENDING_USER, ({ socketId, access, roomId }) => {
       io.to(socketId).emit(EVENTS.SERVER.PENDING_USER_RES, { access, roomId });
+    });
+    socket.on(EVENTS.CLIENT.UPDATE_PLAYER, ({ players, socketId }) => {
+      players.forEach((player, index) => console.log(`player are --- ${player}`));
+      console.log(socketId);
+      io.to(socketId).emit(EVENTS.SERVER.UPDATE_PLAYERR, { players, id: socketId });
     });
 
     // adding issues during gameOn

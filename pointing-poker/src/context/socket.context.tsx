@@ -15,6 +15,8 @@ import {
   IPendingUser,
   addIssue,
   IIssueDetail,
+  setPlayers,
+  removePendingUser,
 } from '../store/reducers/lobbySlice';
 import { EVENTS } from '../store/types/sockeIOEvents';
 import { setRoundOn } from '../store/reducers/gameSlice';
@@ -109,6 +111,17 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
     // -gamePage - pending users
     socket.on(EVENTS.SERVER.PENDING_USER_REQ, (pendingUser: IPendingUser) => {
       dispatch(addPendingUser(pendingUser));
+    });
+    socket.on(EVENTS.SERVER.UPDATE_PLAYERR, ({ players, id }) => {
+      console.log('RECEIVING UPDATE_PLAYER EVENT');
+      players.forEach((player: any) => {
+        console.log(player);
+        // dispatch(setCurCardValueInScorePlayer({}));
+      });
+      console.log(id);
+
+      dispatch(removePendingUser({ socketId: id }));
+      dispatch(setPlayers(players));
     });
 
     // gamPage - adding issues

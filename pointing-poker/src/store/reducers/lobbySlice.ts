@@ -383,6 +383,10 @@ const lobbySlice = createSlice({
     clearPendingUsers(state) {
       state.pendingUsers = [];
     },
+    setPlayers(state, { payload }) {
+      console.log('SETTING PLAYERS AFTER SOCKET RECEIVED SOCKET');
+      state.players = payload.players;
+    },
     addUser(state, action) {
       state.users.push(action.payload);
     },
@@ -599,6 +603,7 @@ const lobbySlice = createSlice({
       const { admin, players, spectators } = payload;
       const fetchedUsers = [admin, ...players, ...spectators];
       state.users = fetchedUsers;
+      if (state.players && state.players.length) return; // stoping if you already been sent palyers arr by admin in game page
       const scores = state.issues.map((issue) => ({
         issueTitle: issue.issueTitle,
         // !!!!!!!!!!below coub be a bug cause it forces nulls!!!!!!!!!!!!!!!!
@@ -681,6 +686,7 @@ export const {
   addPendingUser,
   removePendingUser,
   clearPendingUsers,
+  setPlayers,
   addUser,
   removeUser,
   setUsers,
