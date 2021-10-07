@@ -10,7 +10,7 @@ import style from './Card.module.scss';
 import { RootState } from '../../store/store';
 
 export type CardPoints = {
-  cardPoints: number | string,
+  cardPoints: any,
   shortScoreType?: ShortScoreTypes,
   gameOn?: boolean,
   setValueIssue?: any,
