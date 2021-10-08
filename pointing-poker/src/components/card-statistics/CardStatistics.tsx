@@ -14,6 +14,7 @@ export type CardPoints = {
   shortScoreType?: ShortScoreTypes,
   gameOn?: boolean,
   setValueIssue?: any,
+  percent: number | null,
 };
 
 const CardStatistics: React.FC<CardPoints> = ({
@@ -21,6 +22,7 @@ const CardStatistics: React.FC<CardPoints> = ({
   shortScoreType,
   gameOn = false,
   setValueIssue,
+  percent,
 }): JSX.Element => {
   const [isNumberCard, setIsNumberCard] = useState<number | string>(cardPoints);
   const [inputClassName, setInputClassName] = useState<boolean>(false);
@@ -35,6 +37,7 @@ const CardStatistics: React.FC<CardPoints> = ({
         <span className={`${style.input} ${style.up}`}>{cardPoints}</span>
         <span className={`${style.input} ${style.down}`}>{cardPoints}</span>
       </div>
+      <p className={style.percent}>{`${percent?.toFixed(2)}%`}</p>
     </div>
   );
 };

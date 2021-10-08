@@ -9,6 +9,7 @@ type TStatistics = {
 
 const Statistics: React.FC<TStatistics> = ({ curScoreIndex }): JSX.Element => {
   const [valueArray, setValueArray] = useState<any>([]);
+  const [percentValues, setPercentValues] = useState<any>([]);
 
   const { players, curIssue, gameSettings } = useTypedSelector(
     (state) => state.lobbySlice,
@@ -49,21 +50,19 @@ const Statistics: React.FC<TStatistics> = ({ curScoreIndex }): JSX.Element => {
         arr.forEach((issue: any) => {
           const { totalScores, scores } = issue;
           scores.sort((a: number, b: number) => a - b);
-          const newScore: any = [];
           if (scores.score !== null)
             while (totalScores.length) {
               const count =
                 totalScores.lastIndexOf(totalScores[0]) -
                 totalScores.indexOf(totalScores[0]) +
                 1;
-              newScore.push({
+              scores.push({
                 value: totalScores[0],
                 count,
               });
 
               totalScores.splice(0, count);
             }
-          scores.push(newScore);
           setValueArray(arr);
         });
       }
@@ -73,6 +72,12 @@ const Statistics: React.FC<TStatistics> = ({ curScoreIndex }): JSX.Element => {
   useEffect(() => {
     console.log(valueArray);
     console.log(curScoreIndex !== undefined && valueArray[curScoreIndex]);
+    const array = valueArray.map((issueObj: any) => {
+      const totalCount = players.length;
+      console.log(totalCount);
+      return issueObj.scores.map((score: any) => (score.count * 100) / totalCount);
+    });
+    setPercentValues(array);
   }, [valueArray]);
 
   return (
@@ -82,9 +87,14 @@ const Statistics: React.FC<TStatistics> = ({ curScoreIndex }): JSX.Element => {
         {curScoreIndex !== undefined &&
           curScoreIndex !== null &&
           valueArray.length &&
-          valueArray[curScoreIndex].scores[0].map((score: any) => {
+          percentValues.length &&
+          valueArray[curScoreIndex].scores.map((score: any, index: number) => {
             return (
-              <CardStatistics cardPoints={score.value} shortScoreType={shortScoreType} />
+              <CardStatistics
+                cardPoints={score.value}
+                shortScoreType={shortScoreType}
+                percent={percentValues[curScoreIndex][index]}
+              />
             );
           })}
       </div>
