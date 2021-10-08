@@ -30,7 +30,7 @@ export const createAdmin = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: 'http://localhost:5000/users/create-admin',
+        url: 'https://stark-savannah-25558.herokuapp.com/users/create-admin',
         timeout: 2000,
         data: userData,
       });
@@ -52,7 +52,7 @@ export const createAdmin = createAsyncThunk(
 //     try {
 //       const response = await axios({
 //         method: 'get',
-//         url: `http://localhost:5000/users/${roomId}`,
+//         url: `https://stark-savannah-25558.herokuapp.com/users/${roomId}`,
 //         timeout: 2000,
 //       });
 
@@ -82,7 +82,7 @@ export const createAdmin = createAsyncThunk(
 //     try {
 //       const response = await axios({
 //         method: 'post',
-//         url: 'http://localhost:5000/users/create-player',
+//         url: 'https://stark-savannah-25558.herokuapp.com/users/create-player',
 //         timeout: 2000,
 //         data: playerData,
 //       });

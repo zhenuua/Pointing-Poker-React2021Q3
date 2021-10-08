@@ -34,7 +34,7 @@ const useSockets = () => {
   // } = useTypedSelector((state) => state.socketSlice);
   // const { setPlayerSocket, setChatSocket, setMainSocket, setAdminSocket } = useActions();
 
-  // const socket: Socket = io('http://localhost:5000/');
+  // const socket: Socket = io('https://stark-savannah-25558.herokuapp.com/');
   // socket.on(EVENTSSS.connect, () => {
   //   console.log(`you have connected to Socket.IO server`);
   //   // setSocketId(socket.id);
@@ -42,7 +42,7 @@ const useSockets = () => {
   // });
 
   useEffect(() => {
-    const socket: Socket = io('http://localhost:5000/');
+    const socket: Socket = io('https://stark-savannah-25558.herokuapp.com/');
     socket.on(EVENTSSS.connect, () => {
       console.log(`you have connected to Socket.IO server`);
       // setSocketId(socket.id);
@@ -55,7 +55,7 @@ const useSockets = () => {
     if (userRole !== UserRoles.USER_ADMIN) return undefined;
 
     if (userRole === UserRoles.USER_ADMIN && token) {
-      const adminSocket: Socket = io('http://localhost:5000/admin', {
+      const adminSocket: Socket = io('https://stark-savannah-25558.herokuapp.com/admin', {
         auth: { token: `${token} ${roomId}` },
       });
       adminSocket.on(EVENTSSS.connect, () => {
@@ -85,7 +85,7 @@ export default useSockets;
 //   let adminSocketOuter: null | Socket = null;
 
 //   const socketInit = () => {
-//     const socket: Socket = io('http://localhost:5000/');
+//     const socket: Socket = io('https://stark-savannah-25558.herokuapp.com/');
 //     socket.on(EVENTSSS.connect, () => {
 //       console.log(`you have connected to room:// ${roomId} //, requesting access...`);
 //       // setSocketId(socket.id);
@@ -95,7 +95,7 @@ export default useSockets;
 //   };
 
 //   const adminSocketInit = () => {
-//     const adminSocket: Socket = io('http://localhost:5000/admin', { auth: { token: `${token} ${roomId}` } });
+//     const adminSocket: Socket = io('https://stark-savannah-25558.herokuapp.com/admin', { auth: { token: `${token} ${roomId}` } });
 
 //     adminSocket.on(EVENTSSS.connect, () => {
 //       console.log(`///-----you connected to admin namespace socket id: ${adminSocket.id} -----///`);
@@ -157,7 +157,7 @@ export default useSockets;
 //   jobPosition: string;
 // }) => {
 //   const { roomId, userRole } = data;
-//   const socket: Socket = io('http://localhost:5000/');
+//   const socket: Socket = io('https://stark-savannah-25558.herokuapp.com/');
 //   socket.on(EVENTSSS.connect, () => {
 //     console.log(`you have connected to room:// ${roomId} //, requesting access...`);
 //     socket.emit(EVENTSSS.CLIENT.ACCESS_LOBBY, { roomId, userRole });
@@ -175,7 +175,7 @@ export default useSockets;
 // }) => {
 //   const { token, roomId, userRole, username, lastName, jobPosition } = data;
 
-//   const adminSocket: Socket = io('http://localhost:5000/admin', { auth: { token: `${token} ${roomId}` } });
+//   const adminSocket: Socket = io('https://stark-savannah-25558.herokuapp.com/admin', { auth: { token: `${token} ${roomId}` } });
 
 //   adminSocket.on(EVENTSSS.connect, () => {
 //     console.log(`///-----you connected to admin namespace socket id: ${adminSocket.id} -----///`);

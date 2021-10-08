@@ -128,7 +128,7 @@ export const fetchUsers = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `http://localhost:5000/users/${roomId}`,
+        url: `https://stark-savannah-25558.herokuapp.com/users/${roomId}`,
         timeout: 2000,
       });
       return response.data;
@@ -149,7 +149,7 @@ export const fetchUser = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `http://localhost:5000/users/${userRole}/${socketId}`,
+        url: `https://stark-savannah-25558.herokuapp.com/users/${userRole}/${socketId}`,
         timeout: 2000,
       });
       return response.data;
@@ -170,7 +170,7 @@ export const deleteUser = createAsyncThunk(
     try {
       const response = await axios({
         method: 'delete',
-        url: `http://localhost:5000/users/delete`,
+        url: `https://stark-savannah-25558.herokuapp.com/users/delete`,
         timeout: 2000,
         data: { socketId, userRole },
       });
@@ -189,7 +189,7 @@ export const cancelGame = createAsyncThunk(
     try {
       const response = await axios({
         method: 'delete',
-        url: `http://localhost:5000/lobby/delete`,
+        url: `https://stark-savannah-25558.herokuapp.com/lobby/delete`,
         timeout: 2000,
         data: { roomId },
       });
@@ -208,7 +208,7 @@ export const endGame = createAsyncThunk(
     try {
       const response = await axios({
         method: 'delete',
-        url: `http://localhost:5000/lobby/end-game`,
+        url: `https://stark-savannah-25558.herokuapp.com/lobby/end-game`,
         timeout: 2000,
         data: { roomId },
       });
@@ -234,13 +234,13 @@ export const postSettingsIssues = createAsyncThunk(
     try {
       const responseSettings = await axios({
         method: 'post',
-        url: `http://localhost:5000/lobby/game-settings`,
+        url: `https://stark-savannah-25558.herokuapp.com/lobby/game-settings`,
         timeout: 2000,
         data: { roomId, gameSettings },
       });
       const responseIssues = await axios({
         method: 'post',
-        url: `http://localhost:5000/lobby/issues`,
+        url: `https://stark-savannah-25558.herokuapp.com/lobby/issues`,
         timeout: 2000,
         data: { roomId, issues },
       });
@@ -265,13 +265,13 @@ export const postSettingsIssues = createAsyncThunk(
 //     try {
 //       const responseSettings = await axios({
 //         method: 'post',
-//         url: `http://localhost:5000/lobby/game-settings`,
+//         url: `https://stark-savannah-25558.herokuapp.com/lobby/game-settings`,
 //         timeout: 2000,
 //         data: { roomId, gameSettings },
 //       });
 //       const responseIssues = await axios({
 //         method: 'post',
-//         url: `http://localhost:5000/lobby/issues`,
+//         url: `https://stark-savannah-25558.herokuapp.com/lobby/issues`,
 //         timeout: 2000,
 //         data: { roomId, issues },
 //       });
@@ -293,7 +293,7 @@ export const fetchGameSettings = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `http://localhost:5000/lobby/game-settings/${roomId}`,
+        url: `https://stark-savannah-25558.herokuapp.com/lobby/game-settings/${roomId}`,
         timeout: 5000,
       });
       return response.data;
@@ -311,7 +311,7 @@ export const fetchIssues = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `http://localhost:5000/lobby/issues/${roomId}`,
+        url: `https://stark-savannah-25558.herokuapp.com/lobby/issues/${roomId}`,
         timeout: 5000,
       });
       return response.data.issues;
@@ -329,7 +329,7 @@ export const postIssue = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: `http://localhost:5000/lobby/issues/add`,
+        url: `https://stark-savannah-25558.herokuapp.com/lobby/issues/add`,
         timeout: 5000,
         data: { roomId, issue },
       });
@@ -380,7 +380,7 @@ export const postGamePlayers = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: `http://localhost:5000/lobby/add-game-players`,
+        url: `https://stark-savannah-25558.herokuapp.com/lobby/add-game-players`,
         timeout: 5000,
         data: { roomId, players },
       });
@@ -399,7 +399,7 @@ export const fetchGamePlayers = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `http://localhost:5000/lobby/game-players/${roomId}`,
+        url: `https://stark-savannah-25558.herokuapp.com/lobby/game-players/${roomId}`,
         timeout: 5000,
       });
       return response.data;

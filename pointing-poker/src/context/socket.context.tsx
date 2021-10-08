@@ -30,7 +30,7 @@ interface Context {
   chatSocket: Socket | null;
 }
 
-const SERVER_URL = 'http://localhost:5000/';
+const SERVER_URL = 'https://stark-savannah-25558.herokuapp.com/';
 
 const socket = io(SERVER_URL, {
   reconnectionAttempts: 3,

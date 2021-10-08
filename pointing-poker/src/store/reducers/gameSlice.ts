@@ -39,7 +39,7 @@ export const updateGameStatus = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: `http://localhost:5000/lobby/update-status`,
+        url: `https://stark-savannah-25558.herokuapp.com/lobby/update-status`,
         timeout: 2000,
         data: { roomId, gameOn, gameOver },
       });
