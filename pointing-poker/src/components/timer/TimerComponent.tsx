@@ -38,6 +38,8 @@ const TimerComponent: React.FC<TimerType> = ({
       } else {
         setTimeout(() => setCurrentRoundTime(currentRoundTime - 1), 1000);
       }
+    } else {
+      setCurrentRoundTime(roundTime);
     }
   }, [currentRoundTime, isStartTimer]);
 
