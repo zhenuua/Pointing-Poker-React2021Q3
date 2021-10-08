@@ -1,0 +1,38 @@
+{
+  "files": {
+    "main.css": "/static/css/main.88e88bd5.chunk.css",
+    "main.js": "/static/js/main.1c5c053d.chunk.js",
+    "main.js.map": "/static/js/main.1c5c053d.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.c088eb0c.js",
+    "runtime-main.js.map": "/static/js/runtime-main.c088eb0c.js.map",
+    "static/js/2.cf3096e4.chunk.js": "/static/js/2.cf3096e4.chunk.js",
+    "static/js/2.cf3096e4.chunk.js.map": "/static/js/2.cf3096e4.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/main.88e88bd5.chunk.css.map": "/static/css/main.88e88bd5.chunk.css.map",
+    "static/js/2.cf3096e4.chunk.js.LICENSE.txt": "/static/js/2.cf3096e4.chunk.js.LICENSE.txt",
+    "static/media/Close-icon.6bf8470d.svg": "/static/media/Close-icon.6bf8470d.svg",
+    "static/media/Coffee.53770dcf.svg": "/static/media/Coffee.53770dcf.svg",
+    "static/media/Edit-icon.33fc39e9.svg": "/static/media/Edit-icon.33fc39e9.svg",
+    "static/media/Ellipsis.6120658b.svg": "/static/media/Ellipsis.6120658b.svg",
+    "static/media/Header.module.scss": "/static/media/Header-picture.a479a713.svg",
+    "static/media/ImageUser.9d5e8c61.png": "/static/media/ImageUser.9d5e8c61.png",
+    "static/media/Logo.cca1ea51.svg": "/static/media/Logo.cca1ea51.svg",
+    "static/media/Messenger.189679e1.svg": "/static/media/Messenger.189679e1.svg",
+    "static/media/Poker-Planning-picture.68eb6c0d.svg": "/static/media/Poker-Planning-picture.68eb6c0d.svg",
+    "static/media/Remove-icon.6c6f28cd.svg": "/static/media/Remove-icon.6c6f28cd.svg",
+    "static/media/blue.49b8ca10.png": "/static/media/blue.49b8ca10.png",
+    "static/media/choose.13574b94.svg": "/static/media/choose.13574b94.svg",
+    "static/media/Footer.module.scss": "/static/media/rss.53f3834b.svg",
+    "static/media/pencil.d407c45a.svg": "/static/media/pencil.d407c45a.svg",
+    "static/media/plus.bc3322cd.svg": "/static/media/plus.bc3322cd.svg",
+    "static/media/Lobby-page.module.scss": "/static/media/plusInCircle.ab401dd4.svg",
+    "static/media/Card-coffee.module.scss": "/static/media/red.323674a6.png",
+    "static/media/urn.04ebb7ff.svg": "/static/media/urn.04ebb7ff.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.c088eb0c.js",
+    "static/js/2.cf3096e4.chunk.js",
+    "static/css/main.88e88bd5.chunk.css",
+    "static/js/main.1c5c053d.chunk.js"
+  ]
+}
