@@ -46,19 +46,20 @@ import PendingUserDataTab from '../../components/pending-user-tab/Pending-user-t
 import plus from '../../assets/icons/plus.svg';
 import PopUp from '../../components/popup/PopUp';
 import FormCreateIssue from '../../components/form-create-issue/FormCreateIssue';
+import CardStatistics from '../../components/card-statistics/CardStatistics';
+import Statistics from '../../components/statistics/Statistics/Statistics';
 
 const GamePage: React.FC = (): JSX.Element => {
   const [restartRound, setRestartRound] = useState<boolean>(false);
-  const [openCards, setOpenCards] = useState<boolean>(false);
   const [curScoreIndex, setCurScoreIndex] = useState<number>();
   const [popupCreateIssue, setPopupCreateIssue] = useState<boolean>(false);
   const history = useHistory();
-
+  const result: any = {};
   const { users, gameSettings, issues, players } = useTypedSelector(
     (state) => state.lobbySlice,
   );
   const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
-  const { roundOn } = useTypedSelector((state) => state.gameSlice);
+  const { roundOn, gameOn } = useTypedSelector((state) => state.gameSlice);
   const { curIssue, resultsVoted, pendingUsers } = useTypedSelector(
     (state) => state.lobbySlice,
   );
@@ -148,7 +149,6 @@ const GamePage: React.FC = (): JSX.Element => {
       }
     }
   }, [curScoreIndex, players]);
-
   // const dispatchChaining = async () => {
   //   await Promise.all([
   //     dispatch(fetchGameSettings({ roomId })),
@@ -333,12 +333,10 @@ const GamePage: React.FC = (): JSX.Element => {
             )}
           </div>
         </div>
-        <div className={style.statisticsWrapper}>
-          <div className={style.issuesText}>Statistics:</div>
-        </div>
         {(userRole === UserRoles.USER_PLAYER ||
           (userRole === UserRoles.USER_ADMIN && gameSettings.scramMaster)) && (
           <div className={style.cardWrapper}>
+            <h2 className={style.headerCards}>Select a card to evaluate the issue:</h2>
             <CardCoffee cardPoints="unknown" gameOn setValueIssue={setValueIssue} />
             {cardValues.map((item) => {
               return (
@@ -352,6 +350,17 @@ const GamePage: React.FC = (): JSX.Element => {
               );
             })}
           </div>
+        )}
+        {gameOn && !roundOn ? (
+          <>
+            {restartRound
+              ? curScoreIndex !== undefined && (
+                  <Statistics curScoreIndex={curScoreIndex} />
+                )
+              : ''}
+          </>
+        ) : (
+          ''
         )}
       </div>
       <div className={style.gameWrapperRight}>
