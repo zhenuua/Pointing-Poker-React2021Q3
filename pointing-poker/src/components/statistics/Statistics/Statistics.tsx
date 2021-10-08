@@ -80,8 +80,9 @@ const Statistics: React.FC<TStatistics> = ({ curScoreIndex }): JSX.Element => {
       <div className={style.issuesText}>Statistics:</div>
       <div className={style.wrapperStat}>
         {curScoreIndex !== undefined &&
+          curScoreIndex !== null &&
           valueArray.length &&
-          valueArray[curScoreIndex].scores.map((score: any) => {
+          valueArray[curScoreIndex].scores[0].map((score: any) => {
             return (
               <CardStatistics cardPoints={score.value} shortScoreType={shortScoreType} />
             );
