@@ -25,7 +25,7 @@ const CardStatistics: React.FC<CardPoints> = ({
   const [isNumberCard, setIsNumberCard] = useState<number | string>(cardPoints);
   const [inputClassName, setInputClassName] = useState<boolean>(false);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
-
+  console.log(cardPoints);
   return (
     <div className={`${style.cardWrapper} ${style.border}`}>
       <div className={style.card}>

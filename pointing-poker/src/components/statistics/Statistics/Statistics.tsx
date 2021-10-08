@@ -64,30 +64,28 @@ const Statistics: React.FC<TStatistics> = ({ curScoreIndex }): JSX.Element => {
               totalScores.splice(0, count);
             }
           scores.push(newScore);
+          setValueArray(arr);
         });
       }
     }
   }, [players]);
 
+  useEffect(() => {
+    console.log(valueArray);
+    console.log(curScoreIndex !== undefined && valueArray[curScoreIndex]);
+  }, [valueArray]);
+
   return (
     <div className={style.cardWrapper}>
       <div className={style.issuesText}>Statistics:</div>
       <div className={style.wrapperStat}>
-        {players.map((player) => {
-          return (
-            curScoreIndex !== undefined &&
-            player.scores[curScoreIndex].issueTitle === curIssue?.issueTitle && (
-              <CardStatistics
-                cardPoints={
-                  player.scores[curScoreIndex].score !== null &&
-                  player.scores[curScoreIndex].score
-                }
-                shortScoreType={shortScoreType}
-                gameOn={false}
-              />
-            )
-          );
-        })}
+        {curScoreIndex !== undefined &&
+          valueArray.length &&
+          valueArray[curScoreIndex].scores.map((score: any) => {
+            return (
+              <CardStatistics cardPoints={score.value} shortScoreType={shortScoreType} />
+            );
+          })}
       </div>
     </div>
   );
