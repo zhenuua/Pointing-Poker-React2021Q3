@@ -86,21 +86,22 @@ const GamePage: React.FC = (): JSX.Element => {
   const nextIssue = () => {
     let nextIssueValue: any = null;
     let lastIssueValue: any = null;
-    issues.forEach((e, i, arr) => {
-      if (e.issueTitle === curIssue?.issueTitle) {
-        nextIssueValue = arr[i + 1];
-        if (
-          nextIssueValue !== undefined &&
-          nextIssueValue.issueTitle === arr[arr.length - 1].issueTitle
-        ) {
-          lastIssueValue = arr[arr.length - 1];
+    issues.length > 1 &&
+      issues.forEach((e, i, arr) => {
+        if (e.issueTitle === curIssue?.issueTitle) {
+          nextIssueValue = arr[i + 1];
+          if (
+            nextIssueValue !== undefined &&
+            nextIssueValue.issueTitle === arr[arr.length - 1].issueTitle
+          ) {
+            lastIssueValue = arr[arr.length - 1];
+          }
+          if (i + 1 === arr.length) {
+            const len = arr.length - 1;
+            nextIssueValue = arr[len % i];
+          }
         }
-        if (i + 1 === arr.length) {
-          const len = arr.length - 1;
-          nextIssueValue = arr[len % i];
-        }
-      }
-    });
+      });
 
     if (nextIssueValue !== null) dispatch(setCurIssue(nextIssueValue.issueTitle));
     socket.emit('NEXT_ISSUE', { roomId, nextIssueValue });
@@ -337,7 +338,12 @@ const GamePage: React.FC = (): JSX.Element => {
           (userRole === UserRoles.USER_ADMIN && gameSettings.scramMaster)) && (
           <div className={style.cardWrapper}>
             <h2 className={style.headerCards}>Select a card to evaluate the issue:</h2>
-            <CardCoffee cardPoints="unknown" gameOn setValueIssue={setValueIssue} />
+            <CardCoffee
+              cardPoints="unknown"
+              gameOn
+              setValueIssue={setValueIssue}
+              restartRound={restartRound}
+            />
             {cardValues.map((item) => {
               return (
                 <Card
@@ -346,6 +352,7 @@ const GamePage: React.FC = (): JSX.Element => {
                   shortScoreType={shortScoreType}
                   gameOn
                   setValueIssue={setValueIssue}
+                  restartRound={restartRound}
                 />
               );
             })}

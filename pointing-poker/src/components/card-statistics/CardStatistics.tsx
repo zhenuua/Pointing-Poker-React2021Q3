@@ -34,8 +34,12 @@ const CardStatistics: React.FC<CardPoints> = ({
         <h2 className={style.text}>
           {cardPoints === null ? shortScoreType : shortScoreType}
         </h2>
-        <span className={`${style.input} ${style.up}`}>{cardPoints}</span>
-        <span className={`${style.input} ${style.down}`}>{cardPoints}</span>
+        <span className={`${style.input} ${style.up}`}>
+          {cardPoints === 0 ? 'unknown' : cardPoints}
+        </span>
+        <span className={`${style.input} ${style.down}`}>
+          {cardPoints === 0 ? 'unknown' : cardPoints}
+        </span>
       </div>
       <p className={style.percent}>{`${percent?.toFixed(2)}%`}</p>
     </div>
