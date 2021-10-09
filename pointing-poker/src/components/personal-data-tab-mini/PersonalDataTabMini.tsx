@@ -3,6 +3,7 @@ import React from 'react';
 import Marquee from 'react-double-marquee';
 
 import RemoveIcon from '../../assets/images/Remove-icon.svg';
+import { UserRoles } from '../../store/types/sliceTypes';
 
 import style from './Personal-data-tab-mini.module.scss';
 
@@ -15,6 +16,7 @@ type PersonalDataTabMiniType = {
   id?: number,
   setData?: any,
   data?: any,
+  userRole?: UserRoles,
 };
 
 const PersonalDataTabMini: React.FC<PersonalDataTabMiniType> = ({
@@ -26,6 +28,7 @@ const PersonalDataTabMini: React.FC<PersonalDataTabMiniType> = ({
   id,
   setData,
   data,
+  userRole,
 }): JSX.Element => {
   return (
     <div className={style.userTab}>
@@ -42,9 +45,9 @@ const PersonalDataTabMini: React.FC<PersonalDataTabMiniType> = ({
         ''
       )}
       {isCurrentUser ? (
-        <p className={style.itsYou}>It&#8242;s you</p>
+        <p className={style.itsYou}>It&#8242;s you ({userRole})</p>
       ) : (
-        <p className={style.itsYou} />
+        <p className={style.itsYou}>{userRole}</p>
       )}
       <p className={style.staff}>{userStaff}</p>
       <div className={style.marquee} title={userName}>

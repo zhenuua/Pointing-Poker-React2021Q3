@@ -144,6 +144,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
             userStaff={admin ? admin.jobPosition : 'no admin data'}
             isCurrentUser={socketId === admin?.socketId}
             isRemove={false}
+            userRole={UserRoles.USER_ADMIN}
           />
         ) : null}
       </div>

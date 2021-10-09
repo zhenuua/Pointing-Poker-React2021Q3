@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import ButtonMini from '../../components/button-blue-mini/ButtonMini';
 import Switcher from '../../components/swither/Switcher';
 import TimerComponent from '../../components/timer/TimerComponent';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
@@ -12,6 +13,7 @@ import {
   setScramMaster,
   setResultsVoted,
   setAutoConnect,
+  setGameSettings,
 } from '../../store/reducers/lobbySlice';
 import { configLobby } from './config';
 import style from './Lobby-page.module.scss';
@@ -34,6 +36,20 @@ const LobbySettings: React.FC = (): JSX.Element => {
       dispatch(setCardValues(configLobby.cardCollections.FIBBONACCI));
     }
   };
+
+  const setDefaultSettings = () => {
+    localStorage.setItem(
+      'pointing-poker-default-gameSettings',
+      JSON.stringify(gameSettings),
+    );
+    // console
+  };
+
+  useEffect(() => {
+    const defaultSettings = localStorage.getItem('pointing-poker-default-gameSettings');
+    if (defaultSettings) dispatch(setGameSettings(JSON.parse(defaultSettings)));
+  }, []);
+
   return (
     <section className={style.lobbyGameSettings}>
       <h2 className={`${style.lobbyText} ${style.lobbyTextTitle}`}>Game settings:</h2>
@@ -98,8 +114,18 @@ const LobbySettings: React.FC = (): JSX.Element => {
             className={style.lobbyGameSettings__item__input}
             onChange={changeScoreType}
           >
-            <option value={ScoreTypes.FIBBONACCI}>{ScoreTypes.FIBBONACCI}</option>
-            <option value={ScoreTypes.STORY_POINT}>{ScoreTypes.STORY_POINT}</option>
+            <option
+              value={ScoreTypes.FIBBONACCI}
+              selected={ScoreTypes.FIBBONACCI === scoreType}
+            >
+              {ScoreTypes.FIBBONACCI}
+            </option>
+            <option
+              value={ScoreTypes.STORY_POINT}
+              selected={ScoreTypes.STORY_POINT === scoreType}
+            >
+              {ScoreTypes.STORY_POINT}
+            </option>
           </select>
         </div>
         <div className={style.lobbyGameSettings__item}>
@@ -113,6 +139,9 @@ const LobbySettings: React.FC = (): JSX.Element => {
           ) : (
             <p className={style.lobbyGameSettings__item__title}>No timer</p>
           )}
+        </div>
+        <div className={style.lobbyGameSettings__item}>
+          <ButtonMini text="set default settings" onClick={setDefaultSettings} />
         </div>
       </div>
     </section>

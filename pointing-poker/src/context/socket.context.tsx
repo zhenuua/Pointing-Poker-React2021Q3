@@ -94,7 +94,7 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
     });
 
     socket.on(EVENTS.SERVER.END_ROUND, ({ roundOn }) => {
-      console.log(roundOn);
+      // console.log(roundOn);
       dispatch(setRoundOn(false));
     });
 
