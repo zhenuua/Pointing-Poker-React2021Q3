@@ -666,7 +666,11 @@ const lobbySlice = createSlice({
       // stoping if you already been sent palyers arr by admin in game page
       if (state.players.length) {
         state.users.forEach((user, index) => {
-          if (state.players.length >= index + 1) return;
+          if (
+            state.players.length >= index + 1 ||
+            user.userRole === UserRoles.USER_SPECTATOR
+          )
+            return;
           const scores = state.issues.map((issue) => ({
             issueTitle: issue.issueTitle,
             // !!!!!!!!!!below coub be a bug cause it forces nulls!!!!!!!!!!!!!!!!

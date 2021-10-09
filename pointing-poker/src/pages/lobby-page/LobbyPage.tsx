@@ -13,7 +13,7 @@ import { EVENTS } from '../../store/types/sockeIOEvents';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { createAdmin } from '../../store/actionCreators/lobbyActionCreators';
-import { createPlayer } from '../../store/reducers/userSlice';
+import { createPlayer, createSpectator } from '../../store/reducers/userSlice';
 import { deleteUser, fetchUser, removeUser } from '../../store/reducers/lobbySlice';
 
 import { setChatIconVisible } from '../../store/reducers/controlSlice';
@@ -57,12 +57,26 @@ const LobbyPage: React.FC = (): JSX.Element => {
     };
 
     const createUser = async () => {
-      if (userRole !== UserRoles.USER_ADMIN) {
-        dispatch(createPlayer({ userData, emitSocketEvent: emitJoinLobby }));
-        // dispatch(fetchUsers({ roomId })); - envoloped this into createPlayer
-      } else {
-        dispatch(createAdmin({ userData, emitSocketEvent: emitJoinLobby }));
+      switch (userRole) {
+        case UserRoles.USER_ADMIN: {
+          dispatch(createAdmin({ userData, emitSocketEvent: emitJoinLobby }));
+          break;
+        }
+        case UserRoles.USER_PLAYER: {
+          dispatch(createPlayer({ userData, emitSocketEvent: emitJoinLobby }));
+          break;
+        }
+        case UserRoles.USER_SPECTATOR: {
+          dispatch(createSpectator({ userData, emitSocketEvent: emitJoinLobby }));
+          break;
+        }
       }
+      // if (userRole !== UserRoles.USER_ADMIN) {
+      //   dispatch(createPlayer({ userData, emitSocketEvent: emitJoinLobby }));
+      //   // dispatch(fetchUsers({ roomId })); - envoloped this into createPlayer
+      // } else {
+      //   dispatch(createAdmin({ userData, emitSocketEvent: emitJoinLobby }));
+      // }
     };
 
     // additional logic for rejecting/accepting player/spectator

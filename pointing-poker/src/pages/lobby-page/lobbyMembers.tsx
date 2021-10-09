@@ -32,7 +32,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
         socket.emit(EVENTS.CLIENT.FORCE_DEL_USER, { id, roomId });
         break;
       }
-      case UserRoles.USER_PLAYER: {
+      default: {
         socket.emit(EVENTS.CLIENT.INIT_DEL_USER, {
           initiatorId: socketId,
           candidateId: id,
@@ -106,8 +106,10 @@ const LobbyMain: React.FC = (): JSX.Element => {
               userStaff={user.jobPosition}
               isCurrentUser={user.socketId === socketId}
               isRemove={
-                userRole === UserRoles.USER_ADMIN ||
-                (!(user.socketId === socketId) && playerCounter() > 3)
+                userRole === UserRoles.USER_SPECTATOR
+                  ? false
+                  : userRole === UserRoles.USER_ADMIN ||
+                    (!(user.socketId === socketId) && playerCounter() > 3)
               }
               key={`${user.socketId}`}
               socketId={user.socketId}

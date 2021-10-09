@@ -145,6 +145,33 @@ export const createPlayer = createAsyncThunk(
   },
 );
 
+export const createSpectator = createAsyncThunk(
+  'user/createSpectator',
+  async (
+    { userData, emitSocketEvent }: { userData: PlayerData, emitSocketEvent: () => void },
+    { rejectWithValue, dispatch },
+  ) => {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'http://localhost:5000/users/create-spectator',
+        timeout: 2000,
+        data: userData,
+      });
+      // const { playerToken } = response.data;
+      emitSocketEvent();
+      dispatch(fetchUsers({ roomId: userData.roomId }));
+      return response.data;
+      // dispatch(setToken(playerToken));
+      // dispatch(fetchUsers({ roomId: playerData.roomId }));
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable create new user');
+      return rejectWithValue('');
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,

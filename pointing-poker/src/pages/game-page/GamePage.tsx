@@ -274,6 +274,7 @@ const GamePage: React.FC = (): JSX.Element => {
               userStaff={admin?.jobPosition || 'no data'}
               isCurrentUser={admin?.socketId === socketId}
               isRemove={false}
+              userRole={UserRoles.USER_ADMIN}
             />
           </div>
           {userRole === UserRoles.USER_ADMIN && (
@@ -410,6 +411,7 @@ const GamePage: React.FC = (): JSX.Element => {
                   isRemove={
                     userRole === UserRoles.USER_ADMIN && user.socketId !== socketId
                   }
+                  userRole={user.userRole}
                   // id={user.socketId}
                   // setData={setData}
                   // data={data}

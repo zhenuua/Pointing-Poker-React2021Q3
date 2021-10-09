@@ -30,7 +30,7 @@ export interface PersonalDataTabType {
   isCurrentUser: boolean;
   isRemove: boolean;
   socketId?: string;
-  userRole?: UserRoles;
+  userRole: UserRoles;
   deleteUser?: (id: string, role: UserRoles) => void;
 }
 export interface IPendingUserTab extends PersonalDataTabType {

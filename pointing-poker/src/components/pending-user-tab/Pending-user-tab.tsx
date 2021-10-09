@@ -55,9 +55,9 @@ const PendingUserDataTab: React.FC<IPendingUserTab> = ({
         ''
       )}
       {isCurrentUser ? (
-        <p className={style.itsYou}>It&#8242;s you</p>
+        <p className={style.itsYou}>It&#8242;s you ({userRole})</p>
       ) : (
-        <p className={style.itsYou} />
+        <p className={style.itsYou}>{userRole}</p>
       )}
       <p className={style.staff}>{userStaff}</p>
       <div className={style.marquee} title={userName}>
