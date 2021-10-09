@@ -3,6 +3,7 @@ import axios from 'axios';
 import { error } from 'console';
 import { Socket } from 'socket.io-client';
 import { checkLobby } from './userSlice';
+import { SERVER_URL, FRONT_URL } from '../../url-config/urls';
 
 export interface IScore {
   socketId: string;
@@ -39,7 +40,7 @@ export const updateGameStatus = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: `http://localhost:5000/lobby/update-status`,
+        url: `${SERVER_URL}/lobby/update-status`,
         timeout: 2000,
         data: { roomId, gameOn, gameOver },
       });

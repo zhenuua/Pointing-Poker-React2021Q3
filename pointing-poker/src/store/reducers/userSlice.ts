@@ -3,6 +3,7 @@ import axios from 'axios';
 import { UserRoles } from '../types/sliceTypes';
 import { fetchUsers } from './lobbySlice';
 import { TLobbyChat } from '../../types/types';
+import { SERVER_URL } from '../../url-config/urls';
 
 interface IInitState {
   username: string;
@@ -41,7 +42,7 @@ export const createLobby = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: 'http://localhost:5000/lobby/create',
+        url: `${SERVER_URL}/lobby/create`,
         timeout: 2000,
         data: {
           socketId,
@@ -71,7 +72,7 @@ export const checkLobby = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `http://localhost:5000/lobby/check/${lobbyUrlOrRoomIdPath}`,
+        url: `${SERVER_URL}/lobby/check/${lobbyUrlOrRoomIdPath}`,
         timeout: 2000,
         params: {
           lobbyUrlOrRoomIdPath,
@@ -103,7 +104,7 @@ interface PlayerData {
 //     try {
 //       const response = await axios({
 //         method: 'post',
-//         url: 'http://localhost:5000/users/create-admin',
+//         url: `${SERVER_URL}/users/create-admin`,
 //         timeout: 2000,
 //         data: playerData,
 //       });
@@ -127,7 +128,7 @@ export const createPlayer = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: 'http://localhost:5000/users/create-player',
+        url: `${SERVER_URL}/users/create-player`,
         timeout: 2000,
         data: userData,
       });
@@ -154,7 +155,7 @@ export const createSpectator = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: 'http://localhost:5000/users/create-spectator',
+        url: `${SERVER_URL}/users/create-spectator`,
         timeout: 2000,
         data: userData,
       });

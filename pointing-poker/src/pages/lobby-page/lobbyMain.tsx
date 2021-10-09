@@ -24,6 +24,7 @@ import ErrorWindow from '../../components/error-window/ErrorWindow';
 import PopUp from '../../components/popup/PopUp';
 import LobbyTitle from '../../components/lobby-title/LobbyTitle';
 import { setGameOn, updateGameStatus } from '../../store/reducers/gameSlice';
+import { FRONT_URL } from '../../url-config/urls';
 
 const LobbyMain: React.FC = (): JSX.Element => {
   const [startGameFlag, setStartGameFlag] = useState<boolean>(false);
@@ -88,7 +89,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
     console.log('going back in history');
   };
   const copyLink = () => {
-    navigator.clipboard.writeText(`http://localhost:3000/${roomId}`);
+    navigator.clipboard.writeText(`${FRONT_URL}/${roomId}`);
   };
   const dispatchChaining = async () => {
     await Promise.all([
@@ -157,7 +158,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
                 className={style.lobbyMain__link__input}
                 id="link"
                 type="text"
-                value={`http://localhost:3000/${roomId}`}
+                value={`${FRONT_URL}/${roomId}`}
               />
             </label>
             <ButtonSubmit
