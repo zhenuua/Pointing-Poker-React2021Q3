@@ -11,21 +11,8 @@ const Statistics: React.FC<TStatistics> = ({ curScoreIndex }): JSX.Element => {
   const [valueArray, setValueArray] = useState<any>([]);
   const [percentValues, setPercentValues] = useState<any>([]);
 
-  const { players, curIssue, gameSettings } = useTypedSelector(
-    (state) => state.lobbySlice,
-  );
+  const { players, gameSettings } = useTypedSelector((state) => state.lobbySlice);
   const { shortScoreType } = gameSettings;
-
-  // useEffect(() => {
-  //   players.length &&
-  //     players[0].scores.forEach((item) => {
-  //       const titleObject = {
-  //         issueTitle: item.issueTitle,
-  //         scores: [],
-  //       };
-  //       setValueArray(valueArray.push(titleObject));
-  //     });
-  // }, [players]);
 
   useEffect(() => {
     if (players.length) {
@@ -47,38 +34,28 @@ const Statistics: React.FC<TStatistics> = ({ curScoreIndex }): JSX.Element => {
       });
 
       if (arr.length) {
-        arr.forEach((issue: any) => {
-          const { totalScores, scores } = issue;
-          scores.sort((a: number, b: number) => a - b);
-          if (scores.score !== null)
-            while (totalScores.length) {
-              const count =
-                totalScores.lastIndexOf(totalScores[0]) -
-                totalScores.indexOf(totalScores[0]) +
-                1;
-              scores.push({
-                value: totalScores[0],
-                count,
-              });
+        arr.forEach((issueObj: any) => {
+          const { totalScores, scores } = issueObj;
+          // scores.sort((a: number, b: number) => a - b);
+          totalScores.sort((a: number, b: number) => a - b);
+          while (totalScores.length) {
+            const count =
+              totalScores.lastIndexOf(totalScores[0]) -
+              totalScores.indexOf(totalScores[0]) +
+              1;
+            scores.push({
+              value: totalScores[0],
+              count,
+              votePercent: `${((count / players.length) * 100).toFixed(2)} %`,
+            });
 
-              totalScores.splice(0, count);
-            }
-          setValueArray(arr);
+            totalScores.splice(0, count);
+          }
         });
+        setValueArray(arr);
       }
     }
   }, [players]);
-
-  useEffect(() => {
-    console.log(valueArray);
-    console.log(curScoreIndex !== undefined && valueArray[curScoreIndex]);
-    const array = valueArray.map((issueObj: any) => {
-      const totalCount = players.length;
-      console.log(totalCount);
-      return issueObj.scores.map((score: any) => (score.count * 100) / totalCount);
-    });
-    setPercentValues(array);
-  }, [valueArray]);
 
   return (
     <div className={style.cardWrapper}>
@@ -87,13 +64,13 @@ const Statistics: React.FC<TStatistics> = ({ curScoreIndex }): JSX.Element => {
         {curScoreIndex !== undefined &&
           curScoreIndex !== null &&
           valueArray.length &&
-          percentValues.length &&
           valueArray[curScoreIndex].scores.map((score: any, index: number) => {
             return (
               <CardStatistics
                 cardPoints={score.value}
                 shortScoreType={shortScoreType}
-                percent={percentValues[curScoreIndex][index]}
+                percent={score.votePercent}
+                key={`${curScoreIndex}-${score.value}`}
               />
             );
           })}
@@ -103,3 +80,56 @@ const Statistics: React.FC<TStatistics> = ({ curScoreIndex }): JSX.Element => {
 };
 
 export default Statistics;
+
+// useEffect(() => {
+//   if (players.length) {
+//     const arr: any = [];
+//     players[0].scores.forEach((issue) => {
+//       const obj = {
+//         issueTitle: issue.issueTitle,
+//         totalScores: [],
+//         scores: [],
+//       };
+//       arr.push(obj);
+//     });
+
+//     players.forEach((player) => {
+//       player.scores.forEach((score) => {
+//         const obj = arr.find((issue: any) => issue.issueTitle === score.issueTitle);
+//         if (obj) obj.totalScores.push(score.score);
+//       });
+//     });
+
+//     if (arr.length) {
+//       arr.forEach((issue: any) => {
+//         const { totalScores, scores } = issue;
+//         scores.sort((a: number, b: number) => a - b);
+//         if (scores.score !== null)
+//           while (totalScores.length) {
+//             const count =
+//               totalScores.lastIndexOf(totalScores[0]) -
+//               totalScores.indexOf(totalScores[0]) +
+//               1;
+//             scores.push({
+//               value: totalScores[0],
+//               count,
+//             });
+
+//             totalScores.splice(0, count);
+//           }
+//       });
+//       setValueArray(arr);
+//     }
+//   }
+// }, [players]);
+
+// useEffect(() => {
+//   // console.log(valueArray);
+//   // console.log(curScoreIndex !== undefined && valueArray[curScoreIndex]);
+//   const array = valueArray.map((issueObj: any) => {
+//     const totalCount = players.length;
+//     // console.log(totalCount);
+//     return issueObj.scores.map((score: any) => (score.count * 100) / totalCount);
+//   });
+//   setPercentValues(array);
+// }, [valueArray]);
