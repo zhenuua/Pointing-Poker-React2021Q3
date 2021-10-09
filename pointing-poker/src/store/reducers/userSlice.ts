@@ -3,6 +3,7 @@ import axios from 'axios';
 import { UserRoles } from '../types/sliceTypes';
 import { fetchUsers } from './lobbySlice';
 import { TLobbyChat } from '../../types/types';
+import { SERVER_URL } from '../../url-config/urls';
 
 interface IInitState {
   username: string;
@@ -41,7 +42,7 @@ export const createLobby = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: 'https://stark-savannah-25558.herokuapp.com/lobby/create',
+        url: `${SERVER_URL}/lobby/create`,
         timeout: 2000,
         data: {
           socketId,
@@ -71,7 +72,7 @@ export const checkLobby = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `https://stark-savannah-25558.herokuapp.com/lobby/check/${lobbyUrlOrRoomIdPath}`,
+        url: `${SERVER_URL}/lobby/check/${lobbyUrlOrRoomIdPath}`,
         timeout: 2000,
         params: {
           lobbyUrlOrRoomIdPath,
@@ -103,7 +104,7 @@ interface PlayerData {
 //     try {
 //       const response = await axios({
 //         method: 'post',
-//         url: 'https://stark-savannah-25558.herokuapp.com/users/create-admin',
+//         url: `${SERVER_URL}/users/create-admin`,
 //         timeout: 2000,
 //         data: playerData,
 //       });
@@ -127,7 +128,34 @@ export const createPlayer = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: 'https://stark-savannah-25558.herokuapp.com/users/create-player',
+        url: `${SERVER_URL}/users/create-player`,
+        timeout: 2000,
+        data: userData,
+      });
+      // const { playerToken } = response.data;
+      emitSocketEvent();
+      dispatch(fetchUsers({ roomId: userData.roomId }));
+      return response.data;
+      // dispatch(setToken(playerToken));
+      // dispatch(fetchUsers({ roomId: playerData.roomId }));
+    } catch (err) {
+      console.error(err);
+      alert('server issue, unable create new user');
+      return rejectWithValue('');
+    }
+  },
+);
+
+export const createSpectator = createAsyncThunk(
+  'user/createSpectator',
+  async (
+    { userData, emitSocketEvent }: { userData: PlayerData, emitSocketEvent: () => void },
+    { rejectWithValue, dispatch },
+  ) => {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: `${SERVER_URL}/users/create-spectator`,
         timeout: 2000,
         data: userData,
       });

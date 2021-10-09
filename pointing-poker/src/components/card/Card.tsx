@@ -10,10 +10,11 @@ import style from './Card.module.scss';
 import { RootState } from '../../store/store';
 
 export type CardPoints = {
-  cardPoints: number | string,
+  cardPoints: any,
   shortScoreType?: ShortScoreTypes,
   gameOn?: boolean,
   setValueIssue?: any,
+  restartRound?: boolean,
 };
 
 const Card: React.FC<CardPoints> = ({
@@ -21,11 +22,15 @@ const Card: React.FC<CardPoints> = ({
   shortScoreType,
   gameOn = false,
   setValueIssue,
+  restartRound = false,
 }): JSX.Element => {
   const [isNumberCard, setIsNumberCard] = useState<number | string>(cardPoints);
   const [inputClassName, setInputClassName] = useState<boolean>(false);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
   const { roundOn } = useSelector((state: RootState) => state.gameSlice);
+  const {
+    gameSettings: { cardChange },
+  } = useSelector((state: RootState) => state.lobbySlice);
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setIsNumberCard(+value);
@@ -83,11 +88,19 @@ const Card: React.FC<CardPoints> = ({
         </OutsideClickHandler>
       ) : (
         <div className={style.card}>
-          <div className={!roundOn ? style.front : `${style.front} ${style.flip}`}>
+          <div
+            className={
+              !roundOn && !restartRound ? style.front : `${style.front} ${style.flip}`
+            }
+          >
             <h2 className={style.text}>{shortScoreType}</h2>
             <span className={styleSpan}>{cardPoints}</span>
           </div>
-          <div className={!roundOn ? style.back : `${style.back} ${style.flipBack}`} />
+          <div
+            className={
+              !roundOn && !restartRound ? style.back : `${style.back} ${style.flipBack}`
+            }
+          />
         </div>
       )}
     </div>

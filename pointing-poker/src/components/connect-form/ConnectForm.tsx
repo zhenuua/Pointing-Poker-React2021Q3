@@ -11,6 +11,7 @@ import {
   createLobby,
   setIsObserver,
   setUserAvatar,
+  setUserRole,
 } from '../../store/reducers/userSlice';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { EVENTS } from '../../store/types/sockeIOEvents';
@@ -33,13 +34,13 @@ const ConnectForm: React.FC<FormType> = ({
   const {
     roomId,
     socketId,
-    isObserver,
     userRole,
     username,
     lastName: lastNamae,
   } = useTypedSelector((state) => state.userSlice);
   const { gameOn, gameOver } = useTypedSelector((state) => state.gameSlice);
   const [userImage, setUserImage] = useState<string>('');
+  const [isObserver, setisObserver] = useState<boolean>(false);
   const { socket } = useSocketsContext();
 
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +67,7 @@ const ConnectForm: React.FC<FormType> = ({
     setLast(lastName);
     setJob(jobPosition);
     dispatch(setUserAvatar(userImage));
+    isObserver && dispatch(setUserRole(UserRoles.USER_SPECTATOR));
     if (isConnect) {
       // await Promise.all([dispatch(checkLobby({ lobbyId: lobbyLink }))]);
       // dispatch(checkLobby({ lobbyId: lobbyLink }));
@@ -121,11 +123,9 @@ const ConnectForm: React.FC<FormType> = ({
       {lobbyLink ? (
         <div className={style.switchWrapper}>
           <span className={style.switcherText}>Connect as Observer</span>
-          <Switcher status={isObserver} setStatus={handleSwitch} id="observer" />
+          <Switcher status={isObserver} setStatus={setisObserver} id="observer" />
         </div>
-      ) : (
-        ''
-      )}
+      ) : null}
       <label htmlFor="firstName">
         <span className={style.header}>Your first name:</span>
         <br />

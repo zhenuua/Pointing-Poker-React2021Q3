@@ -4,6 +4,7 @@ import { stat } from 'fs';
 import { Socket } from 'socket.io-client';
 import { configLobby } from '../../pages/lobby-page/config';
 import { UserRoles } from '../types/sliceTypes';
+import { SERVER_URL, FRONT_URL } from '../../url-config/urls';
 
 export interface IUserInfo {
   username: string;
@@ -128,7 +129,7 @@ export const fetchUsers = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `https://stark-savannah-25558.herokuapp.com/users/${roomId}`,
+        url: `${SERVER_URL}/users/${roomId}`,
         timeout: 2000,
       });
       return response.data;
@@ -149,7 +150,7 @@ export const fetchUser = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `https://stark-savannah-25558.herokuapp.com/users/${userRole}/${socketId}`,
+        url: `${SERVER_URL}/users/${userRole}/${socketId}`,
         timeout: 2000,
       });
       return response.data;
@@ -170,7 +171,7 @@ export const deleteUser = createAsyncThunk(
     try {
       const response = await axios({
         method: 'delete',
-        url: `https://stark-savannah-25558.herokuapp.com/users/delete`,
+        url: `${SERVER_URL}/users/delete`,
         timeout: 2000,
         data: { socketId, userRole },
       });
@@ -189,7 +190,7 @@ export const cancelGame = createAsyncThunk(
     try {
       const response = await axios({
         method: 'delete',
-        url: `https://stark-savannah-25558.herokuapp.com/lobby/delete`,
+        url: `${SERVER_URL}/lobby/delete`,
         timeout: 2000,
         data: { roomId },
       });
@@ -208,7 +209,7 @@ export const endGame = createAsyncThunk(
     try {
       const response = await axios({
         method: 'delete',
-        url: `https://stark-savannah-25558.herokuapp.com/lobby/end-game`,
+        url: `${SERVER_URL}/lobby/end-game`,
         timeout: 2000,
         data: { roomId },
       });
@@ -234,13 +235,13 @@ export const postSettingsIssues = createAsyncThunk(
     try {
       const responseSettings = await axios({
         method: 'post',
-        url: `https://stark-savannah-25558.herokuapp.com/lobby/game-settings`,
+        url: `${SERVER_URL}/lobby/game-settings`,
         timeout: 2000,
         data: { roomId, gameSettings },
       });
       const responseIssues = await axios({
         method: 'post',
-        url: `https://stark-savannah-25558.herokuapp.com/lobby/issues`,
+        url: `${SERVER_URL}/lobby/issues`,
         timeout: 2000,
         data: { roomId, issues },
       });
@@ -265,13 +266,13 @@ export const postSettingsIssues = createAsyncThunk(
 //     try {
 //       const responseSettings = await axios({
 //         method: 'post',
-//         url: `https://stark-savannah-25558.herokuapp.com/lobby/game-settings`,
+//         url: `${SERVER_URL}/lobby/game-settings`,
 //         timeout: 2000,
 //         data: { roomId, gameSettings },
 //       });
 //       const responseIssues = await axios({
 //         method: 'post',
-//         url: `https://stark-savannah-25558.herokuapp.com/lobby/issues`,
+//         url: `${SERVER_URL}/lobby/issues`,
 //         timeout: 2000,
 //         data: { roomId, issues },
 //       });
@@ -293,7 +294,7 @@ export const fetchGameSettings = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `https://stark-savannah-25558.herokuapp.com/lobby/game-settings/${roomId}`,
+        url: `${SERVER_URL}/lobby/game-settings/${roomId}`,
         timeout: 5000,
       });
       return response.data;
@@ -311,7 +312,7 @@ export const fetchIssues = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `https://stark-savannah-25558.herokuapp.com/lobby/issues/${roomId}`,
+        url: `${SERVER_URL}/lobby/issues/${roomId}`,
         timeout: 5000,
       });
       return response.data.issues;
@@ -329,7 +330,7 @@ export const postIssue = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: `https://stark-savannah-25558.herokuapp.com/lobby/issues/add`,
+        url: `${SERVER_URL}/lobby/issues/add`,
         timeout: 5000,
         data: { roomId, issue },
       });
@@ -380,7 +381,7 @@ export const postGamePlayers = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: `https://stark-savannah-25558.herokuapp.com/lobby/add-game-players`,
+        url: `${SERVER_URL}/lobby/add-game-players`,
         timeout: 5000,
         data: { roomId, players },
       });
@@ -399,7 +400,7 @@ export const fetchGamePlayers = createAsyncThunk(
     try {
       const response = await axios({
         method: 'get',
-        url: `https://stark-savannah-25558.herokuapp.com/lobby/game-players/${roomId}`,
+        url: `${SERVER_URL}/lobby/game-players/${roomId}`,
         timeout: 5000,
       });
       return response.data;
@@ -666,7 +667,11 @@ const lobbySlice = createSlice({
       // stoping if you already been sent palyers arr by admin in game page
       if (state.players.length) {
         state.users.forEach((user, index) => {
-          if (state.players.length >= index + 1) return;
+          if (
+            state.players.length >= index + 1 ||
+            user.userRole === UserRoles.USER_SPECTATOR
+          )
+            return;
           const scores = state.issues.map((issue) => ({
             issueTitle: issue.issueTitle,
             // !!!!!!!!!!below coub be a bug cause it forces nulls!!!!!!!!!!!!!!!!

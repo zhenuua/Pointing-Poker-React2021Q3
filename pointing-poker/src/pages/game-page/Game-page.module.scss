@@ -2,7 +2,7 @@
   display: flex;
   max-width: 1440px;
   margin: 0 auto;
-  height: 150vh;
+  //height: 170vh;
 }
 
 .gamePageHeader {
@@ -65,7 +65,7 @@
 }
 
 .issuesText {
-  width: 316px;
+  width: 100%;
   height: 76px;
   font-family: 'Ruda', sans-serif;
   font-weight: 700;
@@ -142,4 +142,20 @@
 
 .btnNextIssue {
   margin: 0px 6px;
+}
+
+.headerCards {
+  width: 100%;
+  font-style: normal;
+  font-size: 22px;
+  font-family: 'Ruda', sans-serif;
+  font-weight: 700;
+  margin: 70px 0 20px 80px;
+}
+
+.wrapperStat {
+  display: flex;
+  max-width: 742px;
+  flex-wrap: wrap;
+  min-height: 210px;
 }

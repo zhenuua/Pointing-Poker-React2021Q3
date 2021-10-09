@@ -46,19 +46,20 @@ import PendingUserDataTab from '../../components/pending-user-tab/Pending-user-t
 import plus from '../../assets/icons/plus.svg';
 import PopUp from '../../components/popup/PopUp';
 import FormCreateIssue from '../../components/form-create-issue/FormCreateIssue';
+import CardStatistics from '../../components/card-statistics/CardStatistics';
+import Statistics from '../../components/statistics/Statistics/Statistics';
 
 const GamePage: React.FC = (): JSX.Element => {
   const [restartRound, setRestartRound] = useState<boolean>(false);
-  const [openCards, setOpenCards] = useState<boolean>(false);
   const [curScoreIndex, setCurScoreIndex] = useState<number>();
   const [popupCreateIssue, setPopupCreateIssue] = useState<boolean>(false);
   const history = useHistory();
-
+  const result: any = {};
   const { users, gameSettings, issues, players } = useTypedSelector(
     (state) => state.lobbySlice,
   );
   const { socketId, userRole, roomId } = useTypedSelector((state) => state.userSlice);
-  const { roundOn } = useTypedSelector((state) => state.gameSlice);
+  const { roundOn, gameOn } = useTypedSelector((state) => state.gameSlice);
   const { curIssue, resultsVoted, pendingUsers } = useTypedSelector(
     (state) => state.lobbySlice,
   );
@@ -85,21 +86,22 @@ const GamePage: React.FC = (): JSX.Element => {
   const nextIssue = () => {
     let nextIssueValue: any = null;
     let lastIssueValue: any = null;
-    issues.forEach((e, i, arr) => {
-      if (e.issueTitle === curIssue?.issueTitle) {
-        nextIssueValue = arr[i + 1];
-        if (
-          nextIssueValue !== undefined &&
-          nextIssueValue.issueTitle === arr[arr.length - 1].issueTitle
-        ) {
-          lastIssueValue = arr[arr.length - 1];
+    issues.length > 1 &&
+      issues.forEach((e, i, arr) => {
+        if (e.issueTitle === curIssue?.issueTitle) {
+          nextIssueValue = arr[i + 1];
+          if (
+            nextIssueValue !== undefined &&
+            nextIssueValue.issueTitle === arr[arr.length - 1].issueTitle
+          ) {
+            lastIssueValue = arr[arr.length - 1];
+          }
+          if (i + 1 === arr.length) {
+            const len = arr.length - 1;
+            nextIssueValue = arr[len % i];
+          }
         }
-        if (i + 1 === arr.length) {
-          const len = arr.length - 1;
-          nextIssueValue = arr[len % i];
-        }
-      }
-    });
+      });
 
     if (nextIssueValue !== null) dispatch(setCurIssue(nextIssueValue.issueTitle));
     socket.emit('NEXT_ISSUE', { roomId, nextIssueValue });
@@ -148,7 +150,6 @@ const GamePage: React.FC = (): JSX.Element => {
       }
     }
   }, [curScoreIndex, players]);
-
   // const dispatchChaining = async () => {
   //   await Promise.all([
   //     dispatch(fetchGameSettings({ roomId })),
@@ -273,6 +274,7 @@ const GamePage: React.FC = (): JSX.Element => {
               userStaff={admin?.jobPosition || 'no data'}
               isCurrentUser={admin?.socketId === socketId}
               isRemove={false}
+              userRole={UserRoles.USER_ADMIN}
             />
           </div>
           {userRole === UserRoles.USER_ADMIN && (
@@ -333,13 +335,16 @@ const GamePage: React.FC = (): JSX.Element => {
             )}
           </div>
         </div>
-        <div className={style.statisticsWrapper}>
-          <div className={style.issuesText}>Statistics:</div>
-        </div>
         {(userRole === UserRoles.USER_PLAYER ||
           (userRole === UserRoles.USER_ADMIN && gameSettings.scramMaster)) && (
           <div className={style.cardWrapper}>
-            <CardCoffee cardPoints="unknown" gameOn setValueIssue={setValueIssue} />
+            <h2 className={style.headerCards}>Select a card to evaluate the issue:</h2>
+            <CardCoffee
+              cardPoints="unknown"
+              gameOn
+              setValueIssue={setValueIssue}
+              restartRound={restartRound}
+            />
             {cardValues.map((item) => {
               return (
                 <Card
@@ -348,10 +353,22 @@ const GamePage: React.FC = (): JSX.Element => {
                   shortScoreType={shortScoreType}
                   gameOn
                   setValueIssue={setValueIssue}
+                  restartRound={restartRound}
                 />
               );
             })}
           </div>
+        )}
+        {gameOn && !roundOn ? (
+          <>
+            {restartRound
+              ? curScoreIndex !== undefined && (
+                  <Statistics curScoreIndex={curScoreIndex} />
+                )
+              : ''}
+          </>
+        ) : (
+          ''
         )}
       </div>
       <div className={style.gameWrapperRight}>
@@ -394,6 +411,7 @@ const GamePage: React.FC = (): JSX.Element => {
                   isRemove={
                     userRole === UserRoles.USER_ADMIN && user.socketId !== socketId
                   }
+                  userRole={user.userRole}
                   // id={user.socketId}
                   // setData={setData}
                   // data={data}

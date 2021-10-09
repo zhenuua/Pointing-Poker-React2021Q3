@@ -22,6 +22,7 @@ import { EVENTS } from '../store/types/sockeIOEvents';
 import { setGameOn, setGameOver, setRoundOn } from '../store/reducers/gameSlice';
 import { setChatIconVisible } from '../store/reducers/controlSlice';
 import { RootState } from '../store/store';
+import { SERVER_URL, FRONT_URL } from '../url-config/urls';
 
 interface Context {
   socket: Socket;
@@ -29,8 +30,6 @@ interface Context {
   playerSocket: Socket | null;
   chatSocket: Socket | null;
 }
-
-const SERVER_URL = 'https://stark-savannah-25558.herokuapp.com/';
 
 const socket = io(SERVER_URL, {
   reconnectionAttempts: 3,
@@ -94,7 +93,7 @@ const SocketsProvider = ({ children }: { children: ReactNode }) => {
     });
 
     socket.on(EVENTS.SERVER.END_ROUND, ({ roundOn }) => {
-      console.log(roundOn);
+      // console.log(roundOn);
       dispatch(setRoundOn(false));
     });
 

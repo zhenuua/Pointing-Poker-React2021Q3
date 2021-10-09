@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { Socket } from 'socket.io-client';
+import { SERVER_URL } from '../../url-config/urls';
 import { fetchUsers } from '../reducers/lobbySlice';
 import { setToken } from '../reducers/userSlice';
 import { UserRoles } from '../types/sliceTypes';
@@ -30,7 +31,7 @@ export const createAdmin = createAsyncThunk(
     try {
       const response = await axios({
         method: 'post',
-        url: 'https://stark-savannah-25558.herokuapp.com/users/create-admin',
+        url: `${SERVER_URL}/users/create-admin`,
         timeout: 2000,
         data: userData,
       });
@@ -52,7 +53,7 @@ export const createAdmin = createAsyncThunk(
 //     try {
 //       const response = await axios({
 //         method: 'get',
-//         url: `https://stark-savannah-25558.herokuapp.com/users/${roomId}`,
+//         url: `${SERVER_URL}/users/${roomId}`,
 //         timeout: 2000,
 //       });
 
@@ -82,7 +83,7 @@ export const createAdmin = createAsyncThunk(
 //     try {
 //       const response = await axios({
 //         method: 'post',
-//         url: 'https://stark-savannah-25558.herokuapp.com/users/create-player',
+//         url: `${SERVER_URL}/users/create-player`,
 //         timeout: 2000,
 //         data: playerData,
 //       });

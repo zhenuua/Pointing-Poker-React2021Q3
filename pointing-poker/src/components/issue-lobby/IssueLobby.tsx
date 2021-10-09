@@ -17,6 +17,7 @@ const IssueLobby: React.FC<IssueLobbyType> = ({ issueTitle, priority }): JSX.Ele
   const [issueTitleCurrent, setIssueTitleCurrent] = useState<string>(issueTitle);
   const [issuePriorityCurrent, setIssuePriorityCurrent] = useState<string>(priority);
   const [prevIssueTitle, setPrevIssueTitle] = useState<string>(issueTitle);
+  const { gameOver } = useTypedSelector((state) => state.gameSlice);
 
   const dispatch = useDispatch();
   const { issues } = useTypedSelector((state) => state.lobbySlice);
@@ -55,7 +56,7 @@ const IssueLobby: React.FC<IssueLobbyType> = ({ issueTitle, priority }): JSX.Ele
       className={style.lobbyIssues__item}
       aria-hidden="true"
       onClick={(e: React.MouseEvent<HTMLElement>) => {
-        console.log('клик в элементе');
+        // console.log('клик в элементе');
         e.stopPropagation();
         // обработать клик вне элемента
       }}
@@ -88,24 +89,26 @@ const IssueLobby: React.FC<IssueLobbyType> = ({ issueTitle, priority }): JSX.Ele
           <span className={style.lobbyIssues__item__propity}>{priority} prority</span>
         </p>
       )}
-      <div>
-        <img
-          aria-hidden="true"
-          className={style.lobbyIssues__item__img}
-          src={pencil}
-          alt="edit issue"
-          onClick={(e: React.MouseEvent<HTMLElement>) => {
-            updateIssue();
-          }}
-        />
-        <img
-          className={style.lobbyIssues__item__img}
-          src={urn}
-          alt="delite issue"
-          aria-hidden="true"
-          onClick={() => deleteIssue(issueTitle)}
-        />
-      </div>
+      {!gameOver && (
+        <div>
+          <img
+            aria-hidden="true"
+            className={style.lobbyIssues__item__img}
+            src={pencil}
+            alt="edit issue"
+            onClick={(e: React.MouseEvent<HTMLElement>) => {
+              updateIssue();
+            }}
+          />
+          <img
+            className={style.lobbyIssues__item__img}
+            src={urn}
+            alt="delite issue"
+            aria-hidden="true"
+            onClick={() => deleteIssue(issueTitle)}
+          />
+        </div>
+      )}
     </div>
   );
 };
