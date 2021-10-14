@@ -14,7 +14,13 @@ import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { UserRoles } from '../../store/types/sliceTypes';
 import { createAdmin } from '../../store/actionCreators/lobbyActionCreators';
 import { createPlayer, createSpectator } from '../../store/reducers/userSlice';
-import { deleteUser, fetchUser, removeUser } from '../../store/reducers/lobbySlice';
+import {
+  deleteUser,
+  fetchGameSettings,
+  fetchIssues,
+  fetchUser,
+  removeUser,
+} from '../../store/reducers/lobbySlice';
 
 import { setChatIconVisible } from '../../store/reducers/controlSlice';
 import ellipsis from '../../assets/images/Ellipsis.svg';
@@ -79,9 +85,16 @@ const LobbyPage: React.FC = (): JSX.Element => {
       // }
     };
 
-    // additional logic for rejecting/accepting player/spectator
-    if (userRole !== UserRoles.USER_ADMIN) {
-      console.log('additional logic required for non admin users');
+    // <----------------when you are connecting to already gameOn lobby --------------->
+    const awaitFetching = async () => {
+      await Promise.all([
+        dispatch(fetchGameSettings({ roomId })),
+        dispatch(fetchIssues({ roomId })),
+      ]);
+    };
+
+    if (gameOn) {
+      awaitFetching();
     }
 
     // Creating user

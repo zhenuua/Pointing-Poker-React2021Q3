@@ -14,6 +14,7 @@ import {
   deleteUser,
   fetchGameSettings,
   fetchIssues,
+  setGameSettings,
 } from '../../store/reducers/lobbySlice';
 import { BanPopUpContainer } from './banPopUpContainer';
 
@@ -89,6 +90,13 @@ const LobbyMain: React.FC = (): JSX.Element => {
       socket.emit(EVENTS.CLIENT.BANNED_USER_LEAVE, { roomId });
       alert('you have been banned from lobby, mua-ha-ha');
       history.push('/');
+    }
+  }, [users]);
+
+  useEffect(() => {
+    if (users.length === 1 && users[0].userRole === UserRoles.USER_ADMIN) {
+      const defaultSettings = localStorage.getItem('pointing-poker-default-gameSettings');
+      if (defaultSettings) dispatch(setGameSettings(JSON.parse(defaultSettings)));
     }
   }, [users]);
 

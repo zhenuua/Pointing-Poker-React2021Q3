@@ -667,8 +667,9 @@ const lobbySlice = createSlice({
       // stoping if you already been sent palyers arr by admin in game page
       if (state.players.length) {
         state.users.forEach((user, index) => {
+          const length = !state.gameSettings.scramMaster ? index : index + 1;
           if (
-            state.players.length >= index + 1 ||
+            state.players.length >= length ||
             user.userRole === UserRoles.USER_SPECTATOR
           )
             return;

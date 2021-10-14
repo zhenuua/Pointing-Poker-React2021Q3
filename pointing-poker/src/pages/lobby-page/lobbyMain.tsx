@@ -123,7 +123,7 @@ const LobbyMain: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     if (gameOn && users.length) {
-      awaitFetching();
+      // awaitFetching();
       history.push(`/game-page/${roomId}`);
       // const admin = users.find((user) => user.userRole === UserRoles.USER_ADMIN);
       // admin && socket.emit(EVENTS.CLIENT.CUR_GAMEDATA_ACCESS, {  });

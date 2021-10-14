@@ -45,10 +45,10 @@ const LobbySettings: React.FC = (): JSX.Element => {
     // console
   };
 
-  useEffect(() => {
-    const defaultSettings = localStorage.getItem('pointing-poker-default-gameSettings');
-    if (defaultSettings) dispatch(setGameSettings(JSON.parse(defaultSettings)));
-  }, []);
+  // useEffect(() => {
+  //   const defaultSettings = localStorage.getItem('pointing-poker-default-gameSettings');
+  //   if (defaultSettings) dispatch(setGameSettings(JSON.parse(defaultSettings)));
+  // }, []);
 
   return (
     <section className={style.lobbyGameSettings}>
