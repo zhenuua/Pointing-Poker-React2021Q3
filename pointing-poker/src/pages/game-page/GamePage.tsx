@@ -233,7 +233,7 @@ const GamePage: React.FC = (): JSX.Element => {
 
   const exitGame = () => {
     console.log('exiting lobby/game');
-    socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled: true, userRole });
+    socket.emit(EVENTS.CLIENT.USER_LEAVE, { roomId, gameCanceled: false, userRole });
     history.push('/');
     console.log('going back in history');
   };
