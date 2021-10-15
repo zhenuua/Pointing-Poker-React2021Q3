@@ -19,6 +19,8 @@ Socket.IO enables real-time bidirectional event-based communication. It consists
 a Node.js server (this repository)
 a Javascript client library for the browser (or a Node.js client)
 
+ExpressJS
+
 socket.io-client
 used to enable communicatoin through socket.io server
 
